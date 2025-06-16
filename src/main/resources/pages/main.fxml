@@ -6,10 +6,10 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: -womt-background-1;" stylesheets="@../styles/dark.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: red; -fx-background-radius: 20 0 0 0;" BorderPane.alignment="CENTER" />
+      <BorderPane styleClass="content_pane" BorderPane.alignment="CENTER" />
    </center>
    <left>
-      <CollapsableSidebarMenu collapsed="true" minWidth="-Infinity" prefWidth="56.0" BorderPane.alignment="TOP_LEFT" />
+      <CollapsableSidebarMenu collapsed="true" minWidth="-Infinity" prefWidth="54.0" BorderPane.alignment="TOP_LEFT" />
    </left>
    <padding>
       <Insets top="10.0" />

@@ -19,12 +19,16 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 
-    implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+//    implementation(kotlin("stdlib"))
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+//    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1")
+
     implementation("org.openjfx:javafx-controls:23.0.1")
     implementation("org.openjfx:javafx-fxml:23.0.1")
+
+    implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
+
     implementation(project(":nfx-core"))
     implementation(fileTree("libs") { include("*.jar") })
 }
@@ -81,3 +85,5 @@ sourceSets {
         }
     }
 }
+
+tasks.register("prepareKotlinBuildScriptModel") {}

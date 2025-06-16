@@ -23,7 +23,8 @@ open class MainWindow : NfxWindow(), Initializable {
 		val fxmlLoader = FXMLLoader(javaClass.getResource("/pages/main.fxml"))
 		scene = Scene(fxmlLoader.load<AnchorPane>())
 		title = "WomToolkit"
-		icons.add(Image("icon.png"))
+
+		icons.add(Image(javaClass.getResource("/icons/icon.png")?.toExternalForm()))
 		scene.stylesheets.add(
 			javaClass.getResource("/styles/dark.css")!!.toExternalForm()
 		)
@@ -39,7 +40,9 @@ open class MainWindow : NfxWindow(), Initializable {
 				"womt-background-1"
 			) ?: "#000000"
 		)
-		isResizable = true
+
+		isResizable =
+			true
 		show()
 	}
 

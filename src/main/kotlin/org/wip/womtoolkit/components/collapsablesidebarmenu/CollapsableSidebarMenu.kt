@@ -10,6 +10,7 @@ import javafx.scene.control.Button
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.util.Duration
+import org.wip.womtoolkit.model.LocalizationService
 import java.io.IOException
 import kotlin.properties.Delegates
 
@@ -21,13 +22,16 @@ class CollapsableSidebarMenu : AnchorPane() {
     @FXML lateinit var slicer: Button
     @FXML lateinit var converter: Button
     @FXML lateinit var settings: Button
+    @FXML lateinit var testButton: Button
     @FXML lateinit var selected_indicator: Pane
+    lateinit var selected_indicator_base_size: Pair<Double, Double>
 
     var isCollapsed:  Boolean by Delegates.observable(true) { _, old, new ->
         if (new != old) {
-            slicer.text = if (new) "" else "Slicer"
-            converter.text = if (new) "" else "Converter"
-            settings.text = if (new) "" else "Settings"
+            if (new)
+                hideButtonsText()
+            else
+                showButtonsText()
         }
     }
 
@@ -42,8 +46,8 @@ class CollapsableSidebarMenu : AnchorPane() {
         if (new != null && new != old) {
             animateSelectedIndicator(new)
         }
-        old?.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), selected_button == old)
-        new?.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), selected_button == new)
+        old?.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), false)
+        new?.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), true)
     }
 
     init {
@@ -57,6 +61,21 @@ class CollapsableSidebarMenu : AnchorPane() {
         }
     }
 
+    private fun hideButtonsText() {
+        slicer.textProperty().unbind()
+        converter.textProperty().unbind()
+        settings.textProperty().unbind()
+        slicer.text = ""
+        converter.text = ""
+        settings.text = ""
+    }
+
+    private fun showButtonsText() {
+        slicer.textProperty().bind(LocalizationService.lsb("menu.slicer"))
+        converter.textProperty().bind(LocalizationService.lsb("menu.converter"))
+        settings.textProperty().bind(LocalizationService.lsb("menu.settings"))
+    }
+
     @FXML
     protected fun initialize() {
         this.heightProperty().addListener { _, _, _ ->
@@ -65,9 +84,11 @@ class CollapsableSidebarMenu : AnchorPane() {
         this.widthProperty().addListener { _, _, _ ->
             selected_button?.let { selected_indicator.layoutY = computeSelectedIndicatorY(it) }
         }
-        slicer.text = if (isCollapsed) "" else "Slicer"
-        converter.text = if (isCollapsed) "" else "Converter"
-        settings.text = if (isCollapsed) "" else "Settings"
+        if (isCollapsed) {
+            hideButtonsText()
+        } else {
+            showButtonsText()
+        }
     }
 
     private fun computeSelectedIndicatorY(button: Button): Double {
@@ -80,19 +101,22 @@ class CollapsableSidebarMenu : AnchorPane() {
         } else {
             selected_indicator.visibleProperty().set(true)
         }
+        if (!::selected_indicator_base_size.isInitialized) {
+            selected_indicator_base_size = Pair(selected_indicator.prefWidth, selected_indicator.prefHeight)
+        }
         val y = computeSelectedIndicatorY(button)
         val midY = (y + selected_indicator.layoutY - selected_indicator.height / 2 ) / 2
         val timeline = Timeline(
             KeyFrame(Duration.ZERO,
-                KeyValue(selected_indicator.prefHeightProperty(), 24)
+                KeyValue(selected_indicator.prefHeightProperty(), selected_indicator_base_size.second),
             ),
-            KeyFrame(Duration.millis(50.0),
-                KeyValue(selected_indicator.prefHeightProperty(), 48),
+            KeyFrame(Duration.millis(40.0),
+                KeyValue(selected_indicator.prefHeightProperty(), selected_indicator_base_size.second*2),
                 KeyValue(selected_indicator.layoutYProperty(), midY)
 
             ),
-            KeyFrame(Duration.millis(100.0),
-                KeyValue(selected_indicator.prefHeightProperty(), 24),
+            KeyFrame(Duration.millis(80.0),
+                KeyValue(selected_indicator.prefHeightProperty(), selected_indicator_base_size.second),
                 KeyValue(selected_indicator.layoutYProperty(), y)
             )
         )
@@ -103,7 +127,7 @@ class CollapsableSidebarMenu : AnchorPane() {
     fun onCollapseClick() {
         if (!isCollapsable) return
         val startWidth = this.width
-        val endWidth = if (!isCollapsed) 60 else 150.0
+        val endWidth = if (!isCollapsed) 32.0+24 else 150.0
         val timeline = Timeline(
             KeyFrame(
                 Duration.millis(100.0),
@@ -128,6 +152,14 @@ class CollapsableSidebarMenu : AnchorPane() {
     @FXML
     fun onSettingsClick() {
         selected_button = settings
-        isCollapsable = !isCollapsable
+    }
+
+    @FXML
+    fun onTestClick() {
+        if (LocalizationService.currentLocale == "jpJP") {
+            LocalizationService.currentLocale = "itIT"
+        } else {
+            LocalizationService.currentLocale = "jpJP"
+        }
     }
 }

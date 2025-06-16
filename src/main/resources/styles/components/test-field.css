@@ -1,0 +1,37 @@
+.text-input, .text-area, .text-field {
+    -fx-cursor: text;
+
+    -fx-prompt-text-fill: -womt-text-color-1;
+    -fx-text-fill: -womt-text-color-1;
+
+    -fx-highlight-fill: -womt-accent;
+    -fx-highlight-text-fill: -womt-text-color-1;
+
+
+    /*accent, border, background*/
+    /*top-l, top-r, bottom-r, bottom-l*/
+    -fx-background-color: -womt-indicator-rest, -womt-stroke-rest, -womt-foreground-rest;
+    -fx-background-insets: 0 0 0 0, 0 0 1.5 0, 1.1 1.1 1.5 1.1;
+    -fx-background-radius: 4, 3 3 0 0, 3;
+    -fx-padding: .5333333em .783em .844444em .783em;
+}
+
+.text-area .viewport {
+    -fx-background-color: transparent;
+}
+
+.text-area .content {
+    -fx-background-color: transparent;
+}
+
+.text-input:hover, .text-area:hover, .text-field:hover {
+    -fx-background-color:  -womt-indicator-hover, -womt-stroke-hover, -womt-foreground-hover;
+    -fx-background-insets: 0 0 0 0, 0 0 1.5 0, 1.1 1.1 1.5 1.1;
+    -fx-background-radius: 4, 3 3 0 0, 3;
+}
+
+.text-input:focused, .text-area:focused, .text-field:focused {
+    -fx-background-color: -womt-indicator-selected, -womt-stroke-selected, -womt-foreground-selected;
+    -fx-background-insets: 0 0 0 0, 0 0 2 0, 1.1 1.1 2 1.1;
+    -fx-background-radius: 4, 3 3 0 0, 3;
+}

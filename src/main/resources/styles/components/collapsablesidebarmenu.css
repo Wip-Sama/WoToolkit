@@ -1,0 +1,64 @@
+.collapsablesidebarmenu {
+    -fx-background-color: -womt-background-1;
+}
+
+.collapsablesidebarmenu .selectedIndicator {
+    -fx-background-color: -womt-accent;
+    -fx-background-radius: 8;
+    -fx-pref-width: 3;
+    -fx-pref-height: 14;
+    -fx-alignment: center-left;
+}
+
+/*Normal*/
+.collapsablesidebarmenu .button {
+    -fx-background-color: -womt-button-rest;
+    -fx-text-fill: -womt-text-color-1;
+    -fx-pref-height: 32;
+    -fx-background-radius: 8;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+    -fx-alignment: center-left;
+    -fx-font-weight: bold;
+    -fx-text-overrun: clip;
+}
+
+.collapsablesidebarmenu .button SVGPath {
+    -fx-fill: -womt-text-color-1;
+}
+
+/*Hover*/
+.collapsablesidebarmenu .button:hover {
+    -fx-background-color: -womt-button-hover;
+}
+
+.collapsablesidebarmenu .button:hover SVGPath {
+    -fx-fill: -womt-text-color-1;
+}
+
+/*Pressed*/
+.collapsablesidebarmenu .button:pressed {
+    -fx-background-color: -womt-button-pressed;
+}
+
+.collapsablesidebarmenu .button:selected SVGPath {
+    -fx-fill: linear-gradient(from 0.0% 0.0% to 100.0% 100.0%, black 0.0%, -womt-accent 85.0%);
+}
+
+/*Selected*/
+.collapsablesidebarmenu .button:selected {
+    -fx-background-color: -womt-button-selected;
+}
+
+.collapsablesidebarmenu .button:selected SVGPath {
+    -fx-fill: linear-gradient(from 0.0% 0.0% to 100.0% 100.0%, black 0.0%, -womt-accent 85.0%);
+}
+
+/*Selected Hover*/
+.collapsablesidebarmenu .button:selected:hover {
+    -fx-background-color: -womt-button-hover;
+}
+
+.collapsablesidebarmenu .button:selected:hover SVGPath{
+    -fx-background-color: -womt-button-hover;
+}
