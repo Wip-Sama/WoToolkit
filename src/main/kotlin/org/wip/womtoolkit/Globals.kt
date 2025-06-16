@@ -1,5 +1,6 @@
 package org.wip.womtoolkit
 
+import java.util.logging.Level
 import java.util.logging.Logger
 
 object Globals {
@@ -8,5 +9,9 @@ object Globals {
 	val isDebug: Boolean by lazy {
 		java.lang.management.ManagementFactory.getRuntimeMXBean()
 			.inputArguments.any { it.contains("-agentlib:jdwp") }
+	}
+
+	init {
+		logger?.level = Level.WARNING
 	}
 }

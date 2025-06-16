@@ -1,6 +1,7 @@
 module org.wip.womtoolkit {
     requires java.logging;
     requires java.desktop;
+    requires java.base;
     requires java.management;
 
     requires kotlin.stdlib;

@@ -31,6 +31,41 @@ object LocalizationService {
 		}
 	private val localizations = mutableMapOf<String, LocalizationMap>(Pair(currentLocale, LocalizationMap(DEFAULT_LANGUAGE)))
 
+	init {
+		val resourceUrl = javaClass.getResource(Globals.LOCALES_PATH)
+		if (resourceUrl != null) {
+			when (resourceUrl.protocol) {
+				"file" -> {
+					File(resourceUrl.toURI()).listFiles()?.forEach {
+						if (it.isFile && it.extension == "properties") {
+							availableLocales.add(it.nameWithoutExtension)
+						}
+					}
+				}
+				"jar" -> {
+					val jarConnection = resourceUrl.openConnection() as JarURLConnection
+					val jarFile = jarConnection.jarFile
+					val path = Globals.LOCALES_PATH.removePrefix("/")
+					jarFile.entries().asSequence()
+						.filter { it.name.startsWith(path) && it.name.endsWith(".properties") }
+						.forEach {
+							val fileName = File(it.name).nameWithoutExtension
+							availableLocales.add(fileName)
+						}
+				}
+				else -> {
+					Globals.logger?.warning("Resource protocol '${resourceUrl.protocol}' not supported")
+				}
+			}
+		} else {
+			Globals.logger?.severe("Locale folder '${Globals.LOCALES_PATH}' not found")
+		}
+
+		val our = File(javaClass.getResource(Globals.LOCALES_PATH)!!.file)
+			.listFiles()
+		our?.forEach { if (it.isFile && it.extension == "properties") availableLocales.add(it.nameWithoutExtension) }
+	}
+
 	fun localizedStringBinding(key: String?): StringBinding {
 		return Bindings.createStringBinding(Callable {
 			var localizedString: String = localizations[currentLocale]!!.getLocale(key)
@@ -85,39 +120,4 @@ object LocalizationService {
 		return localizedStringBinding(key, *arg)
 	}
 
-	init {
-
-		val resourceUrl = javaClass.getResource(Globals.LOCALES_PATH)
-		if (resourceUrl != null) {
-			when (resourceUrl.protocol) {
-				"file" -> {
-					File(resourceUrl.toURI()).listFiles()?.forEach {
-						if (it.isFile && it.extension == "properties") {
-							availableLocales.add(it.nameWithoutExtension)
-						}
-					}
-				}
-				"jar" -> {
-					val jarConnection = resourceUrl.openConnection() as JarURLConnection
-					val jarFile = jarConnection.jarFile
-					val path = Globals.LOCALES_PATH.removePrefix("/")
-					jarFile.entries().asSequence()
-						.filter { it.name.startsWith(path) && it.name.endsWith(".properties") }
-						.forEach {
-							val fileName = File(it.name).nameWithoutExtension
-							availableLocales.add(fileName)
-						}
-				}
-				else -> {
-					Globals.logger?.warning("Resource protocol '${resourceUrl.protocol}' not supported")
-				}
-			}
-		} else {
-			Globals.logger?.severe("Locale folder '${Globals.LOCALES_PATH}' not found")
-		}
-
-	val our = File(javaClass.getResource(Globals.LOCALES_PATH)!!.file)
-			.listFiles()
-	our?.forEach { if (it.isFile && it.extension == "properties") availableLocales.add(it.nameWithoutExtension) }
-	}
 }

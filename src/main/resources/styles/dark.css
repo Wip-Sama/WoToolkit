@@ -1,4 +1,4 @@
-@import "components/all_components.css";
+@import "all_components.css";
 
 .root {
     /*-fx-blend-mode this might be useful*/
@@ -32,7 +32,7 @@
 
     -womt-text-1: #ffffff;
     -womt-text-2: #737373;
-    -womt-text-3: #ffffff;
+    -womt-text-3: #505050;
 
     -womt-accent: red;
 
@@ -43,4 +43,60 @@
 .content_pane {
     -fx-background-color: -womt-background-2;
     -fx-background-radius: 10 0 0 0;
+}
+
+.base {
+    -fx-background-color: -womt-background-1;
+}
+
+.base .hit-btn {
+    -fx-min-width: 46;
+    -fx-max-width: 46;
+    -fx-pref-width: 46;
+    -fx-min-height: 26;
+    -fx-pref-height: 26;
+    -fx-max-height: 26;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-background-color: transparent;
+}
+
+.base .shape {
+    -fx-fill: -womt-text-2;
+}
+
+.base .hit-btn:hover {
+    -fx-background-color: rgba(150, 150, 150, .32);
+}
+
+.base .hit-btn:hover SVGPath {
+    -fx-fill: -womt-text-1;
+}
+
+.base .hit-btn-hover {
+    -fx-background-color: rgba(150, 150, 150, .32);
+}
+
+.base .hit-btn-hover SVGPath {
+    -fx-fill: -womt-text-1;
+}
+
+.base .hit-close-hover {
+    -fx-background-color: -womt-accent;
+}
+
+.base .hit-close-hover SVGPath {
+    -fx-fill: -womt-text-1;
+}
+
+.base .title {
+    -fx-text-fill: -womt-text-color-1;
+    -fx-font-size: 12;
+}
+
+.base .info {
+    -fx-text-fill: -womt-text-color-1;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
 }
