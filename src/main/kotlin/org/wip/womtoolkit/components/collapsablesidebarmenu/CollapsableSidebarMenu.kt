@@ -18,6 +18,7 @@ import kotlin.properties.Delegates
 
 //TODO: Add documentation
 //TODO: when making the application fullscreen, the selected indicator is not correctly positioned if the last button is selected
+//TODO: Generalize this component to allow for more buttons and different uses
 class CollapsableSidebarMenu : AnchorPane() {
     @FXML lateinit var collapseToggle: Button
     @FXML lateinit var slicer: Button

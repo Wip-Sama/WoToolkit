@@ -111,8 +111,6 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 			}
 		})
 
-
-
 		info.textProperty().bind(page_indicator)
 	}
 
@@ -198,6 +196,4 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 	fun onMinimizeAction(event: ActionEvent) {
 		windowState = WindowState.MINIMIZED
 	}
-
-
 }
