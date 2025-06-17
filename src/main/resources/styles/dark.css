@@ -5,7 +5,7 @@
 
     -womt-background-1: #202020;
     -womt-background-2: #2c2c2c;
-    -womt-background-3: #ff0000;
+    -womt-background-3: #2d2d2d;
     -womt-background-4: #00ff00;
 
     -womt-button-rest: #00000000;
@@ -28,69 +28,17 @@
     -womt-indicator-pressed: -womt-accent;
     -womt-indicator-selected: -womt-indicator-pressed;
 
-    -womt-slider-background: #2c2c2c;
+    -womt-slider: #a0a0a0;
+    -womt-slider-background: #3c3c3c;
 
     -womt-text-1: #ffffff;
     -womt-text-2: #737373;
-    -womt-text-3: #505050;
+    -womt-text-3: #373737;
 
-    -womt-accent: red;
+    -womt-accent: #700525;
+
+    -womt-border-color: #1d1d1d;
 
     -womt-text-color-1: #ffffff;
 
 }
-
-.content_pane {
-    -fx-background-color: -womt-background-2;
-    -fx-background-radius: 10 0 0 0;
-}
-
-.base {
-    -fx-background-color: -womt-background-1;
-}
-
-.base .hit-btn {
-    -fx-min-width: 46;
-    -fx-max-width: 46;
-    -fx-pref-width: 46;
-    -fx-min-height: 26;
-    -fx-pref-height: 26;
-    -fx-max-height: 26;
-    -fx-border-radius: 0;
-    -fx-background-radius: 0;
-    -fx-background-insets: 0;
-    -fx-background-color: transparent;
-}
-
-.base .shape {
-    -fx-fill: -womt-text-2;
-}
-
-.base .hit-btn-hover {
-    -fx-background-color: rgba(150, 150, 150, .32);
-}
-
-.base .hit-btn-hover SVGPath {
-    -fx-fill: -womt-text-1;
-}
-
-.base .hit-close-hover {
-    -fx-background-color: -womt-accent;
-}
-
-.base .hit-close-hover SVGPath {
-    -fx-fill: -womt-text-1;
-}
-
-.base .title {
-    -fx-text-fill: -womt-text-color-1;
-    -fx-font-size: 12;
-}
-
-.base .info {
-    -fx-text-fill: -womt-text-color-1;
-    -fx-font-size: 14;
-    -fx-font-weight: bold;
-}
-
-

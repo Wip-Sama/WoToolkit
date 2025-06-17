@@ -1,0 +1,30 @@
+.settings_window .collapsablesidebarmenu {
+    -fx-background-color: transparent;
+}
+
+.settings_window .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.settings_window .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.settings_window AnchorPane {
+    -fx-background-color: transparent;
+}
+
+.settings_window VBox {
+    -fx-background-color: transparent;
+}
+
+.settings_window .separator {
+    -fx-padding: 0 0 0 0;
+    -fx-background-color: transparent;
+}
+
+.settings_window .separator .line {
+    -fx-border-color: -womt-background-1;
+    -fx-border-insets: 0 3 0 3;
+    -fx-border-width: 0.8;
+}

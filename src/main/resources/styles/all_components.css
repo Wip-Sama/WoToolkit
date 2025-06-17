@@ -1,5 +1,6 @@
 @import "components/collapsablesidemenu/collapsablesidebarmenu.css";
 @import "components/collapsablesidemenu/collapsablecomponent.css";
-@import "components/test-field.css";
+@import "components/text-field.css";
 @import "components/scroll-bar.css";
-@import "mainWindow.css";
+@import "pages/mainWindow.css";
+@import "pages/settingsWindow.css";
