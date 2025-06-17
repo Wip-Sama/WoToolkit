@@ -3,6 +3,8 @@ package org.wip.womtoolkit.components.collapsablesidebarmenu
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
+import javafx.beans.property.ReadOnlyObjectProperty
+import javafx.beans.property.SimpleObjectProperty
 import javafx.css.PseudoClass
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -16,7 +18,6 @@ import kotlin.properties.Delegates
 
 //TODO: Add documentation
 //TODO: when making the application fullscreen, the selected indicator is not correctly positioned if the last button is selected
-
 class CollapsableSidebarMenu : AnchorPane() {
     @FXML lateinit var collapseToggle: Button
     @FXML lateinit var slicer: Button
@@ -42,12 +43,18 @@ class CollapsableSidebarMenu : AnchorPane() {
         }
     }
 
-    var selected_button: Button? by Delegates.observable(null) { _, old, new ->
+    private var selected_button: Button? by Delegates.observable(null) { _, old, new ->
         if (new != null && new != old) {
             animateSelectedIndicator(new)
+            selectedButtonProperty.value = new
         }
         old?.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), false)
         new?.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), true)
+    }
+    val selectedButtonProperty: SimpleObjectProperty<Button> = SimpleObjectProperty<Button>().apply {
+        addListener { _, _, newValue ->
+            selected_button = newValue
+        }
     }
 
     init {
@@ -113,7 +120,6 @@ class CollapsableSidebarMenu : AnchorPane() {
             KeyFrame(Duration.millis(40.0),
                 KeyValue(selected_indicator.prefHeightProperty(), selected_indicator_base_size.second*2),
                 KeyValue(selected_indicator.layoutYProperty(), midY)
-
             ),
             KeyFrame(Duration.millis(80.0),
                 KeyValue(selected_indicator.prefHeightProperty(), selected_indicator_base_size.second),

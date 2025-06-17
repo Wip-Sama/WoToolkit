@@ -1,5 +1,8 @@
 package org.wip.womtoolkit.view
 
-class Settings {
+import javafx.fxml.FXMLLoader
+import javafx.scene.Parent
 
+class Settings {
+	val root: Parent = FXMLLoader(javaClass.getResource("/pages/settings.fxml")).load()
 }

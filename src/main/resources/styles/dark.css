@@ -66,14 +66,6 @@
     -fx-fill: -womt-text-2;
 }
 
-.base .hit-btn:hover {
-    -fx-background-color: rgba(150, 150, 150, .32);
-}
-
-.base .hit-btn:hover SVGPath {
-    -fx-fill: -womt-text-1;
-}
-
 .base .hit-btn-hover {
     -fx-background-color: rgba(150, 150, 150, .32);
 }
