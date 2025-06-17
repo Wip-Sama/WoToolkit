@@ -3,170 +3,175 @@ package org.wip.womtoolkit.components.collapsablesidebarmenu
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
-import javafx.beans.property.ReadOnlyObjectProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.css.PseudoClass
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
-import javafx.scene.control.Button
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
+import javafx.scene.layout.VBox
 import javafx.util.Duration
-import org.wip.womtoolkit.model.LocalizationService
-import java.io.IOException
 import kotlin.properties.Delegates
 
 //TODO: Add documentation
 //TODO: when making the application fullscreen, the selected indicator is not correctly positioned if the last button is selected
 //TODO: Generalize this component to allow for more buttons and different uses
 class CollapsableSidebarMenu : AnchorPane() {
-    @FXML lateinit var collapseToggle: Button
-    @FXML lateinit var slicer: Button
-    @FXML lateinit var converter: Button
-    @FXML lateinit var settings: Button
-    @FXML lateinit var testButton: Button
-    @FXML lateinit var selected_indicator: Pane
-    lateinit var selected_indicator_base_size: Pair<Double, Double>
+    enum class Positions {
+        TOP, MIDDLE, BOTTOM
+    }
+
+    object Contents {
+        val COLLAPSE: String =
+            "M3 17H21C21.5523 17 22 17.4477 22 18C22 18.5128 21.614 18.9355 21.1166 18.9933L21 19H3C2.44772 19 2 18.5523 2 18C2 17.4872 2.38604 17.0645 2.88338 17.0067L3 17H21H3ZM2.99988 11L20.9999 10.9978C21.5522 10.9978 22 11.4454 22 11.9977C22 12.5105 21.6141 12.9333 21.1167 12.9911L21.0001 12.9978L3.00012 13C2.44784 13.0001 2 12.5524 2 12.0001C2 11.4873 2.38594 11.0646 2.88326 11.0067L2.99988 11L20.9999 10.9978L2.99988 11ZM3 5H21C21.5523 5 22 5.44772 22 6C22 6.51284 21.614 6.93551 21.1166 6.99327L21 7H3C2.44772 7 2 6.55228 2 6C2 5.48716 2.38604 5.06449 2.88338 5.00673L3 5H21H3Z"
+    }
+
+    private var collapseToggle: CollapsableItem = CollapsableComponent().apply {
+        id = "collapseToggle"
+        icon.content = Contents.COLLAPSE
+        selectable = false
+    }
+    @FXML private lateinit var selected_indicator: Pane
+
+    @FXML private lateinit var topSection: VBox
+    @FXML private lateinit var middleSection: VBox
+    @FXML private lateinit var bottomSection: VBox
+
+    lateinit var selectedIndicatorOriginalSize: Pair<Double, Double>
 
     var isCollapsed:  Boolean by Delegates.observable(true) { _, old, new ->
         if (new != old) {
             if (new)
-                hideButtonsText()
+                collapseItems()
             else
-                showButtonsText()
+                expandItems()
         }
     }
-
     var isCollapsable: Boolean by Delegates.observable(true) { _, old, new ->
         if (new != old) {
-            collapseToggle.isVisible = new
-            collapseToggle.isManaged = new
+            (collapseToggle as Pane).isVisible = new
+            (collapseToggle as Pane).isManaged = new
         }
     }
 
-    private var selected_button: Button? by Delegates.observable(null) { _, old, new ->
+    private var selectedItem: CollapsableItem? by Delegates.observable(null) { _, old, new ->
         if (new != null && new != old) {
             animateSelectedIndicator(new)
-            selectedButtonProperty.value = new
+            selectedItemProperty.value = new
         }
-        old?.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), false)
-        new?.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), true)
+
+        old?.deselect()
+        new?.select()
     }
-    val selectedButtonProperty: SimpleObjectProperty<Button> = SimpleObjectProperty<Button>().apply {
+    val selectedItemProperty: SimpleObjectProperty<CollapsableItem> = SimpleObjectProperty<CollapsableItem>().apply {
         addListener { _, _, newValue ->
-            selected_button = newValue
+            selectedItem = newValue
         }
     }
 
     init {
-        val fxmlLoader = FXMLLoader(javaClass.getResource("/components/collapsablesidebarmenu/CollapsableSidebarMenu.fxml"))
-        fxmlLoader.setRoot(this)
-        fxmlLoader.setController(this)
-        try {
-            fxmlLoader.load<Any>()
-        } catch (e: IOException) {
-            throw RuntimeException(e)
+        FXMLLoader(javaClass.getResource("/components/collapsablesidebarmenu/CollapsableSidebarMenu.fxml")).apply {
+            setRoot(this@CollapsableSidebarMenu)
+            setController(this@CollapsableSidebarMenu)
+            load()
         }
-    }
-
-    private fun hideButtonsText() {
-        slicer.textProperty().unbind()
-        converter.textProperty().unbind()
-        settings.textProperty().unbind()
-        slicer.text = ""
-        converter.text = ""
-        settings.text = ""
-    }
-
-    private fun showButtonsText() {
-        slicer.textProperty().bind(LocalizationService.lsb("menu.slicer"))
-        converter.textProperty().bind(LocalizationService.lsb("menu.converter"))
-        settings.textProperty().bind(LocalizationService.lsb("menu.settings"))
     }
 
     @FXML
     protected fun initialize() {
         this.heightProperty().addListener { _, _, _ ->
-            selected_button?.let { selected_indicator.layoutY = computeSelectedIndicatorY(it) }
+            selectedItem?.let { selected_indicator.layoutY = computeSelectedIndicatorY(it) }
         }
         this.widthProperty().addListener { _, _, _ ->
-            selected_button?.let { selected_indicator.layoutY = computeSelectedIndicatorY(it) }
+            selectedItem?.let { selected_indicator.layoutY = computeSelectedIndicatorY(it) }
         }
-        if (isCollapsed) {
-            hideButtonsText()
-        } else {
-            showButtonsText()
+        addComponent(collapseToggle, Positions.TOP)
+        collapseToggle.onActionProperty.addListener { _, _, _ ->
+            if (isCollapsable) {
+                val startWidth = this.width
+                val endWidth = if (!isCollapsed) 32.0+24 else 150.0
+                val timeline = Timeline(
+                    KeyFrame(
+                        Duration.millis(100.0),
+                        KeyValue(this.prefWidthProperty(), endWidth)
+                    )
+                )
+                timeline.play()
+                isCollapsed = !isCollapsed
+            }
         }
     }
 
-    private fun computeSelectedIndicatorY(button: Button): Double {
-        return button.layoutY + button.height / 2 - selected_indicator.height / 2 + button.parent.layoutY
+    private fun collapseItems() {
+        listOf(topSection, middleSection, bottomSection).forEach {
+            it.children.forEach { child ->
+                if (child is CollapsableItem) {
+                    child.expand()
+                }
+            }
+        }
     }
 
-    private fun animateSelectedIndicator(button: Button) {
-        if (selected_button == null) {
+    private fun expandItems() {
+        listOf(topSection, middleSection, bottomSection).forEach {
+            it.children.forEach { child ->
+                if (child is CollapsableItem) {
+                    child.expand()
+                }
+            }
+        }
+    }
+
+    private fun computeSelectedIndicatorY(item: CollapsableItem): Double {
+        val i: Pane = item as Pane
+        return i.layoutY + i.height / 2 - selected_indicator.height / 2 + i.parent.layoutY
+    }
+
+    private fun animateSelectedIndicator(item: CollapsableItem) {
+        if (selectedItem == null) {
             selected_indicator.visibleProperty().set(false)
         } else {
             selected_indicator.visibleProperty().set(true)
         }
-        if (!::selected_indicator_base_size.isInitialized) {
-            selected_indicator_base_size = Pair(selected_indicator.prefWidth, selected_indicator.prefHeight)
+        if (!::selectedIndicatorOriginalSize.isInitialized) {
+            selectedIndicatorOriginalSize = Pair(selected_indicator.prefWidth, selected_indicator.prefHeight)
         }
-        val y = computeSelectedIndicatorY(button)
+        val y = computeSelectedIndicatorY(item)
         val midY = (y + selected_indicator.layoutY - selected_indicator.height / 2 ) / 2
         val timeline = Timeline(
             KeyFrame(Duration.ZERO,
-                KeyValue(selected_indicator.prefHeightProperty(), selected_indicator_base_size.second),
+                KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second),
             ),
             KeyFrame(Duration.millis(40.0),
-                KeyValue(selected_indicator.prefHeightProperty(), selected_indicator_base_size.second*2),
+                KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second*2),
                 KeyValue(selected_indicator.layoutYProperty(), midY)
             ),
             KeyFrame(Duration.millis(80.0),
-                KeyValue(selected_indicator.prefHeightProperty(), selected_indicator_base_size.second),
+                KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second),
                 KeyValue(selected_indicator.layoutYProperty(), y)
             )
         )
         timeline.play()
     }
 
-    @FXML
-    fun onCollapseClick() {
-        if (!isCollapsable) return
-        val startWidth = this.width
-        val endWidth = if (!isCollapsed) 32.0+24 else 150.0
-        val timeline = Timeline(
-            KeyFrame(
-                Duration.millis(100.0),
-                KeyValue(this.prefWidthProperty(), endWidth)
-            )
-        )
-        timeline.play()
-        isCollapsed = !isCollapsed
-    }
-
-    @FXML
-    fun onSlicerClick() {
-        selected_button = slicer
-    }
-
-    @FXML
-    fun onConverterClick() {
-        selected_button = converter
-
-    }
-
-    @FXML
-    fun onSettingsClick() {
-        selected_button = settings
-    }
-
-    @FXML
-    fun onTestClick() {
-        if (LocalizationService.currentLocale == "jpJP") {
-            LocalizationService.currentLocale = "itIT"
+    fun addComponent(component: CollapsableItem, position: Positions = Positions.TOP) {
+        val c: Pane = when (component) {
+            is Pane -> component
+            else -> throw IllegalArgumentException("Component must be a Pane or a subclass of Pane")
+        }
+        when (position) {
+            Positions.TOP -> topSection.children.add(c)
+            Positions.MIDDLE -> middleSection.children.add(c)
+            Positions.BOTTOM -> bottomSection.children.add(c)
+        }
+        component.onActionProperty.addListener { _, _, _ ->
+            if (component.selectable) {
+                selectedItem = component
+            }
+        }
+        if (isCollapsed) {
+            collapseItems()
         } else {
-            LocalizationService.currentLocale = "jpJP"
+            expandItems()
         }
     }
 }

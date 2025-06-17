@@ -1,0 +1,54 @@
+.collapsablecomponent {
+    -fx-background-color: -womt-button-rest;
+    -fx-pref-height: 32;
+    -fx-background-radius: 8;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+    -fx-alignment: center-left;
+    -fx-font-weight: bold;
+}
+
+.collapsablecomponent .label {
+    -fx-text-fill: -womt-text-color-1;
+    -fx-text-overrun: clip;
+}
+
+.collapsablecomponent SVGPath {
+    -fx-fill: -womt-text-color-1;
+}
+
+/*Hover*/
+.collapsablecomponent:hover {
+    -fx-background-color: -womt-button-hover;
+}
+
+.collapsablecomponent:hover SVGPath {
+    -fx-fill: -womt-text-color-1;
+}
+
+/*Pressed*/
+.collapsablecomponent:pressed {
+    -fx-background-color: -womt-button-pressed;
+}
+
+.collapsablecomponent:selected SVGPath {
+    -fx-fill: linear-gradient(from 0.0% 0.0% to 100.0% 100.0%, black 0.0%, -womt-accent 85.0%);
+}
+
+/*Selected*/
+.collapsablecomponent:selected {
+    -fx-background-color: -womt-button-selected;
+}
+
+.collapsablecomponent:selected SVGPath {
+    -fx-fill: linear-gradient(from 0.0% 0.0% to 100.0% 100.0%, black 0.0%, -womt-accent 85.0%);
+}
+
+/*Selected Hover*/
+.collapsablecomponent:selected:hover {
+    -fx-background-color: -womt-button-hover;
+}
+
+.collapsablecomponent:selected:hover SVGPath {
+    -fx-background-color: -womt-button-hover;
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.SVGPath?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onAction" prefHeight="32.0" styleClass="collapsablecomponent" stylesheets="@../../styles/dark.css" type="GridPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <columnConstraints>
+      <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="32.0" minWidth="32.0" prefWidth="32.0" />
+      <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="0.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" valignment="CENTER" vgrow="NEVER" />
+   </rowConstraints>
+   <children>
+      <SVGPath fx:id="svg" content="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" focusTraversable="true" mouseTransparent="true" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER" />
+      <Label fx:id="text" ellipsisString="" mouseTransparent="true" textOverrun="CLIP" GridPane.columnIndex="1">
+         <GridPane.margin>
+            <Insets left="6.0" />
+         </GridPane.margin></Label>
+   </children>
+   <padding>
+      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+   </padding>
+</fx:root>
