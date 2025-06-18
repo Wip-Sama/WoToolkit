@@ -10,11 +10,19 @@ import javafx.scene.layout.GridPane
 import javafx.scene.shape.SVGPath
 import org.wip.womtoolkit.model.LocalizationService
 
+/**
+ * @author WIP
+ * @param icon
+ * @param label
+ * @param onActionProperty
+ * @param selectable
+ * @param localizationKey
+ * */
 class CollapsableComponent() : GridPane(), CollapsableItem {
 	@FXML private lateinit var text: Label
 	@FXML private lateinit var svg: SVGPath
 
-	override var localizaionKey: String? = null
+	override var localizationKey: String? = null
 	override var selectable: Boolean = true
 
 	override val onActionProperty: BooleanProperty = SimpleBooleanProperty(false)
@@ -30,10 +38,10 @@ class CollapsableComponent() : GridPane(), CollapsableItem {
 	}
 
 	override fun expand() {
-		if (localizaionKey == null) {
+		if (localizationKey == null) {
 			return
 		}
-		text.textProperty().bind(LocalizationService.lsb(localizaionKey))
+		text.textProperty().bind(LocalizationService.lsb(localizationKey))
 	}
 
 	override fun collapse() {

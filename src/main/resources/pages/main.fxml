@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.SVGPath?>
+<?import org.wip.womtoolkit.components.PageIndicator?>
 <?import org.wip.womtoolkit.components.collapsablesidebarmenu.CollapsableSidebarMenu?>
 
 <AnchorPane fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../styles/dark.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
@@ -63,6 +64,7 @@
                         </ImageView>
                         <Label fx:id="title" styleClass="title" text="WomToolkit" />
                         <Label fx:id="info" styleClass="info" text="Slicer" />
+                        <PageIndicator fx:id="pageIndicator" />
                      </children>
                      <BorderPane.margin>
                         <Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />

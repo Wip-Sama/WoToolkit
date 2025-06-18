@@ -1,8 +1,14 @@
 package org.wip.womtoolkit.view
 
 import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
+import javafx.scene.layout.BorderPane
 
-class Converter {
-	val root: Parent = FXMLLoader(javaClass.getResource("/pages/converter.fxml")).load()
+class Converter : BorderPane() {
+	init {
+		FXMLLoader(javaClass.getResource("/pages/converter.fxml")).apply {
+			setRoot(this@Converter)
+			setController(this@Converter)
+			load()
+		}
+	}
 }

@@ -11,11 +11,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.wip.womtoolkit.components.collapsablesidebarmenu.CollapsableSidebarMenu?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../styles/dark.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <HBox BorderPane.alignment="CENTER">
          <children>
-            <CollapsableSidebarMenu />
+            <CollapsableSidebarMenu fx:id="sectionSelector" collapsed="false" userCollapsable="false" />
             <Separator orientation="VERTICAL" prefHeight="200.0" />
          </children>
       </HBox>
@@ -51,4 +51,4 @@
       <String fx:value="content_pane" />
       <String fx:value="settings_window" />
    </styleClass>
-</BorderPane>
+</fx:root>

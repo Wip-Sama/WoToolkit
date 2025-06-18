@@ -3,6 +3,7 @@ package org.wip.womtoolkit.components.collapsablesidebarmenu
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
+import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -15,7 +16,7 @@ import kotlin.properties.Delegates
 //TODO: Add documentation
 //TODO: when making the application fullscreen, the selected indicator is not correctly positioned if the last button is selected
 //TODO: Generalize this component to allow for more buttons and different uses
-class CollapsableSidebarMenu : AnchorPane() {
+open class CollapsableSidebarMenu : AnchorPane() {
     enum class Positions {
         TOP, MIDDLE, BOTTOM
     }
@@ -46,7 +47,7 @@ class CollapsableSidebarMenu : AnchorPane() {
                 expandItems()
         }
     }
-    var isCollapsable: Boolean by Delegates.observable(true) { _, old, new ->
+    var isUserCollapsable: Boolean by Delegates.observable(true) { _, old, new ->
         if (new != old) {
             (collapseToggle as Pane).isVisible = new
             (collapseToggle as Pane).isManaged = new
@@ -54,13 +55,12 @@ class CollapsableSidebarMenu : AnchorPane() {
     }
 
     private var selectedItem: CollapsableItem? by Delegates.observable(null) { _, old, new ->
+        old?.deselect()
         if (new != null && new != old) {
             animateSelectedIndicator(new)
             selectedItemProperty.value = new
+            new.select()
         }
-
-        old?.deselect()
-        new?.select()
     }
     val selectedItemProperty: SimpleObjectProperty<CollapsableItem> = SimpleObjectProperty<CollapsableItem>().apply {
         addListener { _, _, newValue ->
@@ -86,19 +86,29 @@ class CollapsableSidebarMenu : AnchorPane() {
         }
         addComponent(collapseToggle, Positions.TOP)
         collapseToggle.onActionProperty.addListener { _, _, _ ->
-            if (isCollapsable) {
-                val startWidth = this.width
-                val endWidth = if (!isCollapsed) 32.0+24 else 150.0
-                val timeline = Timeline(
-                    KeyFrame(
-                        Duration.millis(100.0),
-                        KeyValue(this.prefWidthProperty(), endWidth)
-                    )
+            val startWidth = this.width
+            val endWidth = if (!isCollapsed) 32.0+24 else 150.0
+            val timeline = Timeline(
+                KeyFrame(
+                    Duration.millis(100.0),
+                    KeyValue(prefWidthProperty(), endWidth)
                 )
-                timeline.play()
-                isCollapsed = !isCollapsed
-            }
+            )
+            timeline.play()
+            isCollapsed = !isCollapsed
         }
+
+        if (isCollapsed)
+            collapseItems()
+        else
+            expandItems()
+
+        Platform.runLater {
+            selectedItem?.let { selected_indicator.layoutY = computeSelectedIndicatorY(it) }
+        }
+
+        val width = if (!isCollapsed) 32.0+24 else 150.0
+        this.prefWidthProperty().set(width)
     }
 
     private fun collapseItems() {
@@ -133,6 +143,9 @@ class CollapsableSidebarMenu : AnchorPane() {
             selected_indicator.visibleProperty().set(true)
         }
         if (!::selectedIndicatorOriginalSize.isInitialized) {
+            if (selected_indicator.prefWidth < 0 || selected_indicator.prefHeight < 0) {
+                return
+            }
             selectedIndicatorOriginalSize = Pair(selected_indicator.prefWidth, selected_indicator.prefHeight)
         }
         val y = computeSelectedIndicatorY(item)

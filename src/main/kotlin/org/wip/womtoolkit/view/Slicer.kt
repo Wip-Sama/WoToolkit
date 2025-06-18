@@ -1,9 +1,14 @@
 package org.wip.womtoolkit.view
 
 import javafx.fxml.FXMLLoader
-import javafx.scene.Parent
+import javafx.scene.layout.BorderPane
 
-class Slicer {
-    val root: Parent = FXMLLoader(javaClass.getResource("/pages/slicer.fxml")).load()
-
+class Slicer : BorderPane() {
+    init {
+        FXMLLoader(javaClass.getResource("/pages/slicer.fxml")).apply {
+            setRoot(this@Slicer)
+            setController(this@Slicer)
+            load()
+        }
+    }
 }

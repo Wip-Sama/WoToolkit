@@ -6,11 +6,15 @@ import javafx.beans.binding.StringBinding
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableValue
 import org.wip.womtoolkit.Globals
+import org.wip.womtoolkit.components.PageIndicator
 import java.io.File
 import java.net.JarURLConnection
 import java.util.concurrent.Callable
 import kotlin.sequences.forEach
 
+/**
+ * @author Wip
+ * */
 object LocalizationService {
 	private const val DEFAULT_LANGUAGE: String = "enEN"
 	private val availableLocales = mutableSetOf<String>(DEFAULT_LANGUAGE)
@@ -70,15 +74,14 @@ object LocalizationService {
 		return Bindings.createStringBinding(Callable {
 			var localizedString: String = localizations[currentLocale]!!.getLocale(key)
 
-			if (localizedString.startsWith("__MISSING__") && !Globals.isDebug) {
+			if (localizedString.startsWith("__MISSING_") && !Globals.isDebug) {
 				localizedString = localizations[DEFAULT_LANGUAGE]!!.getLocale(key)
-				if (localizedString.startsWith("__MISSING__"))
+				if (localizedString.startsWith("__MISSING_"))
 					localizedString = ""
 			}
-
 			//TODO: This should be recursive
 			Regex("\\[(.*?)]").findAll(localizedString).map { it.groupValues[1] }
-				.forEach { localizedString.replace("[$it]", localizations[currentLocale]!!.getLocale(it)) }
+				.forEach { localizedString = localizedString.replace("[$it]", localizations[currentLocale]!!.getLocale(it)) }
 			localizedString
 		}, currentLocaleProperty)
 	}
@@ -94,9 +97,9 @@ object LocalizationService {
 		return Bindings.createStringBinding(Callable {
 			var localizedString: String = localizations[currentLocale]!!.getLocale(key)
 
-			if (localizedString.startsWith("__MISSING__") && !Globals.isDebug) {
+			if (localizedString.startsWith("__MISSING_") && !Globals.isDebug) {
 				localizedString = localizations[DEFAULT_LANGUAGE]!!.getLocale(key)
-				if (localizedString.startsWith("__MISSING__"))
+				if (localizedString.startsWith("__MISSING_"))
 					localizedString = ""
 			}
 

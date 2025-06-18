@@ -22,7 +22,7 @@ class LocalizationMap(private val language: String) {
 	}
 
 	fun getLocale(key: String?): String {
-		val value = properties.getProperty(key) ?: "__MISSING__${key}__${language}"
+		val value = properties.getProperty(key) ?: "__MISSING_${key}_${language}__"
 		if (value == "__MISSING__") {
 			Globals.logger?.warning("Missing property: $key in $language")
 		}
