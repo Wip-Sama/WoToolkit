@@ -55,12 +55,13 @@ open class CollapsableSidebarMenu : AnchorPane() {
     }
 
     private var selectedItem: CollapsableItem? by Delegates.observable(null) { _, old, new ->
-        old?.deselect()
         if (new != null && new != old) {
             animateSelectedIndicator(new)
             selectedItemProperty.value = new
-            new.select()
         }
+
+        old?.deselect()
+        new?.select()
     }
     val selectedItemProperty: SimpleObjectProperty<CollapsableItem> = SimpleObjectProperty<CollapsableItem>().apply {
         addListener { _, _, newValue ->
@@ -103,8 +104,15 @@ open class CollapsableSidebarMenu : AnchorPane() {
         else
             expandItems()
 
-        Platform.runLater {
-            selectedItem?.let { selected_indicator.layoutY = computeSelectedIndicatorY(it) }
+        selected_indicator.parent.layoutBoundsProperty().addListener { _, _, _ ->
+            Platform.runLater {
+                selectedItem?.let { selected_indicator.layoutY = computeSelectedIndicatorY(it) }
+            }
+        }
+        selected_indicator.layoutBoundsProperty().addListener { _, _, _ ->
+            Platform.runLater {
+                selectedItem?.let { selected_indicator.layoutY = computeSelectedIndicatorY(it) }
+            }
         }
 
         val width = if (!isCollapsed) 32.0+24 else 150.0
