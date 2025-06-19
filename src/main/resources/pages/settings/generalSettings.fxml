@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10.0" type="VBox" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="80.0" style="-fx-background-color: green; -fx-background-radius: 10;" />
+      <Pane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="80.0" style="-fx-background-color: blue; -fx-background-radius: 10;" />
+      <Pane maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="80.0" style="-fx-background-color: purple; -fx-background-radius: 10;" />
+   </children>
+</fx:root>
