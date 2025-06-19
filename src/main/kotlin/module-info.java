@@ -12,12 +12,10 @@ module org.wip.womtoolkit {
 
     requires nfx.core;
 
-    //io.reactivex.rxjava3.core.Observable
-    requires io.reactivex.rxjava3;
-
     opens org.wip.womtoolkit to javafx.graphics, javafx.fxml;
     opens org.wip.womtoolkit.view to javafx.fxml;
     opens org.wip.womtoolkit.components to javafx.fxml;
     opens org.wip.womtoolkit.components.collapsablesidebarmenu to javafx.fxml;
+    opens org.wip.womtoolkit.view.settings to javafx.fxml;
 }
 
