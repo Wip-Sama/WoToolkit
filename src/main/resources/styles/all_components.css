@@ -4,3 +4,6 @@
 @import "components/scroll-bar.css";
 @import "pages/mainWindow.css";
 @import "pages/settingsWindow.css";
+@import "components/combo-box.css";
+@import "components/choice-box.css";
+@import "components/context-menu.css";
