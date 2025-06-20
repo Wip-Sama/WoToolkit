@@ -1,4 +1,10 @@
 
+.settingElementBase {
+    -fx-background-color: -womt-border-color, -womt-foreground-hover;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 11, 10;
+}
+
 .settingElement {
     -fx-background-color: -womt-border-color, -womt-foreground-rest;
     -fx-background-insets: 0, 1.1;
@@ -9,6 +15,18 @@
     -fx-background-color: -womt-border-color, -womt-foreground-hover;
     -fx-background-insets: 0, 1;
     -fx-background-radius: 11, 10;
+}
+
+.settingElementBase:expanded .settingElement {
+    -fx-background-color: -womt-border-color, -womt-foreground-rest;
+    -fx-background-insets: 0, 1.1;
+    -fx-background-radius: 10 10 0 0, 10 10 0 0;
+}
+
+.settingElementBase:expanded .settingElement:hover {
+    -fx-background-color: -womt-border-color, -womt-foreground-hover;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 11 11 0 0, 10 10 0 0;
 }
 
 .settingElement .title {

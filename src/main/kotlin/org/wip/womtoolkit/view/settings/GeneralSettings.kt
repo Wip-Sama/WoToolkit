@@ -1,11 +1,11 @@
 package org.wip.womtoolkit.view.settings
 
-import javafx.application.Platform
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
-import javafx.scene.control.ChoiceBox
+import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
+import org.wip.womtoolkit.components.SettingElement
+import org.wip.womtoolkit.components.Switch
 
 /**
  * @author Wip
@@ -13,7 +13,10 @@ import javafx.scene.layout.VBox
  * It contains: Accent color, Theme color, Language, Starting page.
  * */
 class GeneralSettings : VBox() {
-	@FXML lateinit var combotest: ChoiceBox<String>
+	@FXML lateinit var accentSetting: SettingElement
+	@FXML lateinit var themeSetting: SettingElement
+	@FXML lateinit var localizationSetting: SettingElement
+	@FXML lateinit var startingPageSetting: SettingElement
 
 	init {
 		FXMLLoader(javaClass.getResource("/pages/settings/generalSettings.fxml")).apply {
@@ -25,13 +28,17 @@ class GeneralSettings : VBox() {
 
 	@FXML
 	fun initialize() {
-		combotest.items.addAll("Item 1", "Item 2", "Item 3")
-		combotest.selectionModel.select(0)
-		combotest.onMouseClicked = EventHandler {
-			combotest.hide()
-			Platform.runLater {
-				combotest.show()
-			}
+//		combotest.onMouseClicked = EventHandler {
+//			combotest.hide()
+//			Platform.runLater {
+//				combotest.show()
+//			}
+//		}
+		accentSetting.setTitle("Accent")
+		accentSetting.quickSetting = Switch()
+		accentSetting.expandableContent = Pane().apply {
+			styleClass.add("-fx-background-color: #ff0000;")
+			prefHeight = 100.0
 		}
 	}
 }
