@@ -7,8 +7,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
-<?import org.wip.womtoolkit.components.Switch?>
 
+<?import javafx.scene.control.CheckBox?>
+<?import org.wip.womtoolkit.components.Switch?>
 <fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="70.0" prefWidth="400.0" styleClass="settingElement" stylesheets="@../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox alignment="CENTER_LEFT" mouseTransparent="true" BorderPane.alignment="CENTER">

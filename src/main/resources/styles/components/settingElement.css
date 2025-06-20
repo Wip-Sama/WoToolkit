@@ -1,0 +1,25 @@
+
+.settingElement {
+    -fx-background-color: -womt-border-color, -womt-foreground-rest;
+    -fx-background-insets: 0, 1.1;
+    -fx-background-radius: 10, 10;
+}
+
+.settingElement:hover {
+    -fx-background-color: -womt-border-color, -womt-foreground-hover;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 11, 10;
+}
+
+.settingElement .title {
+    -fx-font-weight: bold;
+}
+
+.settingElement .description {
+    -fx-text-fill: -womt-text-2;
+}
+
+.settingElement SVGPath {
+    -fx-fill: -womt-text-1;
+}
+
