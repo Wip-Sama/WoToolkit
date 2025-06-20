@@ -1,0 +1,46 @@
+/*This is a switch AKA a fancy toggle button
+Suona meglio in inglese la frase che tradotta*/
+
+.switch AnchorPane {
+    -fx-background-color: -womt-text-1, -womt-foreground-rest;
+    -fx-background-insets: 0, .5;
+    -fx-background-radius: 11.5, 11.5;
+    -fx-text-alignment: CENTER;
+    -fx-alignment: CENTER;
+}
+
+.switch .label {
+    -fx-text-fill: -womt-text-1;
+}
+
+.switch:hover AnchorPane {
+    -fx-background-color: -womt-text-1, -womt-foreground-hover;
+}
+
+.switch:pressed AnchorPane {
+    -fx-background-color: -womt-text-1, -womt-foreground-pressed;
+}
+
+.switch:selected AnchorPane {
+    -fx-background-color: -womt-text-1, -womt-foreground-selected;
+}
+
+.switchStateIndicator {
+    -fx-background-color: -womt-text-1;
+    -fx-background-insets: 4.5;
+    -fx-background-radius: 10;
+}
+
+.switch:hover AnchorPane .switchStateIndicator {
+    -fx-background-insets: 3.5;
+}
+
+.switch:selected AnchorPane {
+    -fx-background-color: transparent, -womt-accent;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 11.5, 11.5;
+}
+
+.switch:selected AnchorPane .switchStateIndicator {
+    -fx-background-color: black;
+}

@@ -6,7 +6,6 @@ import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.ChoiceBox
 import javafx.scene.layout.VBox
-import kotlin.compareTo
 
 /**
  * @author Wip
@@ -24,12 +23,9 @@ class GeneralSettings : VBox() {
 		}
 	}
 
-
 	@FXML
 	fun initialize() {
-		combotest.items.add("Test1")
-		combotest.items.add("Test2")
-		combotest.items.add("Test3")
+		combotest.items.addAll("Item 1", "Item 2", "Item 3")
 		combotest.selectionModel.select(0)
 		combotest.onMouseClicked = EventHandler {
 			combotest.hide()

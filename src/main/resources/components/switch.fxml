@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" styleClass="switch" stylesheets="@../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <left>
+      <Label fx:id="textStateIndicator" mouseTransparent="true" text="Label" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets right="10.0" />
+         </padding>
+      </Label>
+   </left>
+   <center>
+      <AnchorPane fx:id="switchStateHolder" prefHeight="24.0" prefWidth="50.0" BorderPane.alignment="CENTER">
+         <children>
+            <Pane fx:id="switchStateIndicator" layoutY="2.0" maxWidth="33.0" minWidth="22.0" prefHeight="22.0" prefWidth="22.0" styleClass="switchStateIndicator" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="1.0" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </AnchorPane>
+   </center>
+</fx:root>

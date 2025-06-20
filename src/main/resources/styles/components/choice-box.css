@@ -33,7 +33,7 @@
     -fx-shape: "M4.29289 8.29289C4.68342 7.90237 5.31658 7.90237 5.70711 8.29289L12 14.5858L18.2929 8.29289C18.6834 7.90237 19.3166 7.90237 19.7071 8.29289C20.0976 8.68342 20.0976 9.31658 19.7071 9.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L4.29289 9.70711C3.90237 9.31658 3.90237 8.68342 4.29289 8.29289Z";
 }
 
-.choice-box .list-view {
+.choice-box .context-menu {
     -fx-background-color: -womt-foreground-rest;
     -fx-background-radius: 9;
     -fx-border-color: -womt-border-color;
@@ -42,32 +42,46 @@
     -fx-padding: 4;
 }
 
-.choice-box .list-view .list-cell {
-    -fx-background-color: transparent, transparent;
-    -fx-background-insets: 2.5 0 2.5 0, 8 134 8 1;
-    -fx-background-radius: 5, 10;
-    -fx-border-width: 0 8 0 8;
-    -fx-padding: 7 3 7 9;
-}
-
-.choice-box .list-view .list-cell:hover {
-    -fx-background-color: -womt-foreground-hover, transparent;
-}
-
-.choice-box .list-view .list-cell:pressed  {
-    -fx-background-insets: 2.5 0 2.5 0, 10 134 10 1;
-    -fx-background-color: -womt-foreground-pressed, -womt-accent;
-}
-
-.choice-box .list-view .list-cell:selected  {
-    -fx-background-color: -womt-foreground-selected, -womt-accent;
-}
-
-.choice-box .list-view .list-cell:selected:hover {
-    -fx-background-insets: 2.5 0 2.5 0, 10 134 10 1;
-    -fx-background-color: -womt-foreground-hover, -womt-accent;
-}
-
-.choice-box .list-view .list-cell:empty:hover  {
+.choice-box .menu-item {
     -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-text-fill: -womt-text-1;
+    -fx-padding: 2 0 2 0;
+    -fx-background-insets: 2 0 2 0;
+}
+
+.choice-box .menu-item:hover {
+    -fx-background-color: -womt-foreground-hover;
+}
+
+.choice-box .menu-item:pressed  {
+    -fx-background-color: -womt-foreground-pressed;
+}
+
+.choice-box .menu-item:checked  {
+    -fx-background-color: -womt-foreground-selected;
+}
+
+.choice-box .menu-item:checked:hover {
+    -fx-background-color: -womt-foreground-hover;
+}
+
+.choice-box .menu-item:empty:hover  {
+    -fx-background-color: transparent;
+}
+
+.check-menu-item > .left-container,
+.radio-menu-item > .left-container {
+    -fx-padding: 2.1;
+}
+
+.radio-menu-item:checked > .left-container > .radio,
+.check-menu-item:checked > .left-container > .check {
+    -fx-background-color: -womt-accent;
+    -fx-shape: "M2 0Q0 0 0 2V12q0 2 2 2t2-2V2Q4 0 2 0Z";
+    -fx-scale-shape: false;
+}
+.radio-menu-item:pressed:checked > .left-container > .radio,
+.check-menu-item:pressed:checked > .left-container > .check {
+    -fx-shape: "M2 0Q0 0 0 2V6q0 2 2 2t2-2V2Q4 0 2 0Z";
 }

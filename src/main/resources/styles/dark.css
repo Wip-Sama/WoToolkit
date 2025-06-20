@@ -42,54 +42,31 @@
     -womt-text-color-1: #ffffff;
 }
 
-.choice-box .context-menu {
-    -fx-background-color: -womt-foreground-rest;
-    -fx-background-radius: 9;
-    -fx-border-color: -womt-border-color;
-    -fx-border-width: 1.1;
-    -fx-border-radius: 8;
-    -fx-padding: 4;
-}
-
-.choice-box .menu-item {
-    -fx-background-color: transparent;
-    -fx-background-radius: 8;
+.root .label {
     -fx-text-fill: -womt-text-1;
-    -fx-padding: 0;
 }
 
-.choice-box .menu-item:hover {
-    -fx-background-color: -womt-foreground-hover;
+.settingElement {
+    -fx-background-color: -womt-border-color, -womt-foreground-rest;
+    -fx-background-insets: 0, 1.1;
+    -fx-background-radius: 10, 10;
 }
 
-.choice-box .menu-item:pressed  {
-    -fx-background-color: -womt-foreground-pressed;
+.settingElement:hover {
+    -fx-background-color: -womt-border-color, -womt-foreground-hover;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 11, 10;
 }
 
-.choice-box .menu-item:checked  {
-    -fx-background-color: -womt-foreground-selected;
+.settingElement .title {
+    -fx-font-weight: bold;
 }
 
-.choice-box .menu-item:checked:hover {
-    -fx-background-color: -womt-foreground-hover;
+.settingElement .description {
+    -fx-text-fill: -womt-text-2;
 }
 
-.choice-box .menu-item:empty:hover  {
-    -fx-background-color: transparent;
+.settingElement SVGPath {
+    -fx-fill: -womt-text-1;
 }
 
-.check-menu-item > .left-container,
-.radio-menu-item > .left-container {
-    -fx-padding: 2.1;
-}
-
-.radio-menu-item:checked > .left-container > .radio,
-.check-menu-item:checked > .left-container > .check {
-    -fx-background-color: -womt-accent;
-    -fx-shape: "M2 0Q0 0 0 2V12q0 2 2 2t2-2V2Q4 0 2 0Z";
-    -fx-scale-shape: false;
-}
-.radio-menu-item:pressed:checked > .left-container > .radio,
-.check-menu-item:pressed:checked > .left-container > .check {
-    -fx-shape: "M2 0Q0 0 0 2V6q0 2 2 2t2-2V2Q4 0 2 0Z";
-}
