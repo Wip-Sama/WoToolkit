@@ -1,0 +1,19 @@
+.button {
+    -fx-background-color: -womt-stroke-rest, -womt-foreground-rest;
+    -fx-background-insets:  0 0 0 0, 1.1;
+    -fx-background-radius: 3, 3;
+    -fx-padding: 5 9 5 9;
+    -fx-text-fill: -womt-text-1;
+}
+
+.button:hover {
+    -fx-background-color: -womt-stroke-hover, -womt-foreground-hover;
+}
+
+.button:pressed {
+    -fx-background-color: -womt-stroke-pressed, -womt-foreground-pressed;
+}
+
+.button:pressed:hover {
+    -fx-background-color: -womt-stroke-pressed, -womt-foreground-pressed;
+}

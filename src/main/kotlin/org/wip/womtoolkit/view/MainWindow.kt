@@ -1,7 +1,5 @@
 package org.wip.womtoolkit.view
 
-import javafx.animation.KeyFrame
-import javafx.animation.Timeline
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.beans.value.ChangeListener
@@ -21,7 +19,6 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.SVGPath
 import javafx.stage.StageStyle
-import javafx.util.Duration
 import org.wip.womtoolkit.components.PageIndicator
 import org.wip.womtoolkit.components.collapsablesidebarmenu.CollapsableComponent
 import org.wip.womtoolkit.components.collapsablesidebarmenu.CollapsableSidebarMenu
@@ -33,7 +30,6 @@ import xss.it.nfx.HitSpot
 import xss.it.nfx.WindowState
 import java.net.URL
 import java.util.*
-import kotlin.text.clear
 
 open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 	@FXML lateinit var closeButton: Button
@@ -80,7 +76,7 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		icons.add(Image(javaClass.getResource("/icons/icon.png")?.toExternalForm()))
 		scene.stylesheets.clear()
 		scene.stylesheets.add(
-			javaClass.getResource("/styles/light.css")!!.toExternalForm()
+			javaClass.getResource("/styles/dark.css")!!.toExternalForm()
 		)
 		captionColor = Color.valueOf(
 			cssReader.getValueFromCssFile(

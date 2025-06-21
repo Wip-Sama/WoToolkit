@@ -1,0 +1,45 @@
+.colorPickerPopup .alphaSlider .track {
+    -fx-background-color: linear-gradient(to right, transparent, -womt-accent);
+}
+
+.colorPickerPopup .brightnessSlider .track {
+    -fx-background-color: linear-gradient(to right, black, white);
+}
+
+.colorPickerPopup .hueSlider .track {
+    -fx-background-color:
+            linear-gradient(
+                    to right,
+                    red 0%,
+                    yellow 17%,
+                    lime 33%,
+                    cyan 50%,
+                    blue 67%,
+                    magenta 83%,
+                    red 100%
+            );
+}
+
+.colorPickerPopup {
+    -fx-background-color: -womt-background-4;
+    -fx-background-radius: 10;
+    -fx-border-color: -womt-stroke-rest;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+}
+
+.colorPickerPopup .colorPreview {
+    -fx-background-color: -womt-background-3;
+    -fx-background-radius: 10;
+    -fx-border-color: -womt-stroke-rest;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+}
+
+.colorPickerPopup .colorPreview .newColorPreview{
+    -fx-background-radius: 8 8 0 0;
+}
+
+.colorPickerPopup .colorPreview .oldColorPreview{
+    -fx-background-radius: 0 0 8 8;
+}

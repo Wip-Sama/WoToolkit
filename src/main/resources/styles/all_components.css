@@ -9,4 +9,7 @@
 @import "components/context-menu.css";
 @import "components/switch.css";
 @import "components/settingElement.css";
-@import "components/color-picker.css";
+@import "components/color-picker-popup.css";
+@import "components/slider.css";
+@import "components/button.css";
+@import "components/popup.css";

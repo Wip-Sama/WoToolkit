@@ -7,30 +7,35 @@ import javafx.fxml.FXMLLoader
 import javafx.geometry.Point2D
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.Slider
+import javafx.scene.control.Tooltip
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.paint.CycleMethod
 import javafx.scene.paint.LinearGradient
 import javafx.scene.paint.Stop
+import javafx.scene.shape.Rectangle
+import org.wip.womtoolkit.Globals
+import org.wip.womtoolkit.model.Lsp
 import java.awt.Color.HSBtoRGB
 import java.awt.Color.RGBtoHSB
 import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.roundToLong
 import kotlin.math.sin
 import kotlin.properties.Delegates
 
-class ColorPicker: BorderPane() {
+class ColorPickerPopup: BorderPane() {
 	@FXML lateinit var pngDisplay: ImageView
 	@FXML lateinit var brightnessSlider: Slider
 
-	@FXML lateinit var baseColorSlider: Slider
+	@FXML lateinit var hueColorSlider: Slider
 	@FXML lateinit var canvasDisplay: Canvas
 
 	@FXML lateinit var interactableCanvas: Canvas
@@ -38,16 +43,21 @@ class ColorPicker: BorderPane() {
 
 	@FXML lateinit var oldColorPane: Pane
 	@FXML lateinit var newColorPane: Pane
+	@FXML lateinit var displayContainer: AnchorPane
+
+	@FXML lateinit var hueColorTooltip: Tooltip
+	@FXML lateinit var brightnessTooltip: Tooltip
+	@FXML lateinit var alphaTooltip: Tooltip
 
 	private val selectedColorProperty = SimpleObjectProperty<Color>()
 	private val selectingColorProperty = SimpleObjectProperty<Color>()
 
-	private val lastMousePositionProperty = SimpleObjectProperty<Point2D>(Point2D(0.0, 0.0))
+	private val lastMousePositionProperty = SimpleObjectProperty<Point2D?>()
 
 	var isHueSelector: Boolean by Delegates.observable(false) { _, old, new ->
 		if (new != old) {
-			baseColorSlider.isVisible = new
-			baseColorSlider.isManaged = new
+			hueColorSlider.isVisible = new
+			hueColorSlider.isManaged = new
 			canvasDisplay.isVisible = new
 			canvasDisplay.isManaged = new
 
@@ -66,35 +76,34 @@ class ColorPicker: BorderPane() {
 	}
 
 	init {
-		FXMLLoader(javaClass.getResource("/components/colorPicker.fxml")).apply {
-			setRoot(this@ColorPicker)
-			setController(this@ColorPicker)
+		FXMLLoader(javaClass.getResource("/components/colorPickerPopup.fxml")).apply {
+			setRoot(this@ColorPickerPopup)
+			setController(this@ColorPickerPopup)
 			load()
 		}
 	}
 
 	@FXML
 	fun initialize() {
+		val rectClip = Rectangle().apply {
+			arcHeight = 18.0
+			arcWidth = 18.0
+		}
+		displayContainer.clip = rectClip
+		displayContainer.layoutBoundsProperty().addListener { _, _, bounds ->
+			rectClip.width = bounds.width
+			rectClip.height = bounds.height
+		}
+
+		hueColorTooltip.textProperty().bind(Lsp.lsb("colorPicker.hue.tooltip"))
+		brightnessTooltip.textProperty().bind(Lsp.lsb("colorPicker.brightness.tooltip"))
+		alphaTooltip.textProperty().bind(Lsp.lsb("colorPicker.alpha.tooltip"))
+
 		pngDisplay.image = javaClass.getResourceAsStream("/images/color_wheel.png")?.let { Image(it) }
 
 		// Update the display canvas when the base color changes
-		baseColorSlider.valueProperty().addListener { observable, oldValue, newValue ->
-			val gc = canvasDisplay.graphicsContext2D
-			gc.fill = intToColor(newValue.toInt())
-			gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
-			val verticalGradient = LinearGradient(
-				0.0, 0.0, 0.0, 1.0, true, CycleMethod.NO_CYCLE,
-				listOf(Stop(0.0, Color.TRANSPARENT), Stop(1.0, Color.BLACK))
-			)
-			val horizontalGradient = LinearGradient(
-				0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE,
-				listOf(Stop(0.0, Color.WHITE), Stop(1.0, Color.TRANSPARENT))
-			)
-			gc.fill = horizontalGradient
-			gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
-			gc.fill = verticalGradient
-			gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
-			getColor()
+		hueColorSlider.valueProperty().addListener { observable, oldValue, newValue ->
+			updateHue()
 		}
 
 		alphaSlider.valueProperty().addListener { observable, oldValue, newValue ->
@@ -113,23 +122,25 @@ class ColorPicker: BorderPane() {
 		interactableCanvas.onMouseDragged = storePoint
 
 		selectedColorProperty.addListener { _, _, newColor ->
+			val radii = CornerRadii(0.0, 0.0, 8.0, 8.0, false)
 			if (newColor != null) {
-				oldColorPane.background = Background(BackgroundFill(newColor, null, null))
+				oldColorPane.background = Background(BackgroundFill(newColor, radii, null))
 			} else {
-				oldColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, null, null))
+				oldColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, radii, null))
 			}
 		}
 		selectingColorProperty.addListener { _, _, newColor ->
+			val radii = CornerRadii(8.0, 8.0, 0.0, 0.0, false)
 			if (newColor != null) {
-				newColorPane.background = Background(BackgroundFill(newColor, null, null))
+				newColorPane.background = Background(BackgroundFill(newColor, radii, null))
 			} else {
-				newColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, null, null))
+				newColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, radii, null))
 			}
 		}
 
 		if (isHueSelector) {
-			baseColorSlider.isVisible = true
-			baseColorSlider.isManaged = true
+			hueColorSlider.isVisible = true
+			hueColorSlider.isManaged = true
 			canvasDisplay.isVisible = true
 			canvasDisplay.isManaged = true
 
@@ -137,9 +148,10 @@ class ColorPicker: BorderPane() {
 			pngDisplay.isManaged = false
 			brightnessSlider.isVisible = false
 			brightnessSlider.isManaged = false
+
 		} else {
-			baseColorSlider.isVisible = false
-			baseColorSlider.isManaged = false
+			hueColorSlider.isVisible = false
+			hueColorSlider.isManaged = false
 			canvasDisplay.isVisible = false
 			canvasDisplay.isManaged = false
 
@@ -156,6 +168,37 @@ class ColorPicker: BorderPane() {
 			alphaSlider.isVisible = false
 			alphaSlider.isManaged = false
 		}
+
+		selectedColorProperty.value = Color(0.0,.5,.5,1.0)
+		selectingColorProperty.value = Color(0.0,.5,.5,1.0)
+
+		hueColorSlider.value = colorToInt(getBaseColor(selectedColorProperty.value)).toDouble()
+	}
+
+	private fun updateHue() {
+		val gc = canvasDisplay.graphicsContext2D
+
+		//Base color
+		gc.fill = intToColor(hueColorSlider.value.toInt())
+		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
+
+		//Brightness
+		val verticalGradient = LinearGradient(
+			0.0, 0.0, 0.0, 1.0, true, CycleMethod.NO_CYCLE,
+			listOf(Stop(0.0, Color.TRANSPARENT), Stop(1.0, Color.BLACK))
+		)
+
+		//Saturation
+		val horizontalGradient = LinearGradient(
+			0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE,
+			listOf(Stop(0.0, Color.WHITE), Stop(1.0, Color.TRANSPARENT))
+		)
+
+		gc.fill = horizontalGradient
+		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
+		gc.fill = verticalGradient
+		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
+		getColor()
 	}
 
 	private fun getColor() {
@@ -167,8 +210,9 @@ class ColorPicker: BorderPane() {
 	}
 
 	private fun getColorFromPng() {
-		var x = lastMousePositionProperty.value.x
-		var y = lastMousePositionProperty.value.y
+		if (lastMousePositionProperty.value == null) return
+		var x = lastMousePositionProperty.value!!.x
+		var y = lastMousePositionProperty.value!!.y
 		val middleX = interactableCanvas.width / 2
 		val middleY = interactableCanvas.height / 2
 
@@ -193,11 +237,23 @@ class ColorPicker: BorderPane() {
 		drawSelectedColor(x, y, selectingColorProperty.value)
 	}
 
-	private fun getColorFromHue() {
-		val x = clamp(lastMousePositionProperty.value.x, 0.0, canvasDisplay.width)
-		val y = clamp(lastMousePositionProperty.value.y, 0.0, canvasDisplay.height)
+	private fun getCoordinateFromColor(color: Color): Point2D {
+		val baseColor = intToColor(hueColorSlider.value.toInt())
+		val saturation = 1 - (color.red - baseColor.red) / (1 - baseColor.red)
+		val brightness = 1 - (color.green - baseColor.green) / (1 - baseColor.green)
 
-		val baseColor = intToColor(baseColorSlider.value.toInt())
+		val x = saturation * canvasDisplay.width
+		val y = brightness * canvasDisplay.height
+
+		return Point2D(x, y)
+	}
+
+	private fun getColorFromHue() {
+		if (lastMousePositionProperty.value == null) return
+		val x = clamp(lastMousePositionProperty.value!!.x, 0.0, canvasDisplay.width)
+		val y = clamp(lastMousePositionProperty.value!!.y, 0.0, canvasDisplay.height)
+
+		val baseColor = intToColor(hueColorSlider.value.toInt())
 		val saturation = 1 - (x / canvasDisplay.width)
 		val brightness = 1 - (y / canvasDisplay.height)
 
@@ -228,7 +284,12 @@ class ColorPicker: BorderPane() {
 		return Color.hsb(hue, saturation, brightness)
 	}
 
-	private fun colorToBaseColor(color: Color): Color {
+	private fun colorToInt(color: Color): Int {
+		val hue = color.hue / 360.0 * 65535.0
+		return hue.toInt()
+	}
+
+	private fun getBaseColor(color: Color): Color {
 		val awtColor = java.awt.Color(HSBtoRGB(RGBtoHSB((color.red*255).toInt(), (color.green*255).toInt(), (color.blue*255).toInt(), null)[0], 1.0F, 1.0F))
 		return Color(
 			awtColor.red / 255.0,

@@ -1,0 +1,6 @@
+.popupBottom {
+    -fx-background-color: -womt-background-1;
+    -fx-background-radius: 0 0 10 10;
+    -fx-border-color: -womt-border-color;
+    -fx-border-width: 1 0 0 0;
+}

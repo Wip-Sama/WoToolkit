@@ -1,7 +1,11 @@
 package org.wip.womtoolkit.view
 
+import javafx.application.Platform
+import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
+import javafx.scene.control.Slider
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.Region
 
 class Slicer : BorderPane() {
     init {
@@ -10,5 +14,9 @@ class Slicer : BorderPane() {
             setController(this@Slicer)
             load()
         }
+    }
+
+    @FXML
+    fun initialize() {
     }
 }

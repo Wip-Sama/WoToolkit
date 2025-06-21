@@ -6,7 +6,7 @@
     -womt-background-1: #202020;
     -womt-background-2: #2c2c2c;
     -womt-background-3: #2d2d2d;
-    -womt-background-4: #00ff00;
+    -womt-background-4: #282828;
 
     -womt-button-rest: #00000000;
     -womt-button-hover: rgb(94, 94, 94, 0.4); /*rgba(94, 94, 94, .5);*/
@@ -45,3 +45,6 @@
 .root .label {
     -fx-text-fill: -womt-text-1;
 }
+
+
+
