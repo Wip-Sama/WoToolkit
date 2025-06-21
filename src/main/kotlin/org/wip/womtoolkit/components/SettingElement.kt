@@ -1,6 +1,5 @@
 package org.wip.womtoolkit.components
 
-import com.sun.javafx.css.PseudoClassState
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
@@ -15,15 +14,11 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
-import javafx.scene.shape.Circle
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.Duration
 import org.wip.womtoolkit.Globals
-import kotlin.div
 import kotlin.properties.Delegates
-import kotlin.text.get
-import kotlin.text.set
 
 /**
  * @author Wip
@@ -42,6 +37,7 @@ class SettingElement() : AnchorPane() {
     @FXML lateinit var description: Label
     @FXML lateinit var expandedIndicator: SVGPath
     @FXML lateinit var expandablePane: BorderPane
+    @FXML lateinit var imageContainer: BorderPane
     @FXML lateinit var displayPane: BorderPane
     @FXML lateinit var rightContainer: HBox
 
@@ -53,7 +49,7 @@ class SettingElement() : AnchorPane() {
         expandablePane.center = newValue
     }
 
-    var quickSetting: Pane? by Delegates.observable(null) { _, oldValue, newValue ->
+    var quickSetting: Node? by Delegates.observable(null) { _, oldValue, newValue ->
         rightContainer.children.remove(oldValue)
         rightContainer.children.add(0, newValue)
     }

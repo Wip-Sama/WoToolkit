@@ -6,7 +6,6 @@ import javafx.beans.binding.StringBinding
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableValue
 import org.wip.womtoolkit.Globals
-import org.wip.womtoolkit.components.PageIndicator
 import java.io.File
 import java.net.JarURLConnection
 import java.util.concurrent.Callable
@@ -123,4 +122,22 @@ object LocalizationService {
 		return localizedStringBinding(key, *arg)
 	}
 
+}
+
+object Lsp {
+	fun localizedStringProperty(key: String?): ObservableValue<String> {
+		return LocalizationService.localizedStringBinding(key)
+	}
+
+	fun lsb(key: String?): ObservableValue<String> {
+		return localizedStringProperty(key)
+	}
+
+	fun localizedStringProperty(key: String?, vararg args: ObservableValue<String?>?): ObservableValue<String> {
+		return LocalizationService.localizedStringBinding(key, *args)
+	}
+
+	fun lsb(key: String?, vararg args: ObservableValue<String?>?): ObservableValue<String> {
+		return localizedStringProperty(key, *args)
+	}
 }

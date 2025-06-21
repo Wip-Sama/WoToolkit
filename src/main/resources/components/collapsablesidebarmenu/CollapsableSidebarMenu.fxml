@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root minWidth="60.0" prefWidth="56.0" styleClass="collapsablesidebarmenu" stylesheets="@../../styles/dark.css" type="AnchorPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root minWidth="60.0" prefWidth="56.0" styleClass="collapsablesidebarmenu"  type="AnchorPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Pane fx:id="selected_indicator" focusTraversable="true" layoutX="10.0" layoutY="10.0" styleClass="selectedIndicator" visible="false" AnchorPane.leftAnchor="10.0" />
       <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

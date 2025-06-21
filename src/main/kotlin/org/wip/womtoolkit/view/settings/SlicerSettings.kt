@@ -1,5 +1,6 @@
 package org.wip.womtoolkit.view.settings
 
+import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.VBox
 
@@ -10,5 +11,9 @@ class SlicerSettings : VBox() {
 			setController(this@SlicerSettings)
 			load()
 		}
+	}
+
+	@FXML
+	fun initialize() {
 	}
 }

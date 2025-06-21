@@ -20,7 +20,7 @@ import javafx.util.Duration
 class Switch() : BorderPane() {
 	@FXML private lateinit var switchStateHolder: AnchorPane
 	@FXML private lateinit var switchStateIndicator: Pane
-	@FXML private lateinit var textStateIndicator: Label
+	@FXML lateinit var textStateIndicator: Label
 
 	var stateProperty: BooleanProperty = SimpleBooleanProperty(false) // always left
 		private set

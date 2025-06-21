@@ -78,8 +78,9 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		title = "WomToolkit"
 
 		icons.add(Image(javaClass.getResource("/icons/icon.png")?.toExternalForm()))
+		scene.stylesheets.clear()
 		scene.stylesheets.add(
-			javaClass.getResource("/styles/dark.css")!!.toExternalForm()
+			javaClass.getResource("/styles/light.css")!!.toExternalForm()
 		)
 		captionColor = Color.valueOf(
 			cssReader.getValueFromCssFile(

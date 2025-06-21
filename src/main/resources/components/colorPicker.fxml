@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+               <children>
+                   <AnchorPane>
+                       <ImageView fx:id="pngDisplay" fitHeight="255.0" fitWidth="255.0" pickOnBounds="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                       <Canvas fx:id="canvasDisplay" height="255.0" width="255.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     <Canvas fx:id="interactableCanvas" height="255.0" layoutX="5.0" layoutY="5.0" width="255.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                   </AnchorPane>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Pane fx:id="newColorPane" prefHeight="200.0" prefWidth="200.0" />
+                        <Pane fx:id="oldColorPane" prefHeight="200.0" prefWidth="200.0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Slider fx:id="baseColorSlider" blockIncrement="1.0" max="65535.0" prefHeight="11.0" prefWidth="365.0" />
+            <Slider fx:id="brightnessSlider" blockIncrement="1.0" prefHeight="11.0" prefWidth="365.0" value="100.0" />
+            <Slider fx:id="alphaSlider" blockIncrement="1.0" value="100.0" />
+         </children>
+      </VBox>
+   </center>
+</fx:root>

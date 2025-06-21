@@ -1,0 +1,45 @@
+@import "all_components.css";
+
+.root {
+    -womt-background-1: #dfdfdf;
+    -womt-background-2: #d3d3d3;
+    -womt-background-3: #d2d2d2;
+    -womt-background-4: #ff00ff;
+
+    -womt-button-rest: #00ffffff;
+    -womt-button-hover: rgba(161, 161, 161, 0.4);
+    -womt-button-selected: rgba(161, 161, 161, 0.2);
+    -womt-button-pressed: rgba(161, 161, 161, 0.3);
+
+    -womt-stroke-rest: #c4c4c4;
+    -womt-stroke-hover: #c4c4c4;
+    -womt-stroke-pressed: #c4c4c4;
+    -womt-stroke-selected: -womt-stroke-pressed;
+
+    -womt-foreground-rest: #c7c7c7;
+    -womt-foreground-hover: #c2c2c2;
+    -womt-foreground-pressed: #dddddd;
+    -womt-foreground-selected: -womt-foreground-pressed;
+
+    -womt-indicator-rest: #606060;
+    -womt-indicator-hover: #606060;
+    -womt-indicator-pressed: -womt-accent;
+    -womt-indicator-selected: -womt-indicator-pressed;
+
+    -womt-slider: #5f5f5f;
+    -womt-slider-background: #c3c3c3;
+
+    -womt-text-1: #000000;
+    -womt-text-2: #8c8c8c;
+    -womt-text-3: #c8c8c8;
+
+    -womt-accent: #8ffada;
+
+    -womt-border-color: #e2e2e2;
+
+    -womt-text-color-1: #000000;
+}
+
+.root .label {
+    -fx-text-fill: -womt-text-1;
+}

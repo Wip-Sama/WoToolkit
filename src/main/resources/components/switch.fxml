@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" styleClass="switch" stylesheets="@../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" styleClass="switch"  type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <Label fx:id="textStateIndicator" mouseTransparent="true" text="Label" BorderPane.alignment="CENTER">
          <padding>
