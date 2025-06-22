@@ -8,11 +8,17 @@ import javafx.scene.control.ChoiceBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.scene.shape.SVGPath
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.wip.womtoolkit.Globals
 import org.wip.womtoolkit.components.SettingElement
 import org.wip.womtoolkit.components.Switch
 import org.wip.womtoolkit.model.LocalizationService
 import org.wip.womtoolkit.model.Lsp
-import kotlin.properties.Delegates
 
 /**
  * @author Wip
@@ -35,6 +41,8 @@ class GeneralSettings : VBox() {
 		const val STARTING_PAGE: String =
 			"M13.4508 2.53318C12.6128 1.82618 11.3872 1.82618 10.5492 2.53318L3.79916 8.22772C3.29241 8.65523 3 9.28447 3 9.94747V19.2526C3 20.2191 3.7835 21.0026 4.75 21.0026H7.75C8.7165 21.0026 9.5 20.2191 9.5 19.2526V15.25C9.5 14.5707 10.0418 14.018 10.7169 14.0004H13.2831C13.9582 14.018 14.5 14.5707 14.5 15.25V19.2526C14.5 20.2191 15.2835 21.0026 16.25 21.0026H19.25C20.2165 21.0026 21 20.2191 21 19.2526V9.94747C21 9.28447 20.7076 8.65523 20.2008 8.22772L13.4508 2.53318Z"
 	}
+
+	private val scope = MainScope()
 
 	init {
 		FXMLLoader(javaClass.getResource("/pages/settings/generalSettings.fxml")).apply {
@@ -63,29 +71,42 @@ class GeneralSettings : VBox() {
 		accentSetting.imageContainer.center = SVGPath().apply {
 			content = Constants.ACCENT
 		}
-		themeSetting.quickSetting = Switch(true).apply {
-			stateProperty.addListener { observable, oldValue, newValue ->
+
+		themeSetting.quickSetting = Switch(Globals.theme == "dark").apply {
+			fun updateLocale() {
 				textStateIndicator.textProperty().unbind()
 				textStateIndicator.textProperty().bind(
-					if (newValue) {
+					if (state) {
 						Lsp.lsb("settingsPage.general.theme.dark")
 					} else {
 						Lsp.lsb("settingsPage.general.theme.light")
 					}
 				)
 			}
-			textStateIndicator.textProperty().unbind()
-			textStateIndicator.textProperty().bind(
-				if (state) {
-					Lsp.lsb("settingsPage.general.theme.dark")
-				} else {
-					Lsp.lsb("settingsPage.general.theme.light")
+			fun updateTheme() {
+				Globals.theme = if (state) "dark" else "light"
+			}
+			updateLocale()
+
+			stateProperty.addListener { observable, oldValue, newValue ->
+				updateLocale()
+				if (newValue != oldValue) {
+					updateTheme()
 				}
-			)
+			}
+
+			scope.launch {
+				Globals.themeFlow.collectLatest { newTheme ->
+					withContext(Dispatchers.JavaFx) {
+						state = newTheme == "dark"
+					}
+				}
+			}
 		}
 		themeSetting.imageContainer.center = SVGPath().apply {
 			content = Constants.THEME
 		}
+
 		localizationSetting.quickSetting = ChoiceBox<String>().apply {
 			items.addAll(LocalizationService.locales)
 			value = LocalizationService.currentLocale
@@ -99,10 +120,10 @@ class GeneralSettings : VBox() {
 				LocalizationService.currentLocale = newValue ?: LocalizationService.currentLocale
 			}
 		}
-
 		localizationSetting.imageContainer.center = SVGPath().apply {
 			content = Constants.LOCALIZATION
 		}
+
 		startingPageSetting.quickSetting = ChoiceBox<String>().apply {
 			items.addAll("None", "Slicer", "Converter")
 			value = "None"

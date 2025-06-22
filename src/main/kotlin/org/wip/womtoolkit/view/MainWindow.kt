@@ -1,5 +1,6 @@
 package org.wip.womtoolkit.view
 
+import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.beans.value.ChangeListener
@@ -19,6 +20,10 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.SVGPath
 import javafx.stage.StageStyle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import org.wip.womtoolkit.Globals
 import org.wip.womtoolkit.components.PageIndicator
 import org.wip.womtoolkit.components.collapsablesidebarmenu.CollapsableComponent
 import org.wip.womtoolkit.components.collapsablesidebarmenu.CollapsableSidebarMenu
@@ -30,6 +35,11 @@ import xss.it.nfx.HitSpot
 import xss.it.nfx.WindowState
 import java.net.URL
 import java.util.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 	@FXML lateinit var closeButton: Button
@@ -62,6 +72,8 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		val page_indicator: StringProperty = SimpleStringProperty()
 	}
 
+	private val scope = MainScope()
+
 	init {
 		val fxmlLoader = FXMLLoader(javaClass.getResource("/pages/main.fxml"))
 		fxmlLoader.setController(this)
@@ -74,22 +86,24 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		title = "WomToolkit"
 
 		icons.add(Image(javaClass.getResource("/icons/icon.png")?.toExternalForm()))
-		scene.stylesheets.clear()
-		scene.stylesheets.add(
-			javaClass.getResource("/styles/dark.css")!!.toExternalForm()
-		)
-		captionColor = Color.valueOf(
-			cssReader.getValueFromCssFile(
-				"/styles/dark.css",
-				"womt-text-color-1"
-			) ?: "#000000"
-		)
-		titleBarColor = Color.valueOf(
-			cssReader.getValueFromCssFile(
-				"/styles/dark.css",
-				"womt-background-1"
-			) ?: "#000000"
-		)
+
+//		Platform.runLater {
+//			scope.launch(Dispatchers.JavaFx) {
+//				Globals.themeFlow.collectLatest { newTheme ->
+//					updateStyles()
+//				}
+//			}
+//		}
+
+		scope.launch {
+			Globals.themeFlow.collectLatest { newTheme ->
+				withContext(Dispatchers.JavaFx) {
+					updateStyles()
+				}
+			}
+		}
+
+		updateStyles()
 
 		isResizable = true
 		initStyle(StageStyle.UNIFIED)
@@ -150,8 +164,6 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		pageIndicator.addLabel(
 			info
 		)
-
-
 	}
 
 	private fun handelState(state: WindowState?) {
@@ -216,6 +228,23 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 
 	override fun getTitleBarHeight(): Double {
 		return 32.0
+	}
+
+	private fun updateStyles() {
+		scene.stylesheets.clear()
+		val cssUrl = javaClass.getResource("/styles/${Globals.theme}.css")
+		if (cssUrl != null) {
+			scene.stylesheets.add(cssUrl.toExternalForm())
+		} else {
+			println("File CSS non trovato: /styles/${Globals.theme}.css")
+		}
+
+		captionColor = Color.valueOf(
+			cssReader.getValueFromCssFile("/styles/${Globals.theme}.css", "womt-text-color-1") ?: "#000000"
+		)
+		titleBarColor = Color.valueOf(
+			cssReader.getValueFromCssFile("/styles/${Globals.theme}.css", "womt-background-1") ?: "#000000"
+		)
 	}
 
 	@FXML
