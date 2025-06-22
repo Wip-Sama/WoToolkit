@@ -1,11 +1,13 @@
-package org.wip.womtoolkit.components
+package org.wip.womtoolkit.components.colorpicker
 
+import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.geometry.Point2D
 import javafx.scene.canvas.Canvas
+import javafx.scene.control.Button
 import javafx.scene.control.Slider
 import javafx.scene.control.Tooltip
 import javafx.scene.image.Image
@@ -22,7 +24,6 @@ import javafx.scene.paint.CycleMethod
 import javafx.scene.paint.LinearGradient
 import javafx.scene.paint.Stop
 import javafx.scene.shape.Rectangle
-import org.wip.womtoolkit.Globals
 import org.wip.womtoolkit.model.Lsp
 import java.awt.Color.HSBtoRGB
 import java.awt.Color.RGBtoHSB
@@ -31,7 +32,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.properties.Delegates
 
-class ColorPickerPopup: BorderPane() {
+class ColorPickerWindow() : BorderPane() {
 	@FXML lateinit var pngDisplay: ImageView
 	@FXML lateinit var brightnessSlider: Slider
 
@@ -49,8 +50,17 @@ class ColorPickerPopup: BorderPane() {
 	@FXML lateinit var brightnessTooltip: Tooltip
 	@FXML lateinit var alphaTooltip: Tooltip
 
-	private val selectedColorProperty = SimpleObjectProperty<Color>()
+	@FXML lateinit var cancelButton: Button
+	@FXML lateinit var confirmButton: Button
+
+	private val selectedColorProperty = SimpleObjectProperty<Color>(Color.RED)
 	private val selectingColorProperty = SimpleObjectProperty<Color>()
+
+	val selectingColor: Color
+		get() = selectingColorProperty.value ?: Color.BLACK
+
+	val selectedColor: Color
+		get() = selectedColorProperty.value ?: Color.TRANSPARENT
 
 	private val lastMousePositionProperty = SimpleObjectProperty<Point2D?>()
 
@@ -75,10 +85,14 @@ class ColorPickerPopup: BorderPane() {
 		}
 	}
 
+	constructor(color: Color) : this() {
+		selectedColorProperty.value = color
+	}
+
 	init {
-		FXMLLoader(javaClass.getResource("/components/colorPickerPopup.fxml")).apply {
-			setRoot(this@ColorPickerPopup)
-			setController(this@ColorPickerPopup)
+		FXMLLoader(javaClass.getResource("/components/colorPickerWindow.fxml")).apply {
+			setRoot(this@ColorPickerWindow)
+			setController(this@ColorPickerWindow)
 			load()
 		}
 	}
@@ -149,6 +163,7 @@ class ColorPickerPopup: BorderPane() {
 			brightnessSlider.isVisible = false
 			brightnessSlider.isManaged = false
 
+			hueColorSlider.value = colorToInt(getBaseColor(selectedColorProperty.value)).toDouble()
 		} else {
 			hueColorSlider.isVisible = false
 			hueColorSlider.isManaged = false
@@ -169,10 +184,39 @@ class ColorPickerPopup: BorderPane() {
 			alphaSlider.isManaged = false
 		}
 
-		selectedColorProperty.value = Color(0.0,.5,.5,1.0)
-		selectingColorProperty.value = Color(0.0,.5,.5,1.0)
+		confirmButton.onAction = EventHandler {
+			selectedColorProperty.value = selectingColorProperty.value ?: Color.BLACK
+			Platform.runLater {
+				updateColorPreview()
+			}
+		}
 
-		hueColorSlider.value = colorToInt(getBaseColor(selectedColorProperty.value)).toDouble()
+		cancelButton.onAction = EventHandler {
+			selectingColorProperty.value = null
+			lastMousePositionProperty.value = null
+			Platform.runLater {
+				updateColorPreview()
+			}
+		}
+
+		Platform.runLater {
+			updateColorPreview()
+		}
+	}
+
+	fun updateColorPreview() {
+		val downCorners = CornerRadii(0.0, 0.0, 8.0, 8.0, false)
+		if (selectedColorProperty.value != null) {
+			oldColorPane.background = Background(BackgroundFill(selectedColorProperty.value, downCorners, null))
+		} else {
+			oldColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, downCorners, null))
+		}
+		val upCorners = CornerRadii(8.0, 8.0, 0.0, 0.0, false)
+		if (selectingColorProperty.value != null) {
+			newColorPane.background = Background(BackgroundFill(selectingColorProperty.value, upCorners, null))
+		} else {
+			newColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, upCorners, null))
+		}
 	}
 
 	private fun updateHue() {

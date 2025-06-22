@@ -1,0 +1,26 @@
+.color-picker-button {
+    -fx-background-color: black;
+    -fx-background-radius: 9;
+    -fx-background-insets: 1;
+    -fx-border-color: transparent;
+    -fx-border-radius: 5;
+    -fx-border-width: 6;
+    -fx-pref-width: 36;
+    -fx-pref-height: 36;
+}
+
+.color-picker-button:hover,
+.color-picker-button:selected {
+    -fx-border-color: -womt-text-color-1;
+    -fx-border-radius: 5;
+    -fx-border-width: 6;
+}
+
+.color-picker-button:selected .selectedIndicator {
+    -fx-background-color: -womt-text-color-1;
+}
+
+.color-picker-button:selected .selectedIndicator SVGPath {
+    visibility: true;
+    -fx-text-fill: -womt-text-color-high-contrast;
+}

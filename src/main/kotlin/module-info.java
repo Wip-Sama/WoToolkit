@@ -18,6 +18,7 @@ module org.wip.womtoolkit {
     opens org.wip.womtoolkit.view to javafx.fxml;
     opens org.wip.womtoolkit.components to javafx.fxml;
     opens org.wip.womtoolkit.components.collapsablesidebarmenu to javafx.fxml;
+    opens org.wip.womtoolkit.components.colorpicker to javafx.fxml;
     opens org.wip.womtoolkit.view.settings to javafx.fxml;
 }
 

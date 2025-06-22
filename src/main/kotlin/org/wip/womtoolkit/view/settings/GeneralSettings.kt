@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import org.wip.womtoolkit.Globals
 import org.wip.womtoolkit.components.SettingElement
 import org.wip.womtoolkit.components.Switch
+import org.wip.womtoolkit.components.colorpicker.ColorPickerButton
 import org.wip.womtoolkit.model.LocalizationService
 import org.wip.womtoolkit.model.Lsp
 
@@ -67,6 +68,12 @@ class GeneralSettings : VBox() {
 		accentSetting.expandableContent = Pane().apply {
 			styleClass.add("-fx-background-color: #ff0000;")
 			prefHeight = 100.0
+		}
+		accentSetting.quickSetting = ColorPickerButton(true).apply {
+			colorProperty.value = Globals.accent
+			colorProperty.addListener { _, _, color ->
+				Globals.accent = color
+			}
 		}
 		accentSetting.imageContainer.center = SVGPath().apply {
 			content = Constants.ACCENT

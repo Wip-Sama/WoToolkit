@@ -40,11 +40,9 @@
     -womt-border-color: #1d1d1d;
 
     -womt-text-color-1: #ffffff;
+    -womt-text-color-high-contrast: #000000;
 }
 
 .root .label {
     -fx-text-fill: -womt-text-1;
 }
-
-
-

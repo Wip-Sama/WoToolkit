@@ -103,6 +103,14 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 			}
 		}
 
+		scope.launch {
+			Globals.accentFlow.collectLatest { newAccent ->
+				withContext(Dispatchers.JavaFx) {
+					updateStyles()
+				}
+			}
+		}
+
 		updateStyles()
 
 		isResizable = true
@@ -245,6 +253,9 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		titleBarColor = Color.valueOf(
 			cssReader.getValueFromCssFile("/styles/${Globals.theme}.css", "womt-background-1") ?: "#000000"
 		)
+
+		val accentColor = Globals.accent.toString().replace("0x", "#")
+		scene.root.style = "-womt-accent: $accentColor;"
 	}
 
 	@FXML
