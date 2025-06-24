@@ -16,11 +16,20 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import javafx.util.Duration
+import org.wip.womtoolkit.model.Lsp
+import kotlin.properties.Delegates
 
 class Switch() : BorderPane() {
 	@FXML private lateinit var switchStateHolder: AnchorPane
 	@FXML private lateinit var switchStateIndicator: Pane
 	@FXML lateinit var textStateIndicator: Label
+
+	var falseLocalization: String? by Delegates.observable(null) { _, _, newValue ->
+		updateLocalization()
+	}
+	var trueLocalization: String? by Delegates.observable(null) { _, _, newValue ->
+		updateLocalization()
+	}
 
 	var stateProperty: BooleanProperty = SimpleBooleanProperty(false) // always left
 		private set
@@ -43,24 +52,9 @@ class Switch() : BorderPane() {
 
 	@FXML
 	fun initialize() {
-		stateProperty.addListener(ChangeListener { _, old, new: Boolean? ->
-			val endPosition = if (new == true) switchStateHolder.width-switchStateIndicator.width else 0
-			Timeline(
-				KeyFrame(Duration.ZERO, { AnchorPane.clearConstraints(switchStateIndicator) } ),
-				KeyFrame(
-					Duration.millis(100.0),
-					KeyValue(switchStateIndicator.layoutXProperty(), endPosition),
-				),
-				KeyFrame(Duration.millis(100.0), {
-					if (new == true) {
-						AnchorPane.setRightAnchor(switchStateIndicator, 1.0)
-						pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), true)
-					} else {
-						AnchorPane.setLeftAnchor(switchStateIndicator, 1.0)
-						pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), false)
-					}
-				} ),
-			).play()
+		stateProperty.addListener(ChangeListener { _, _, new: Boolean? ->
+			animateTransition()
+			updateLocalization()
 		})
 
 		pressedProperty().addListener { observable, oldValue, newValue ->
@@ -82,5 +76,41 @@ class Switch() : BorderPane() {
 		onMouseClicked = EventHandler { event: MouseEvent? ->
 			state = !state
 		}
+		updateLocalization()
 	}
+
+	private fun animateTransition(value: Boolean = stateProperty.value) {
+		val endPosition = if (value == true) switchStateHolder.width-switchStateIndicator.width else 0
+		Timeline(
+			KeyFrame(Duration.ZERO, { AnchorPane.clearConstraints(switchStateIndicator) } ),
+			KeyFrame(
+				Duration.millis(100.0),
+				KeyValue(switchStateIndicator.layoutXProperty(), endPosition),
+			),
+			KeyFrame(Duration.millis(100.0), {
+				if (value == true) {
+					AnchorPane.setRightAnchor(switchStateIndicator, 1.0)
+					pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), true)
+				} else {
+					AnchorPane.setLeftAnchor(switchStateIndicator, 1.0)
+					pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), false)
+				}
+			} ),
+		).play()
+	}
+
+	private fun updateLocalization(value: Boolean = stateProperty.value) {
+		if (value) {
+			if (trueLocalization != null) {
+				textStateIndicator.textProperty().unbind()
+				textStateIndicator.textProperty().bind(Lsp.lsb(trueLocalization))
+			}
+		} else {
+			if (falseLocalization != null) {
+				textStateIndicator.textProperty().unbind()
+				textStateIndicator.textProperty().bind(Lsp.lsb(falseLocalization))
+			}
+		}
+	}
+
 }

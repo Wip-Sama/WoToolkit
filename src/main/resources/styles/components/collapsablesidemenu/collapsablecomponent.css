@@ -9,12 +9,12 @@
 }
 
 .collapsablecomponent .label {
-    -fx-text-fill: -womt-text-color-1;
+    -fx-text-fill: -womt-text;
     -fx-text-overrun: clip;
 }
 
 .collapsablecomponent SVGPath {
-    -fx-fill: -womt-text-color-1;
+    -fx-fill: -womt-text;
 }
 
 /*Hover*/
@@ -23,7 +23,7 @@
 }
 
 .collapsablecomponent:hover SVGPath {
-    -fx-fill: -womt-text-color-1;
+    -fx-fill: -womt-text;
 }
 
 /*Pressed*/

@@ -46,12 +46,22 @@ class SettingElement() : AnchorPane() {
     var expandableContent: Pane? by Delegates.observable(null) { _, oldValue, newValue ->
         expandedIndicator.isManaged = newValue != null
         expandedIndicator.isVisible = newValue != null
-        expandablePane.center = newValue
+        expandablePane.top = newValue
+        displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), newValue != null)
     }
 
     var quickSetting: Node? by Delegates.observable(null) { _, oldValue, newValue ->
         rightContainer.children.remove(oldValue)
         rightContainer.children.add(0, newValue)
+        newValue?.hoverProperty()?.addListener { _, _, hover ->
+            if (expandableContent == null)
+                return@addListener
+            if (hover) {
+                displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), false)
+            } else {
+                displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), true)
+            }
+        }
     }
 
     init {
@@ -82,8 +92,8 @@ class SettingElement() : AnchorPane() {
     @FXML
     fun initialize() {
         val rectClip = Rectangle().apply {
-            arcHeight = 23.0
-            arcWidth = 23.0
+            arcHeight = 13.0
+            arcWidth = 13.0
         }
         clip = rectClip
         layoutBoundsProperty().addListener { _, _, bounds ->
@@ -91,7 +101,8 @@ class SettingElement() : AnchorPane() {
             rectClip.height = bounds.height
         }
 
-        onMouseClicked = EventHandler { evt ->
+
+        displayPane.onMouseClicked = EventHandler { evt ->
             if (quickSetting != null && isDescendantOf(evt.target as? Node, quickSetting!!)) {
                 return@EventHandler
             }
@@ -125,7 +136,10 @@ class SettingElement() : AnchorPane() {
                 Duration.millis(100.0),
                 KeyValue(prefHeightProperty(),
                     if (expandedProperty.get())
-                        (expandableContent?.prefHeight ?: 0.0) + displayHeight
+                        (expandableContent?.prefHeight ?: 0.0) +
+                        (expandablePane.padding?.top ?: 12.0) +
+                        (expandablePane.padding?.bottom ?: 12.0) +
+                        displayHeight
                     else
                         displayHeight
                     )

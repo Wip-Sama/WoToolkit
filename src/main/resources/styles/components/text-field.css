@@ -1,11 +1,11 @@
 .text-input, .text-area, .text-field {
     -fx-cursor: text;
 
-    -fx-prompt-text-fill: -womt-text-color-1;
-    -fx-text-fill: -womt-text-color-1;
+    -fx-prompt-text-fill: -womt-text;
+    -fx-text-fill: -womt-text;
 
     -fx-highlight-fill: -womt-accent;
-    -fx-highlight-text-fill: -womt-text-color-1;
+    -fx-highlight-text-fill: -womt-text;
 
 
     /*accent, border, background*/

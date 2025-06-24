@@ -11,16 +11,16 @@
 
 .color-picker-button:hover,
 .color-picker-button:selected {
-    -fx-border-color: -womt-text-color-1;
+    -fx-border-color: -womt-text;
     -fx-border-radius: 5;
     -fx-border-width: 6;
 }
 
 .color-picker-button:selected .selectedIndicator {
-    -fx-background-color: -womt-text-color-1;
+    -fx-background-color: -womt-text;
 }
 
 .color-picker-button:selected .selectedIndicator SVGPath {
     visibility: true;
-    -fx-text-fill: -womt-text-color-high-contrast;
+    -fx-fill: -womt-text-contrast;
 }

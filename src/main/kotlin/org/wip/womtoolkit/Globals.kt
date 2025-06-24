@@ -15,11 +15,6 @@ object Globals {
 			.inputArguments.any { it.contains("-agentlib:jdwp") }
 	}
 
-//	val themeProperty = SimpleStringProperty("default")
-//	var theme: String
-//		get() = themeProperty.get()
-//		set(value) = themeProperty.set(value)
-
 	private val _themeFlow = MutableStateFlow("dark")
 	val themeFlow: StateFlow<String> get() = _themeFlow
 	var theme: String

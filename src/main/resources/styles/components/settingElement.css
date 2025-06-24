@@ -1,32 +1,35 @@
-
-.settingElementBase {
-    -fx-background-color: -womt-border-color, -womt-foreground-hover;
-    -fx-background-insets: 0, 1;
-    -fx-background-radius: 11, 10;
-}
-
 .settingElement {
-    -fx-background-color: -womt-border-color, -womt-foreground-rest;
-    -fx-background-insets: 0, 1.1;
-    -fx-background-radius: 10, 10;
-}
-
-.settingElement:hover {
-    -fx-background-color: -womt-border-color, -womt-foreground-hover;
+    -fx-background-color: -womt-border-dark, -womt-background-light;
     -fx-background-insets: 0, 1;
-    -fx-background-radius: 11, 10;
+    -fx-background-radius: 6, 5;
 }
 
-.settingElementBase:expanded .settingElement {
-    -fx-background-color: -womt-border-color, -womt-foreground-rest;
-    -fx-background-insets: 0, 1.1;
-    -fx-background-radius: 10 10 0 0, 10 10 0 0;
+.settingElementTop:expandable:hover {
+    -fx-background-color: -womt-border-light, -womt-background-light-hover;
+    -fx-background-insets: 0, .9;
 }
 
-.settingElementBase:expanded .settingElement:hover {
-    -fx-background-color: -womt-border-color, -womt-foreground-hover;
+.settingElementTop:expandable:pressed {
+    -fx-background-color: -womt-border-light, -womt-background-light-pressed;
+    -fx-background-insets: 0, .9;
+}
+
+.settingElement:expanded .settingElementTop {
+    -fx-background-color: -womt-border-dark, -womt-background-light;
     -fx-background-insets: 0, 1;
-    -fx-background-radius: 11 11 0 0, 10 10 0 0;
+    -fx-background-radius: 6 6 0 0, 5 5 0 0;
+}
+
+.settingElement:expanded .settingElementTop:expandable:hover {
+    -fx-background-color: -womt-border-light, -womt-background-light-hover;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 6 6 0 0, 5 5 0 0;
+}
+
+.settingElement:expanded .settingElementTop:expandable:hover:pressed {
+    -fx-background-color: -womt-border-light, -womt-background-light-pressed;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 6 6 0 0, 5 5 0 0;
 }
 
 .settingElement .title {
@@ -34,10 +37,10 @@
 }
 
 .settingElement .description {
-    -fx-text-fill: -womt-text-2;
+    -fx-text-fill: -womt-text-muted;
 }
 
 .settingElement SVGPath {
-    -fx-fill: -womt-text-1;
+    -fx-fill: -womt-text;
 }
 

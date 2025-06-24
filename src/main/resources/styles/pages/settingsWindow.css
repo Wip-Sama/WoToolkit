@@ -29,7 +29,7 @@
 }
 
 .settings_window .separator .line {
-    -fx-border-color: -womt-background-1;
+    -fx-border-color: -womt-background-dark;
     -fx-border-insets: 0 3 0 3;
     -fx-border-width: 0.8;
 }

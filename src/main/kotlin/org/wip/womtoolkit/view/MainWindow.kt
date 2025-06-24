@@ -256,6 +256,8 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 
 		val accentColor = Globals.accent.toString().replace("0x", "#")
 		scene.root.style = "-womt-accent: $accentColor;"
+
+		ProcessBuilder()
 	}
 
 	@FXML

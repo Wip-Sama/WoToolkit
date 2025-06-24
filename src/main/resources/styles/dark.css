@@ -1,11 +1,11 @@
 @import "all_components.css";
 
-.root {
+.old_root {
     /*-fx-blend-mode this might be useful*/
 
     -womt-background-1: #202020;
-    -womt-background-2: #2c2c2c;
-    -womt-background-3: #2d2d2d;
+    -womt-background-normal: #2c2c2c;
+    -womt-background-light: #2d2d2d;
     -womt-background-4: #282828;
 
     -womt-button-rest: #00000000;
@@ -31,18 +31,74 @@
     -womt-slider: #a0a0a0;
     -womt-slider-background: #3c3c3c;
 
-    -womt-text-1: #ffffff;
-    -womt-text-2: #737373;
-    -womt-text-3: #373737;
 
     -womt-accent: #700525;
 
     -womt-border-color: #1d1d1d;
+}
 
-    -womt-text-color-1: #ffffff;
-    -womt-text-color-high-contrast: #000000;
+
+
+/*Hanno opacità per adattarsi agli sfondi???q*/
+/*
+-womt-background-dark
+foreground 18
+stroke 19
+indicator 60
+
+-womt-background-normal
+foreground 22
+stroke 23
+indicator 2
+
+no non è trasparenza usano più colori...
+*/
+
+.root {
+    -womt-background-darkest: hsb(0, 0%, 9%);
+    -womt-background-dark: hsb(0, 0%, 13%);
+    -womt-background-normal: hsb(0, 0%, 17%);
+    -womt-background-light: hsb(0, 0%, 21%);
+    -womt-background-lightest: hsb(0, 0%, 27%);
+
+    -womt-background-light-hover: hsb(0, 0%, 24%);
+    -womt-background-light-pressed: hsb(0, 0%, 19%);
+
+    -womt-border-dark: hsb(0, 0%, 11%);
+    -womt-border-light: hsb(0, 0%, 29%); /*23 / 19<< */
+
+    -womt-text: hsb(0, 0%, 100%);
+    -womt-text-muted: hsb(0, 0%, 82%);
+    -womt-text-contrast: hsb(0, 0%, 0%); /*18 / 24*/
+
+    /*TODO: Button, stroke, foreground, indicator*/
+
+    -womt-accent: #700525;
+
+    -womt-button-rest: #00000000;
+    -womt-button-hover: rgb(94, 94, 94, 0.4); /*rgba(94, 94, 94, .5);*/
+    -womt-button-selected: rgb(94, 94, 94, 0.2); /*rgba(94, 94, 94, .3);*/
+    -womt-button-pressed: rgb(94, 94, 94, 0.3); /*rgba(94, 94, 94, .4);*/
+
+    -womt-foreground-rest: hsb(0, 0%, 22%); /*18 / 22 / 24*/
+    -womt-foreground-hover: hsb(0, 0%, 24%); /*24 / 25*/
+    -womt-foreground-pressed: hsb(0, 0%, 21%); /*20 / 21*/
+    -womt-foreground-selected: hsb(0, 0%, 12%);
+
+    -womt-stroke-rest: hsb(0, 0%, 25%);
+    -womt-stroke-hover: -womt-stroke-rest;
+    -womt-stroke-pressed: hsb(0, 0%, 23%);
+    -womt-stroke-selected: hsb(0, 0%, 19%);
+
+    -womt-indicator-rest: hsb(0, 0%, 60%);
+    -womt-indicator-hover: hsb(0, 0%, 60%);
+    -womt-indicator-pressed: hsb(0, 0%, 60%);
+    -womt-indicator-selected: -womt-accent;
+
+    /*Component specifics colors*/
+    -womt-slider:  hsba(0, 0%, 100%, .6);  /*-womt-slider: hsb(0, 0%, 62%);*/ /*TODO: vedere se questo va bene*/
 }
 
 .root .label {
-    -fx-text-fill: -womt-text-1;
+    -fx-text-fill: -womt-text;
 }

@@ -1,31 +1,31 @@
 
 .choice-box {
     /*-fx-background-color: -womt-indicator-rest, -womt-stroke-rest, -womt-foreground-rest;*/
-    -fx-background-color: transparent, -womt-stroke-rest, -womt-foreground-rest;
-    -fx-background-insets: 0, 0, 1.1;
-    -fx-background-radius: 4, 4, 4;
+    -fx-background-color: -womt-stroke-rest, -womt-foreground-rest;
+    -fx-background-insets: 0, 1.1;
+    -fx-background-radius: 4, 4;
 }
 
 .choice-box:hover {
     /*-fx-background-color:  -womt-indicator-hover, -womt-stroke-hover, -womt-foreground-hover;*/
-    -fx-background-color:  transparent, -womt-stroke-hover, -womt-foreground-hover;
+    -fx-background-color:  -womt-stroke-hover, -womt-foreground-hover;
 }
 
 /*the style of the combo box when the list is showing*/
 .choice-box:showing {
-    -fx-background-color: transparent, -womt-stroke-rest, -womt-foreground-rest;
+    -fx-background-color: -womt-stroke-rest, -womt-foreground-rest;
 }
 
 /*the element shown inside the choice-box*/
 .choice-box .label {
-    -fx-text-fill: -womt-text-1;
+    -fx-text-fill: -womt-text;
     -fx-padding: 4 8 4 10;
     -fx-border-width: 1;
     -fx-border-color: transparent;
 }
 
 .choice-box .arrow {
-    -fx-background-color: -womt-text-1;
+    -fx-background-color: -womt-border-dark;
     -fx-background-insets: 0;
     -fx-padding: 3 6;
     -fx-scale-x: .8;
@@ -36,7 +36,7 @@
 .choice-box .context-menu {
     -fx-background-color: -womt-foreground-rest;
     -fx-background-radius: 9;
-    -fx-border-color: -womt-border-color;
+    -fx-border-color: -womt-border-dark;
     -fx-border-width: 1.1;
     -fx-border-radius: 8;
     -fx-padding: 4;
@@ -45,7 +45,7 @@
 .choice-box .menu-item {
     -fx-background-color: transparent;
     -fx-background-radius: 8;
-    -fx-text-fill: -womt-text-1;
+    -fx-text-fill: -womt-text;
     -fx-padding: 2 0 2 0;
     -fx-background-insets: 2 0 2 0;
 }

@@ -1,5 +1,5 @@
 .collapsablesidebarmenu {
-    -fx-background-color: -womt-background-1;
+    -fx-background-color: -womt-background-dark;
 }
 
 .collapsablesidebarmenu .selectedIndicator {
@@ -13,7 +13,7 @@
 /*Normal*/
 .collapsablesidebarmenu .button {
     -fx-background-color: -womt-button-rest;
-    -fx-text-fill: -womt-text-color-1;
+    -fx-text-fill: -womt-text;
     -fx-pref-height: 32;
     -fx-background-radius: 8;
     -fx-border-width: 0;
@@ -24,7 +24,7 @@
 }
 
 .collapsablesidebarmenu .button SVGPath {
-    -fx-fill: -womt-text-color-1;
+    -fx-fill: -womt-text;
 }
 
 /*Hover*/
@@ -33,7 +33,7 @@
 }
 
 .collapsablesidebarmenu .button:hover SVGPath {
-    -fx-fill: -womt-text-color-1;
+    -fx-fill: -womt-text;
 }
 
 /*Pressed*/

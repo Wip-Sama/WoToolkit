@@ -64,7 +64,7 @@ class ColorPickerWindow() : BorderPane() {
 
 	private val lastMousePositionProperty = SimpleObjectProperty<Point2D?>()
 
-	var isHueSelector: Boolean by Delegates.observable(false) { _, old, new ->
+	var isHueSelector: Boolean by Delegates.observable(true) { _, old, new ->
 		if (new != old) {
 			hueColorSlider.isVisible = new
 			hueColorSlider.isManaged = new

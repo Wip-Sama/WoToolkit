@@ -18,14 +18,14 @@
 
 /*the element shown inside the combo-box*/
 .combo-box .list-cell {
-    -fx-text-fill: -womt-text-1;
+    -fx-text-fill: -womt-text;
     -fx-padding: 4 8 4 10;
     -fx-border-width: 1;
     -fx-border-color: transparent;
 }
 
 .combo-box-base.combo-box > .arrow-button > .arrow {
-    -fx-background-color: -womt-text-1;
+    -fx-background-color: -womt-border-dark;
     -fx-background-insets: 0;
     -fx-padding: 3 6;
     -fx-scale-x: .8;
@@ -38,7 +38,7 @@
 .combo-box .list-view {
     -fx-background-color: -womt-foreground-rest;
     -fx-background-radius: 9;
-    -fx-border-color: -womt-border-color;
+    -fx-border-color: -womt-border-light;
     -fx-border-width: 1.1;
     -fx-border-radius: 8;
     -fx-padding: 4;

@@ -1,18 +1,18 @@
 
 .content_pane {
-    -fx-background-color: -womt-background-2;
+    -fx-background-color: -womt-background-normal;
     -fx-background-radius: 10 0 0 0;
 }
 
 /*If you notice when you enable another window the border shrinks a bit, it's annoying*/
 .content_pane_border {
-    -fx-border-color: -womt-border-color;
+    -fx-border-color: -womt-border-dark;
     -fx-border-radius: 9 0 0 0;
     -fx-border-width: 1.5 0 0 1.5;
 }
 
 .base {
-    -fx-background-color: -womt-background-1;
+    -fx-background-color: -womt-background-dark;
 }
 
 .base .hit-btn {
@@ -29,7 +29,7 @@
 }
 
 .base .shape {
-    -fx-fill: -womt-text-2;
+    -fx-fill: -womt-text-muted;
 }
 
 .base .hit-btn-hover {
@@ -37,7 +37,7 @@
 }
 
 .base .hit-btn-hover SVGPath {
-    -fx-fill: -womt-text-1;
+    -fx-fill: -womt-text;
 }
 
 .base .hit-close-hover {
@@ -45,21 +45,21 @@
 }
 
 .base .hit-close-hover SVGPath {
-    -fx-fill: -womt-text-1;
+    -fx-fill: -womt-text;
 }
 
 .base .title {
-    -fx-text-fill: -womt-text-color-1;
+    -fx-text-fill: -womt-text;
     -fx-font-size: 12;
 }
 
 .base .info .label {
-    -fx-text-fill: -womt-text-color-1;
+    -fx-text-fill: -womt-text;
     -fx-font-size: 14;
     -fx-font-weight: bold;
 }
 
 .base .info SVGPath {
-    -fx-fill: -womt-text-color-1;
+    -fx-fill: -womt-text;
 }
 

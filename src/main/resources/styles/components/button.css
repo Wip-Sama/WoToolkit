@@ -3,7 +3,7 @@
     -fx-background-insets:  0 0 0 0, 1.1;
     -fx-background-radius: 3, 3;
     -fx-padding: 5 9 5 9;
-    -fx-text-fill: -womt-text-1;
+    -fx-text-fill: -womt-text;
 }
 
 .button:hover {

@@ -4,6 +4,7 @@ import javafx.event.EventHandler
 import javafx.scene.paint.Color
 import javafx.stage.Popup
 
+//TODO: Move the buttons here and transform this into a PopupWrapper
 class ColorPickerPopup(
 	color: Color,
 	private val onColorSelected: (Color) -> Unit

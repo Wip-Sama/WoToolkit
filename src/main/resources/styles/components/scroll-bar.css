@@ -1,7 +1,7 @@
 
 .scroll-box {
     -fx-background-radius: 6;
-    -fx-background-color: -womt-background-3;
+    -fx-background-color: -womt-background-light;
 }
 
 .scroll-bar:horizontal, .scroll-bar:vertical {
@@ -22,7 +22,7 @@
 }
 
 .scroll-bar:hover > .track-background {
-    -fx-background-color: -womt-slider-background;
+    -fx-background-color: -womt-background-normal;
     -fx-background-radius: 10;
     -fx-background-insets: 0;
     -fx-padding: 5;
