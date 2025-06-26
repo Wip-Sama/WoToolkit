@@ -77,11 +77,26 @@ class ColorPickerWindow() : BorderPane() {
 			brightnessSlider.isManaged = !new
 		}
 	}
-
 	var isAlphaAvailable: Boolean by Delegates.observable(false) { _, old, new ->
 		if (new != old) {
 			alphaSlider.isVisible = new
 			alphaSlider.isManaged = new
+		}
+	}
+	var isAdvancedMode: Boolean by Delegates.observable(false) { _, old, new ->
+		if (new != old) {
+		}
+	}
+	var showRGB: Boolean by Delegates.observable(false) { _, old, new ->
+		if (new != old) {
+		}
+	}
+	var showHSB: Boolean by Delegates.observable(false) { _, old, new ->
+		if (new != old) {
+		}
+	}
+	var showHex: Boolean by Delegates.observable(false) { _, old, new ->
+		if (new != old) {
 		}
 	}
 
@@ -165,6 +180,8 @@ class ColorPickerWindow() : BorderPane() {
 
 			hueColorSlider.value = colorToInt(getBaseColor(selectedColorProperty.value)).toDouble()
 			updateHue()
+			//TODO: the cursor is still not showing
+			lastMousePositionProperty.value = getCoordinateFromColor(selectedColor)
 		} else {
 			hueColorSlider.isVisible = false
 			hueColorSlider.isManaged = false
@@ -205,7 +222,7 @@ class ColorPickerWindow() : BorderPane() {
 		}
 	}
 
-	fun updateColorPreview() {
+	private fun updateColorPreview() {
 		val downCorners = CornerRadii(0.0, 0.0, 8.0, 8.0, false)
 		if (selectedColorProperty.value != null) {
 			oldColorPane.background = Background(BackgroundFill(selectedColorProperty.value, downCorners, null))
