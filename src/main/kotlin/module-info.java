@@ -7,6 +7,8 @@ module org.wip.womtoolkit {
     requires kotlin.stdlib;
     requires kotlinx.coroutines.core;
     requires kotlinx.coroutines.javafx;
+    requires kotlinx.serialization.core;
+    requires kotlinx.serialization.json;
 
     requires javafx.fxml;
     requires javafx.controls;

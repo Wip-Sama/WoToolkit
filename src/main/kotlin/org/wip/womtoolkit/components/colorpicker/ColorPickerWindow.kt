@@ -164,6 +164,7 @@ class ColorPickerWindow() : BorderPane() {
 			brightnessSlider.isManaged = false
 
 			hueColorSlider.value = colorToInt(getBaseColor(selectedColorProperty.value)).toDouble()
+			updateHue()
 		} else {
 			hueColorSlider.isVisible = false
 			hueColorSlider.isManaged = false

@@ -6,11 +6,13 @@ import javafx.beans.binding.StringBinding
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableValue
 import org.wip.womtoolkit.Globals
+import org.wip.womtoolkit.model.database.Database
 import java.io.File
 import java.net.JarURLConnection
 import java.util.concurrent.Callable
 import kotlin.sequences.forEach
 
+//TODO: if possibile remove it's dependency on javafx
 /**
  * @author Wip
  * */
@@ -19,7 +21,8 @@ object LocalizationService {
 	private val availableLocales = mutableSetOf<String>(DEFAULT_LANGUAGE)
 	val locales : Set<String>
 		get() = availableLocales
-	private var currentLocaleProperty = SimpleStringProperty(DEFAULT_LANGUAGE)
+
+	val currentLocaleProperty = SimpleStringProperty(Database.loadLocale()?: DEFAULT_LANGUAGE)
 	var currentLocale: String
 		get() = currentLocaleProperty.get()
 		set(value) {
@@ -32,7 +35,8 @@ object LocalizationService {
 				currentLocaleProperty.set(value)
 			}
 		}
-	private val localizations = mutableMapOf<String, LocalizationMap>(Pair(currentLocale, LocalizationMap(DEFAULT_LANGUAGE)))
+
+	private val localizations = mutableMapOf<String, LocalizationMap>(Pair(currentLocale, LocalizationMap(currentLocale)))
 
 	init {
 		val resourceUrl = javaClass.getResource(Globals.LOCALES_PATH)
@@ -69,18 +73,27 @@ object LocalizationService {
 		our?.forEach { if (it.isFile && it.extension == "properties") availableLocales.add(it.nameWithoutExtension) }
 	}
 
+	private fun getLocaleOrDefault(key: String?): String {
+		return if (key == null || key.isBlank()) {
+			throw IllegalArgumentException("Key cannot be null or blank")
+		} else {
+			localizations[currentLocale]?.getLocale(key)
+				?: localizations[DEFAULT_LANGUAGE]?.getLocale(key)
+				?: "__MISSING_${key}__"
+		}
+	}
+
 	fun localizedStringBinding(key: String?): StringBinding {
 		return Bindings.createStringBinding(Callable {
-			var localizedString: String = localizations[currentLocale]!!.getLocale(key)
+			var localizedString: String = getLocaleOrDefault(key)
 
 			if (localizedString.startsWith("__MISSING_") && !Globals.isDebug) {
-				localizedString = localizations[DEFAULT_LANGUAGE]!!.getLocale(key)
-				if (localizedString.startsWith("__MISSING_"))
-					localizedString = ""
+				localizedString = ""
 			}
+
 			//TODO: This should be recursive
 			Regex("\\[(.*?)]").findAll(localizedString).map { it.groupValues[1] }
-				.forEach { localizedString = localizedString.replace("[$it]", localizations[currentLocale]!!.getLocale(it)) }
+				.forEach { localizedString = localizedString.replace("[$it]", getLocaleOrDefault(it)) }
 			localizedString
 		}, currentLocaleProperty)
 	}
@@ -94,12 +107,10 @@ object LocalizationService {
 		val observables = arrayOf<Observable>(currentLocaleProperty, *args.map { it as Observable }.toTypedArray())
 
 		return Bindings.createStringBinding(Callable {
-			var localizedString: String = localizations[currentLocale]!!.getLocale(key)
+			var localizedString: String = getLocaleOrDefault(key)
 
 			if (localizedString.startsWith("__MISSING_") && !Globals.isDebug) {
-				localizedString = localizations[DEFAULT_LANGUAGE]!!.getLocale(key)
-				if (localizedString.startsWith("__MISSING_"))
-					localizedString = ""
+				localizedString = ""
 			}
 
 			args.indices.forEach {
@@ -112,7 +123,7 @@ object LocalizationService {
 
 			//TODO: This should be recursive
 			Regex("\\[(.*?)]").findAll(localizedString).map { it.groupValues[1] }
-				.forEach { localizedString = localizedString.replace("[$it]", localizations[currentLocale]!!.getLocale(it)) }
+				.forEach { localizedString = localizedString.replace("[$it]", getLocaleOrDefault(it)) }
 
 			localizedString
 		}, *observables)

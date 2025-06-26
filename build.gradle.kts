@@ -1,10 +1,9 @@
 plugins {
     kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "2.2.0-RC2"
     id("org.openjfx.javafxplugin") version "0.1.0"
     id("org.beryx.jlink") version "3.1.1"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.0-RC2"
-    //gradle shadowJar per il jar con tutte le dipendenze
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1" //gradle shadowJar per il jar con tutte le dipendenze
     application
 }
 
