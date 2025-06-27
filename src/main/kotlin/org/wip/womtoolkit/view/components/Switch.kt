@@ -39,7 +39,7 @@ class Switch() : BorderPane() {
 		set(value) { stateProperty.value = value }
 
 	init {
-		FXMLLoader(javaClass.getResource("/components/switch.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/components/switch.fxml")).apply {
 			setRoot(this@Switch)
 			setController(this@Switch)
 			load()

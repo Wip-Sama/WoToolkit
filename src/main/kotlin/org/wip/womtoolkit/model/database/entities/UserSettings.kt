@@ -1,5 +1,6 @@
 package org.wip.womtoolkit.model.database.entities
 
+import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.paint.Color
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -105,7 +105,7 @@ class ColorPickerWindow() : BorderPane() {
 	}
 
 	init {
-		FXMLLoader(javaClass.getResource("/components/colorPickerWindow.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/components/colorPickerWindow.fxml")).apply {
 			setRoot(this@ColorPickerWindow)
 			setController(this@ColorPickerWindow)
 			load()

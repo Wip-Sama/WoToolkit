@@ -64,7 +64,7 @@ class SettingElement() : AnchorPane() {
     }
 
     init {
-        FXMLLoader(javaClass.getResource("/components/settingElement.fxml")).apply {
+        FXMLLoader(javaClass.getResource("/view/components/settingElement.fxml")).apply {
             setRoot(this@SettingElement)
             setController(this@SettingElement)
             load()

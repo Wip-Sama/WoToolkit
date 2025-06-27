@@ -23,4 +23,3 @@ module org.wip.womtoolkit {
     opens org.wip.womtoolkit.view.pages to javafx.fxml;
     opens org.wip.womtoolkit.view.pages.settings to javafx.fxml;
 }
-

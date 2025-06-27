@@ -32,8 +32,12 @@ dependencies {
 
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
 
+    implementation("org.jetbrains.pty4j:pty4j:0.13.8")
+
     implementation(project(":nfx-core"))
     implementation(fileTree("libs") { include("*.jar") })
+
+    implementation("org.slf4j:slf4j-simple:2.0.13")
 }
 
 tasks.test {
@@ -56,6 +60,9 @@ javafx {
 application {
     mainModule.set("org.wip.womtoolkit")
     mainClass.set("org.wip.womtoolkit.MainKt")
+//    applicationDefaultJvmArgs = listOf(
+//        "--add-opens=org.wip.womtoolkit/org.wip.womtoolkit.view.pages=ALL-UNNAMED"
+//    )
 }
 
 kotlin {

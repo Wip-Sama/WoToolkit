@@ -16,7 +16,7 @@ class PageIndicator : HBox() {
 	}
 
 	init {
-		FXMLLoader(javaClass.getResource("/components/pageIndicator.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/components/pageIndicator.fxml")).apply {
 			setRoot(this@PageIndicator)
 			setController(this@PageIndicator)
 			load()

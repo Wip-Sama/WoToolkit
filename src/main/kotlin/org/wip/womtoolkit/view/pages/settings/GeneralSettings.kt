@@ -47,7 +47,7 @@ class GeneralSettings : VBox() {
 	private val scope = MainScope()
 
 	init {
-		FXMLLoader(javaClass.getResource("/pages/settings/generalSettings.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/pages/settings/generalSettings.fxml")).apply {
 			setRoot(this@GeneralSettings)
 			setController(this@GeneralSettings)
 			load()

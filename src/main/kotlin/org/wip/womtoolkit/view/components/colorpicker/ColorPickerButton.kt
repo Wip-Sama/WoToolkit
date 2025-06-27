@@ -23,7 +23,7 @@ class ColorPickerButton() : AnchorPane() {
 	}
 
 	init {
-		FXMLLoader(javaClass.getResource("/components/colorPickerButton.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/components/colorPickerButton.fxml")).apply {
 			setRoot(this@ColorPickerButton)
 			setController(this@ColorPickerButton)
 			load()

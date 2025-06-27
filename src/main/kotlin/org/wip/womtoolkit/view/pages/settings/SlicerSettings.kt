@@ -6,7 +6,7 @@ import javafx.scene.layout.VBox
 
 class SlicerSettings : VBox() {
 	init {
-		FXMLLoader(javaClass.getResource("/pages/settings/slicerSettings.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/pages/settings/slicerSettings.fxml")).apply {
 			setRoot(this@SlicerSettings)
 			setController(this@SlicerSettings)
 			load()

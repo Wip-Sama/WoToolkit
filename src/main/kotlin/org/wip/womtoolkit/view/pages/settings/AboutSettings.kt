@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox
  * */
 class AboutSettings : VBox() {
 	init {
-		FXMLLoader(javaClass.getResource("/pages/settings/aboutSettings.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/pages/settings/aboutSettings.fxml")).apply {
 			setRoot(this@AboutSettings)
 			setController(this@AboutSettings)
 			load()

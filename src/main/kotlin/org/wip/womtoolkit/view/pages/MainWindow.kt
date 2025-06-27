@@ -48,6 +48,8 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 	@FXML lateinit var buttonContainer: HBox
 	@FXML lateinit var mainPane: AnchorPane
 
+	private val scope = MainScope()
+
 	object Constants {
 		const val MINIMIZE: String = // chrome minimize (hardest)
 			"M0.554306 1.1109C0.554306 0.932457 0.698965 0.787798 0.877407 0.787798H5.40082C5.57926 0.787798 5.72392 0.932457 5.72392 1.1109C5.72392 1.28934 5.57926 1.434 5.40082 1.434H0.877407C0.698965 1.434 0.554306 1.28934 0.554306 1.1109Z"
@@ -66,10 +68,8 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		val page_indicator: StringProperty = SimpleStringProperty()
 	}
 
-	private val scope = MainScope()
-
 	init {
-		val fxmlLoader = FXMLLoader(javaClass.getResource("/pages/main.fxml"))
+		val fxmlLoader = FXMLLoader(javaClass.getResource("/view/pages/main.fxml"))
 		fxmlLoader.setController(this)
 		scene = Scene(fxmlLoader.load<AnchorPane>())
 		minWidth = 620.0
@@ -233,18 +233,18 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 
 	private fun updateStyles() {
 		scene.stylesheets.clear()
-		val cssUrl = javaClass.getResource("/styles/${ApplicationSettings.userSettings.theme}.css")
+		val cssUrl = javaClass.getResource("/view/styles/${ApplicationSettings.userSettings.theme}.css")
 		if (cssUrl != null) {
 			scene.stylesheets.add(cssUrl.toExternalForm())
 		} else {
-			println("File CSS non trovato: /styles/${ApplicationSettings.userSettings.theme}.css")
+			println("File CSS non trovato: /view/styles/${ApplicationSettings.userSettings.theme}.css")
 		}
 
 		captionColor = Color.valueOf(
-			cssReader.getValueFromCssFile("/styles/${ApplicationSettings.userSettings.theme}.css", "womt-text-color-1") ?: "#000000"
+			cssReader.getValueFromCssFile("/view/styles/${ApplicationSettings.userSettings.theme}.css", "womt-text-color-1") ?: "#000000"
 		)
 		titleBarColor = Color.valueOf(
-			cssReader.getValueFromCssFile("/styles/${ApplicationSettings.userSettings.theme}.css", "womt-background-1") ?: "#000000"
+			cssReader.getValueFromCssFile("/view/styles/${ApplicationSettings.userSettings.theme}.css", "womt-background-1") ?: "#000000"
 		)
 
 		val accentColor = ApplicationSettings.userSettings.accent.toString().replace("0x", "#")

@@ -5,7 +5,7 @@ import javafx.scene.layout.BorderPane
 
 class Converter : BorderPane() {
 	init {
-		FXMLLoader(javaClass.getResource("/pages/converter.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/pages/converter.fxml")).apply {
 			setRoot(this@Converter)
 			setController(this@Converter)
 			load()

@@ -70,7 +70,7 @@ open class CollapsableSidebarMenu : AnchorPane() {
     }
 
     init {
-        FXMLLoader(javaClass.getResource("/components/collapsablesidebarmenu/CollapsableSidebarMenu.fxml")).apply {
+        FXMLLoader(javaClass.getResource("/view/components/collapsablesidebarmenu/CollapsableSidebarMenu.fxml")).apply {
             setRoot(this@CollapsableSidebarMenu)
             setController(this@CollapsableSidebarMenu)
             load()

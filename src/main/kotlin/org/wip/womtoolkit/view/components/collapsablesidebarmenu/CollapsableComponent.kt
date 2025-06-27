@@ -30,7 +30,7 @@ class CollapsableComponent() : GridPane(), CollapsableItem {
 	val icon get() = svg
 
 	init {
-		FXMLLoader(javaClass.getResource("/components/collapsablesidebarmenu/CollapsableComponent.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/components/collapsablesidebarmenu/CollapsableComponent.fxml")).apply {
 			setRoot(this@CollapsableComponent)
 			setController(this@CollapsableComponent)
 			load()

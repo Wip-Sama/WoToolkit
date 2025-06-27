@@ -31,7 +31,7 @@ class Settings(val pageIndicator: PageIndicator? = null) : BorderPane() {
 	}
 
 	init {
-		FXMLLoader(javaClass.getResource("/pages/settings.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/pages/settings.fxml")).apply {
 			setRoot(this@Settings)
 			setController(this@Settings)
 			load()

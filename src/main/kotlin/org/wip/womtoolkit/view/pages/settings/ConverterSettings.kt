@@ -5,7 +5,7 @@ import javafx.scene.layout.VBox
 
 class ConverterSettings : VBox() {
 	init {
-		FXMLLoader(javaClass.getResource("/pages/settings/converterSettings.fxml")).apply {
+		FXMLLoader(javaClass.getResource("/view/pages/settings/converterSettings.fxml")).apply {
 			setRoot(this@ConverterSettings)
 			setController(this@ConverterSettings)
 			load()
