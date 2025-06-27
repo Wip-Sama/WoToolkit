@@ -5,6 +5,10 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.ChoiceBox
+import javafx.scene.control.Label
+import javafx.scene.control.Separator
+import javafx.scene.layout.GridPane
+import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.shape.SVGPath
 import kotlinx.coroutines.Dispatchers
@@ -56,8 +60,6 @@ class GeneralSettings : VBox() {
 
 	@FXML
 	fun initialize() {
-		accentSetting.title.textProperty().bind(Lsp.lsb("settingsPage.general.accent.title"))
-		accentSetting.description.textProperty().bind(Lsp.lsb("settingsPage.general.accent.description"))
 		themeSetting.title.textProperty().bind(Lsp.lsb("settingsPage.general.theme.title"))
 		themeSetting.description.textProperty().bind(Lsp.lsb("settingsPage.general.theme.description"))
 		localizationSetting.title.textProperty().bind(Lsp.lsb("settingsPage.general.language.title"))
@@ -65,19 +67,50 @@ class GeneralSettings : VBox() {
 		startingPageSetting.title.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.title"))
 		startingPageSetting.description.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.description"))
 
-		//Add buttons and expandable content to settings panels
-		accentSetting.expandableContent = VBox().apply {
-			prefHeight = 100.0
-			minHeight = 100.0
-			children.add(Switch())
-			children.add(Switch())
-			children.add(Switch())
-			children.add(Switch())
-		}
-		accentSetting.quickSetting = ColorPickerButton(true).apply {
-			colorProperty.value = ApplicationSettings.userSettings.accent
-			colorProperty.addListener { _, _, color ->
-				ApplicationSettings.userSettings.accent = color
+		accentSetting.apply {
+			title.textProperty().bind(Lsp.lsb("settingsPage.general.accent.title"))
+			description.textProperty().bind(Lsp.lsb("settingsPage.general.accent.description"))
+			quickSetting = ColorPickerButton(true).apply {
+				colorProperty.value = ApplicationSettings.userSettings.accent
+				colorProperty.addListener { _, _, color ->
+					ApplicationSettings.userSettings.accent = color
+				}
+			}
+			expandableContent = VBox().apply {
+				spacing = 8.0
+				children.addAll(
+					Label().apply {
+						textProperty().bind(themeSetting.title.textProperty())
+					},
+					HBox().apply {
+						children.addAll(
+							ColorPickerButton(),
+							ColorPickerButton(),
+							ColorPickerButton(),
+							ColorPickerButton(),
+							ColorPickerButton(),
+						)
+					},
+					Separator().apply {
+						styleClass.add("my-separator")
+					},
+					Label().apply {
+						textProperty().bind(themeSetting.title.textProperty())
+					},
+					GridPane().apply {
+						for (x in 0..4) {
+							for (y in 0..3) {
+//								val color = ApplicationSettings.userSettings.accentPalette[x][y]
+								add(ColorPickerButton(false).apply {
+//									colorProperty.value = color
+//									setOnAction {
+//										ApplicationSettings.userSettings.accentPalette[x][y] = colorProperty.value
+//									}
+								}, x, y)
+							}
+						}
+					}
+				)
 			}
 		}
 

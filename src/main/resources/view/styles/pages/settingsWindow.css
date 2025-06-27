@@ -23,13 +23,12 @@
     -fx-background-color: transparent;
 }
 
-.settings_window .separator {
+.settings_window .zone_separator {
     -fx-padding: 0 0 0 0;
     -fx-background-color: transparent;
 }
 
-.settings_window .separator .line {
+.settings_window .zone_separator .line {
     -fx-border-color: -womt-background-dark;
-    -fx-border-insets: 0 3 0 3;
-    -fx-border-width: 0.8;
+    -fx-border-width: 0 2 0 0;
 }

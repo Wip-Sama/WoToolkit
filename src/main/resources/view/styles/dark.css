@@ -102,3 +102,14 @@ no non è trasparenza usano più colori...
 .root .label {
     -fx-text-fill: -womt-text;
 }
+
+.separator {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.separator .line {
+    -fx-border-color: -womt-border-dark;
+    -fx-border-width: 1 0 0 0;
+}
+

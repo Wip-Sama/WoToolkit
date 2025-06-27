@@ -127,7 +127,6 @@ class SettingElement() : AnchorPane() {
     }
 
     fun animateExpand() {
-        val displayHeight = displayPane.height
         if (expandedProperty.get())
             pseudoClassStateChanged(PseudoClass.getPseudoClass("expanded"), expandedProperty.get())
         Timeline(
@@ -135,12 +134,12 @@ class SettingElement() : AnchorPane() {
                 Duration.millis(100.0),
                 KeyValue(prefHeightProperty(),
                     if (expandedProperty.get())
-                        (expandableContent?.prefHeight ?: 0.0) +
-                        (expandablePane.padding?.top ?: 12.0) +
-                        (expandablePane.padding?.bottom ?: 12.0) +
-                        displayHeight
+                        (expandableContent?.height ?: 0.0) +
+                        (expandablePane.padding?.top ?: 8.0) +
+                        (expandablePane.padding?.bottom ?: 8.0) +
+                        displayPane.height
                     else
-                        displayHeight
+                        displayPane.height
                     )
                 ),
             KeyFrame(Duration.millis(100.0),
