@@ -17,10 +17,10 @@ module org.wip.womtoolkit {
     requires nfx.core;
 
     opens org.wip.womtoolkit to javafx.graphics, javafx.fxml;
-    opens org.wip.womtoolkit.view to javafx.fxml;
-    opens org.wip.womtoolkit.components to javafx.fxml;
-    opens org.wip.womtoolkit.components.collapsablesidebarmenu to javafx.fxml;
-    opens org.wip.womtoolkit.components.colorpicker to javafx.fxml;
-    opens org.wip.womtoolkit.view.settings to javafx.fxml;
+    opens org.wip.womtoolkit.view.components to javafx.fxml;
+    opens org.wip.womtoolkit.view.components.collapsablesidebarmenu to javafx.fxml;
+    opens org.wip.womtoolkit.view.components.colorpicker to javafx.fxml;
+    opens org.wip.womtoolkit.view.pages to javafx.fxml;
+    opens org.wip.womtoolkit.view.pages.settings to javafx.fxml;
 }
 

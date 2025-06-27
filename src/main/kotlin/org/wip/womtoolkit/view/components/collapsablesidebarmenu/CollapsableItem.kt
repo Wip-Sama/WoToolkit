@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.components.collapsablesidebarmenu
+package org.wip.womtoolkit.view.components.collapsablesidebarmenu
 
 import javafx.beans.property.BooleanProperty
 

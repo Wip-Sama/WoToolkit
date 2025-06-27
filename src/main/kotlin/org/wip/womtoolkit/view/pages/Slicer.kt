@@ -1,11 +1,8 @@
-package org.wip.womtoolkit.view
+package org.wip.womtoolkit.view.pages
 
-import javafx.application.Platform
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
-import javafx.scene.control.Slider
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.Region
 
 class Slicer : BorderPane() {
     init {

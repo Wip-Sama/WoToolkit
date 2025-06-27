@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.view.settings
+package org.wip.womtoolkit.view.pages.settings
 
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader

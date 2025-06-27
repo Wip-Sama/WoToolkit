@@ -5,8 +5,6 @@ import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableValue
-import org.wip.womtoolkit.Globals
-import org.wip.womtoolkit.model.database.Database
 import java.io.File
 import java.net.JarURLConnection
 import java.util.concurrent.Callable
@@ -22,7 +20,7 @@ object LocalizationService {
 	val locales : Set<String>
 		get() = availableLocales
 
-	val currentLocaleProperty = SimpleStringProperty(Database.loadLocale()?: DEFAULT_LANGUAGE)
+	val currentLocaleProperty = SimpleStringProperty(DEFAULT_LANGUAGE)
 	var currentLocale: String
 		get() = currentLocaleProperty.get()
 		set(value) {

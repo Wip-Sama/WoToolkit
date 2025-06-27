@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.components
+package org.wip.womtoolkit.view.components
 
 import javafx.scene.control.Slider
 import javafx.scene.layout.Region

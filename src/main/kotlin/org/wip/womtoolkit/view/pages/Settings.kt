@@ -1,19 +1,18 @@
-package org.wip.womtoolkit.view
+package org.wip.womtoolkit.view.pages
 
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
-import javafx.scene.control.Slider
 import javafx.scene.layout.BorderPane
-import org.wip.womtoolkit.components.PageIndicator
-import org.wip.womtoolkit.components.collapsablesidebarmenu.CollapsableComponent
-import org.wip.womtoolkit.components.collapsablesidebarmenu.CollapsableSidebarMenu
+import org.wip.womtoolkit.view.components.PageIndicator
+import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableComponent
+import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableSidebarMenu
 import org.wip.womtoolkit.model.LocalizationService
-import org.wip.womtoolkit.view.settings.AboutSettings
-import org.wip.womtoolkit.view.settings.ConverterSettings
-import org.wip.womtoolkit.view.settings.GeneralSettings
-import org.wip.womtoolkit.view.settings.SlicerSettings
+import org.wip.womtoolkit.view.pages.settings.AboutSettings
+import org.wip.womtoolkit.view.pages.settings.ConverterSettings
+import org.wip.womtoolkit.view.pages.settings.GeneralSettings
+import org.wip.womtoolkit.view.pages.settings.SlicerSettings
 
 class Settings(val pageIndicator: PageIndicator? = null) : BorderPane() {
 	@FXML lateinit var sectionSelector: CollapsableSidebarMenu
@@ -87,7 +86,6 @@ class Settings(val pageIndicator: PageIndicator? = null) : BorderPane() {
 		sectionSelector.selectedItemProperty.addListener { _, _, newValue ->
 			if (newValue != null) {
 				l.textProperty().bind(LocalizationService.lsb("${newValue.localizationKey}"))
-
 			}
 		}
 

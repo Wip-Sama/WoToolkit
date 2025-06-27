@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.components
+package org.wip.womtoolkit.view.components
 
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
@@ -17,7 +17,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.Duration
-import org.wip.womtoolkit.Globals
+import org.wip.womtoolkit.model.Globals
 import kotlin.properties.Delegates
 
 /**

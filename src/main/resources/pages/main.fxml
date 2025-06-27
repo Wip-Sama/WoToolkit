@@ -10,8 +10,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.SVGPath?>
-<?import org.wip.womtoolkit.components.PageIndicator?>
-<?import org.wip.womtoolkit.components.collapsablesidebarmenu.CollapsableSidebarMenu?>
+<?import org.wip.womtoolkit.view.components.PageIndicator?>
+<?import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableSidebarMenu?>
 
 <AnchorPane fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"  xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>

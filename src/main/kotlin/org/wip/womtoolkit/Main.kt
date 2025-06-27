@@ -2,16 +2,16 @@ package org.wip.womtoolkit
 
 import javafx.application.Application
 import javafx.stage.Stage
-import org.wip.womtoolkit.model.InitializeModel
-import org.wip.womtoolkit.view.MainWindow
+import org.wip.womtoolkit.model.DataManager
+import org.wip.womtoolkit.view.pages.MainWindow
 
 class WomToolkit : Application() {
 	override fun start(primaryStage: Stage) {
-		InitializeModel.init()
+		DataManager.init()
 		MainWindow()
 	}
 	override fun stop() {
-		InitializeModel.close()
+		DataManager.close()
 	}
 }
 

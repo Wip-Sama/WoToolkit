@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.view.settings
+package org.wip.womtoolkit.view.pages.settings
 
 import javafx.application.Platform
 import javafx.event.EventHandler
@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.wip.womtoolkit.Globals
-import org.wip.womtoolkit.components.SettingElement
-import org.wip.womtoolkit.components.Switch
-import org.wip.womtoolkit.components.colorpicker.ColorPickerButton
+import org.wip.womtoolkit.view.components.SettingElement
+import org.wip.womtoolkit.view.components.Switch
+import org.wip.womtoolkit.view.components.colorpicker.ColorPickerButton
+import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.LocalizationService
 import org.wip.womtoolkit.model.Lsp
 
@@ -75,9 +75,9 @@ class GeneralSettings : VBox() {
 			children.add(Switch())
 		}
 		accentSetting.quickSetting = ColorPickerButton(true).apply {
-			colorProperty.value = Globals.accent
+			colorProperty.value = ApplicationSettings.userSettings.accent
 			colorProperty.addListener { _, _, color ->
-				Globals.accent = color
+				ApplicationSettings.userSettings.accent = color
 			}
 		}
 
@@ -85,12 +85,12 @@ class GeneralSettings : VBox() {
 			content = Constants.ACCENT
 		}
 
-		themeSetting.quickSetting = Switch(Globals.theme == "dark").apply {
+		themeSetting.quickSetting = Switch(ApplicationSettings.userSettings.theme == "dark").apply {
 			trueLocalization = "settingsPage.general.theme.dark"
 			falseLocalization = "settingsPage.general.theme.light"
 
 			fun updateTheme() {
-				Globals.theme = if (state) "dark" else "light"
+				ApplicationSettings.userSettings.theme = if (state) "dark" else "light"
 			}
 			stateProperty.addListener { observable, oldValue, newValue ->
 				if (newValue != oldValue) {
@@ -99,7 +99,7 @@ class GeneralSettings : VBox() {
 			}
 
 			scope.launch {
-				Globals.themeFlow.collectLatest { newTheme ->
+				ApplicationSettings.userSettings.themeFlow.collectLatest { newTheme ->
 					withContext(Dispatchers.JavaFx) {
 						state = newTheme == "dark"
 					}
@@ -120,7 +120,7 @@ class GeneralSettings : VBox() {
 				}
 			}
 			valueProperty().addListener { _, _, newValue ->
-				LocalizationService.currentLocale = newValue ?: LocalizationService.currentLocale
+				ApplicationSettings.userSettings.localization = newValue
 			}
 		}
 		localizationSetting.imageContainer.center = SVGPath().apply {

@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.components.colorpicker
+package org.wip.womtoolkit.view.components.colorpicker
 
 import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty

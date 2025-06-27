@@ -1,8 +1,9 @@
-package org.wip.womtoolkit.components.colorpicker
+package org.wip.womtoolkit.view.components.colorpicker
 
 import javafx.event.EventHandler
 import javafx.scene.paint.Color
 import javafx.stage.Popup
+import javafx.stage.Window
 
 //TODO: Move the buttons here and transform this into a PopupWrapper
 class ColorPickerPopup(
@@ -29,7 +30,7 @@ class ColorPickerPopup(
 		}
 	}
 
-	override fun show(owner: javafx.stage.Window?, x: Double, y: Double) {
+	override fun show(owner: Window?, x: Double, y: Double) {
 		super.show(owner, x, y)
 	}
 }

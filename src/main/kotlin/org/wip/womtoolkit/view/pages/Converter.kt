@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.view
+package org.wip.womtoolkit.view.pages
 
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.BorderPane

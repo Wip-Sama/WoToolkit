@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.components
+package org.wip.womtoolkit.view.components
 
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader

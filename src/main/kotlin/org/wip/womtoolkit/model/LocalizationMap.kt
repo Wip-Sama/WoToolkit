@@ -1,8 +1,5 @@
 package org.wip.womtoolkit.model
 
-import org.wip.womtoolkit.Globals
-import java.io.FileInputStream
-import java.io.InputStream
 import java.util.*
 
 //TODO: Add documentation

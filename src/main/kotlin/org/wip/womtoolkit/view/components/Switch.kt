@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.components
+package org.wip.womtoolkit.view.components
 
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
