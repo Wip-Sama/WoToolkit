@@ -100,12 +100,7 @@ class GeneralSettings : VBox() {
 					GridPane().apply {
 						for (x in 0..4) {
 							for (y in 0..3) {
-//								val color = ApplicationSettings.userSettings.accentPalette[x][y]
 								add(ColorPickerButton(false).apply {
-//									colorProperty.value = color
-//									setOnAction {
-//										ApplicationSettings.userSettings.accentPalette[x][y] = colorProperty.value
-//									}
 								}, x, y)
 							}
 						}

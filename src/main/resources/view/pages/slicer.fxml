@@ -16,7 +16,7 @@
    <center>
         <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="cliInput" text="python3 &quot;C:\Users\sgroo\Desktop\ciao.py&quot;" />
+            <TextField fx:id="cliInput" text="cd C:\Users\sgroo\Desktop\TestSlicerCli ; .\venv312\Scripts\activate ; python slicer_handler.py &quot;E:\Manga\The Beginning After The End\222&quot; &quot;E:\Manga\The Beginning After The End\222\banane&quot; *&gt; output.txt " />
             <Button mnemonicParsing="false" onAction="#testCli" text="Button" />
             <ProgressBar fx:id="testUpdate" prefWidth="200.0" progress="0.56" />
             <ScrollPane style="-fx-background-color: black;">
