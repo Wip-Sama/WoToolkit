@@ -131,7 +131,7 @@ class SettingElement() : AnchorPane() {
             pseudoClassStateChanged(PseudoClass.getPseudoClass("expanded"), expandedProperty.get())
         Timeline(
             KeyFrame(
-                Duration.millis(100.0),
+                Duration.millis(200.0),
                 KeyValue(prefHeightProperty(),
                     if (expandedProperty.get())
                         (expandableContent?.height ?: 0.0) +
@@ -142,7 +142,7 @@ class SettingElement() : AnchorPane() {
                         displayPane.height
                     )
                 ),
-            KeyFrame(Duration.millis(100.0),
+            KeyFrame(Duration.millis(200.0),
                 { pseudoClassStateChanged(PseudoClass.getPseudoClass("expanded"), expandedProperty.get()) }
             )
         ).play()

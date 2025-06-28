@@ -4,6 +4,7 @@ import javafx.application.Platform
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
+import javafx.geometry.Insets
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Label
 import javafx.scene.control.Separator
@@ -67,43 +68,96 @@ class GeneralSettings : VBox() {
 		startingPageSetting.title.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.title"))
 		startingPageSetting.description.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.description"))
 
+		fun getSelectableColorPicker(): ColorPickerButton {
+			return ColorPickerButton().apply {
+				scope.launch(Dispatchers.IO) {
+					ApplicationSettings.userSettings.accentFlow.collectLatest { newColor ->
+						withContext(Dispatchers.JavaFx) {
+							isSelectedProperty.value = newColor == colorProperty.value
+						}
+					}
+				}
+				onAction = EventHandler {
+					ApplicationSettings.userSettings.accent = colorProperty.value
+				}
+			}
+		}
+
 		accentSetting.apply {
 			title.textProperty().bind(Lsp.lsb("settingsPage.general.accent.title"))
 			description.textProperty().bind(Lsp.lsb("settingsPage.general.accent.description"))
-			quickSetting = ColorPickerButton(true).apply {
+			quickSetting = ColorPickerButton().apply {
+				isColorPickerAvailable = true
 				colorProperty.value = ApplicationSettings.userSettings.accent
-				colorProperty.addListener { _, _, color ->
-					ApplicationSettings.userSettings.accent = color
+
+				colorProperty.addListener { _, _, newColor ->
+					if (newColor != ApplicationSettings.userSettings.accent)
+						ApplicationSettings.userSettings.accent = newColor
+				}
+
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.accentFlow.collectLatest { newColor ->
+						withContext(Dispatchers.JavaFx) {
+							if (newColor != colorProperty.value)
+								colorProperty.value = newColor
+						}
+					}
 				}
 			}
 			expandableContent = VBox().apply {
 				spacing = 8.0
 				children.addAll(
-					Label().apply {
-						textProperty().bind(themeSetting.title.textProperty())
-					},
-					HBox().apply {
+					VBox().apply {
+						setMargin(this, Insets(0.0, 0.0, 0.0, 55.0))
+						spacing = 8.0
 						children.addAll(
-							ColorPickerButton(),
-							ColorPickerButton(),
-							ColorPickerButton(),
-							ColorPickerButton(),
-							ColorPickerButton(),
+							Label().apply {
+								textProperty().bind(Lsp.lsb("settingsPage.general.accent.history"))
+							},
+							HBox().apply {
+								for (x in 0..4) {
+									children.add(getSelectableColorPicker())
+								}
+
+								fun updateColorPickerButtons() {
+									children.forEachIndexed { index, node ->
+										if (node is ColorPickerButton) {
+											if (index >= ApplicationSettings.userSettings.accentHistory.size) {
+												node.visibleProperty().set(false)
+											} else
+											node.colorProperty.value = ApplicationSettings.userSettings.accentHistory[index]
+										}
+									}
+								}
+
+								scope.launch(Dispatchers.IO) {
+									ApplicationSettings.userSettings.accentHistoryFlow.collectLatest { newColors ->
+										withContext(Dispatchers.JavaFx) {
+											updateColorPickerButtons()
+										}
+									}
+								}
+							},
 						)
 					},
 					Separator().apply {
 						styleClass.add("my-separator")
 					},
-					Label().apply {
-						textProperty().bind(themeSetting.title.textProperty())
-					},
-					GridPane().apply {
-						for (x in 0..4) {
-							for (y in 0..3) {
-								add(ColorPickerButton(false).apply {
-								}, x, y)
+					VBox().apply {
+						setMargin(this, Insets(0.0, 0.0, 0.0, 55.0))
+						spacing = 8.0
+						children.addAll(
+							Label().apply {
+								textProperty().bind(Lsp.lsb("settingsPage.general.accent.presets"))
+							},
+							GridPane().apply {
+								for (x in 0..4) {
+									for (y in 0..3) {
+										add(getSelectableColorPicker(), x, y)
+									}
+								}
 							}
-						}
+						)
 					}
 				)
 			}

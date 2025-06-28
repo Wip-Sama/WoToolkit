@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
@@ -87,6 +88,20 @@ class UserSettings {
 					colorPickerSettings = newValue
 				}
 			}.collect()
+		}
+		scope.launch {
+			accentFlow.collectLatest {
+				accentHistory = accentHistory.toMutableList().apply {
+					if (!contains(it)) {
+						add(it)
+					}
+				}.takeLast(5)
+			}
+			accentHistoryFlow.collectLatest { history ->
+				if (history.size > 5) {
+					_accentHistoryFlow.value = history.takeLast(5)
+				}
+			}
 		}
 	}
 }
