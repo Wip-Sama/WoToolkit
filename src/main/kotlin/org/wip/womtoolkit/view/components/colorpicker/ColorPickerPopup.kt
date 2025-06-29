@@ -28,6 +28,16 @@ class ColorPickerPopup(
 		colorPickerWindow.cancelButton.onAction = EventHandler {
 			hide()
 		}
+		colorPickerWindow.heightProperty().addListener { _, oldValue, newValue ->
+			if (newValue != oldValue) {
+				y -= (newValue.toDouble() - oldValue.toDouble())/2
+			}
+		}
+		colorPickerWindow.widthProperty().addListener { _, oldValue, newValue ->
+			if (newValue != oldValue) {
+				x -= (newValue.toDouble() - oldValue.toDouble())/2
+			}
+		}
 	}
 
 	override fun show(owner: Window?, x: Double, y: Double) {

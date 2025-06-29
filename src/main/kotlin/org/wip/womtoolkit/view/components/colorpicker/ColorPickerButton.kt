@@ -10,7 +10,6 @@ import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.AnchorPane
 import javafx.scene.paint.Color
-import kotlinx.coroutines.Dispatchers
 import kotlin.properties.Delegates
 
 class ColorPickerButton() : AnchorPane() {
@@ -60,7 +59,17 @@ class ColorPickerButton() : AnchorPane() {
 				val cpp = ColorPickerPopup(colorProperty.value) { newColor ->
 					colorProperty.value = newColor
 				}
-				cpp.show(this, layoutX + width / 2, layoutY + height / 2)
+				val scene = scene
+				val window = scene?.window
+				if (window != null) {
+					cpp.setOnShown {
+						val centerX = window.x + window.width / 2 - cpp.width / 2
+						val centerY = window.y + window.height / 2 - cpp.height / 2
+						cpp.x = centerX
+						cpp.y = centerY
+					}
+					cpp.show(this, window.x, window.y)
+				}
 			}
 			onAction?.handle(ActionEvent(this, null))
 		}
