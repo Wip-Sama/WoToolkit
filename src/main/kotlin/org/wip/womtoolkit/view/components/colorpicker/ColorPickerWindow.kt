@@ -8,7 +8,11 @@ import javafx.fxml.FXMLLoader
 import javafx.geometry.Point2D
 import javafx.scene.canvas.Canvas
 import javafx.scene.control.Button
+import javafx.scene.control.ChoiceBox
+import javafx.scene.control.Label
 import javafx.scene.control.Slider
+import javafx.scene.control.TextField
+import javafx.scene.control.ToggleButton
 import javafx.scene.control.Tooltip
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -19,11 +23,13 @@ import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Pane
+import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.paint.CycleMethod
 import javafx.scene.paint.LinearGradient
 import javafx.scene.paint.Stop
 import javafx.scene.shape.Rectangle
+import javafx.scene.shape.SVGPath
 import org.wip.womtoolkit.model.Lsp
 import java.awt.Color.HSBtoRGB
 import java.awt.Color.RGBtoHSB
@@ -33,6 +39,13 @@ import kotlin.math.sin
 import kotlin.properties.Delegates
 
 class ColorPickerWindow() : BorderPane() {
+	object Constants {
+		const val COLLAPSED: String =
+			"M4.29289 8.29289C4.68342 7.90237 5.31658 7.90237 5.70711 8.29289L12 14.5858L18.2929 8.29289C18.6834 7.90237 19.3166 7.90237 19.7071 8.29289C20.0976 8.68342 20.0976 9.31658 19.7071 9.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L4.29289 9.70711C3.90237 9.31658 3.90237 8.68342 4.29289 8.29289Z"
+		const val EXPANDED: String =
+			"M4.29289 15.7071C4.68342 16.0976 5.31658 16.0976 5.70711 15.7071L12 9.41421L18.2929 15.7071C18.6834 16.0976 19.3166 16.0976 19.7071 15.7071C20.0976 15.3166 20.0976 14.6834 19.7071 14.2929L12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L4.29289 14.2929C3.90237 14.6834 3.90237 15.3166 4.29289 15.7071Z"
+	}
+
 	@FXML lateinit var pngDisplay: ImageView
 	@FXML lateinit var brightnessSlider: Slider
 
@@ -52,6 +65,22 @@ class ColorPickerWindow() : BorderPane() {
 
 	@FXML lateinit var cancelButton: Button
 	@FXML lateinit var confirmButton: Button
+
+	@FXML lateinit var colorPickerTitle: Label
+	@FXML lateinit var advancedModeToggle: ToggleButton
+	@FXML lateinit var advancedModeIndicator: SVGPath
+	@FXML lateinit var advancedElementsContainer: VBox
+	@FXML lateinit var modeSelector: ChoiceBox<String>
+
+	@FXML lateinit var hexValue: TextField
+	@FXML lateinit var firstValue: TextField
+	@FXML lateinit var firstLabel: Label
+	@FXML lateinit var secondValue: TextField
+	@FXML lateinit var thirdLabel: Label
+	@FXML lateinit var thirdValue: TextField
+	@FXML lateinit var secondLabel: Label
+	@FXML lateinit var alphaValue: TextField
+	@FXML lateinit var alphaLabel: Label
 
 	private val selectedColorProperty = SimpleObjectProperty<Color>(Color.RED)
 	private val selectingColorProperty = SimpleObjectProperty<Color>()
@@ -81,22 +110,6 @@ class ColorPickerWindow() : BorderPane() {
 		if (new != old) {
 			alphaSlider.isVisible = new
 			alphaSlider.isManaged = new
-		}
-	}
-	var isAdvancedMode: Boolean by Delegates.observable(false) { _, old, new ->
-		if (new != old) {
-		}
-	}
-	var showRGB: Boolean by Delegates.observable(false) { _, old, new ->
-		if (new != old) {
-		}
-	}
-	var showHSB: Boolean by Delegates.observable(false) { _, old, new ->
-		if (new != old) {
-		}
-	}
-	var showHex: Boolean by Delegates.observable(false) { _, old, new ->
-		if (new != old) {
 		}
 	}
 
@@ -131,15 +144,15 @@ class ColorPickerWindow() : BorderPane() {
 		pngDisplay.image = javaClass.getResourceAsStream("/images/color_wheel.png")?.let { Image(it) }
 
 		// Update the display canvas when the base color changes
-		hueColorSlider.valueProperty().addListener { observable, oldValue, newValue ->
+		hueColorSlider.valueProperty().addListener { _, _, _ ->
 			updateHue()
 		}
 
-		alphaSlider.valueProperty().addListener { observable, oldValue, newValue ->
+		alphaSlider.valueProperty().addListener { _, _, _ ->
 			getColor()
 		}
 
-		brightnessSlider.valueProperty().addListener { observable, oldValue, newValue ->
+		brightnessSlider.valueProperty().addListener { _, _, _ ->
 			getColor()
 		}
 
@@ -147,6 +160,7 @@ class ColorPickerWindow() : BorderPane() {
 			lastMousePositionProperty.value = Point2D(event.x, event.y)
 			getColor()
 		}
+
 		interactableCanvas.onMouseClicked = storePoint
 		interactableCanvas.onMouseDragged = storePoint
 
@@ -158,6 +172,7 @@ class ColorPickerWindow() : BorderPane() {
 				oldColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, radii, null))
 			}
 		}
+
 		selectingColorProperty.addListener { _, _, newColor ->
 			val radii = CornerRadii(8.0, 8.0, 0.0, 0.0, false)
 			if (newColor != null) {
@@ -166,6 +181,21 @@ class ColorPickerWindow() : BorderPane() {
 				newColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, radii, null))
 			}
 		}
+
+		advancedModeToggle.selectedProperty().addListener { observable, oldValue, newValue ->
+			if (newValue) {
+				advancedModeIndicator.content = Constants.EXPANDED
+			} else {
+				advancedModeIndicator.content = Constants.COLLAPSED
+			}
+		}
+
+		advancedElementsContainer.visibleProperty().bind(advancedModeToggle.selectedProperty())
+		advancedElementsContainer.managedProperty().bind(advancedModeToggle.selectedProperty())
+
+
+
+
 
 		if (isHueSelector) {
 			hueColorSlider.isVisible = true

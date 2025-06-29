@@ -63,6 +63,11 @@ class SettingElement() : AnchorPane() {
         }
     }
 
+    val rectClip = Rectangle().apply {
+        arcHeight = 13.0
+        arcWidth = 13.0
+    }
+
     init {
         FXMLLoader(javaClass.getResource("/view/components/settingElement.fxml")).apply {
             setRoot(this@SettingElement)
@@ -70,16 +75,16 @@ class SettingElement() : AnchorPane() {
             load()
         }
 
-        expandablePane.managedProperty().bind(expandedProperty)
-        expandablePane.visibleProperty().bind(expandedProperty)
+        expandablePane.managedProperty().set(expandedProperty.get())
+        expandablePane.visibleProperty().set(expandedProperty.get())
 
         expandedProperty.addListener { _, _, newValue ->
+            animateExpand()
             if (expandableContent == null) {
                 Globals.logger?.warning("Expandable content is null, cannot expand setting element")
                 expandedProperty.set(false)
                 return@addListener
             }
-            animateExpand()
             if (newValue) {
                 expandedIndicator.content = Constants.EXPANDED
             } else {
@@ -90,16 +95,11 @@ class SettingElement() : AnchorPane() {
 
     @FXML
     fun initialize() {
-        val rectClip = Rectangle().apply {
-            arcHeight = 13.0
-            arcWidth = 13.0
-        }
         clip = rectClip
         layoutBoundsProperty().addListener { _, _, bounds ->
             rectClip.width = bounds.width
-            rectClip.height = bounds.height
         }
-
+        rectClip.height = displayPane.prefHeight
 
         displayPane.onMouseClicked = EventHandler { evt ->
             if (quickSetting != null && isDescendantOf(evt.target as? Node, quickSetting!!)) {
@@ -122,28 +122,42 @@ class SettingElement() : AnchorPane() {
         return false
     }
 
-    fun setTitle(title: String) {
-        this.title.text = title
-    }
-
     fun animateExpand() {
         if (expandedProperty.get())
             pseudoClassStateChanged(PseudoClass.getPseudoClass("expanded"), expandedProperty.get())
-        Timeline(
-            KeyFrame(
-                Duration.millis(200.0),
-                KeyValue(prefHeightProperty(),
-                    if (expandedProperty.get())
-                        (expandableContent?.height ?: 0.0) +
+
+        val newHeight = if (expandedProperty.get())
+                (expandableContent?.height ?: 0.0) +
                         (expandablePane.padding?.top ?: 8.0) +
                         (expandablePane.padding?.bottom ?: 8.0) +
                         displayPane.height
-                    else
-                        displayPane.height
-                    )
-                ),
+        else
+            displayPane.height
+
+        Timeline(
+            KeyFrame(Duration.ZERO,
+                {
+                    if (expandedProperty.get()) {
+                        expandablePane.visibleProperty().set(true)
+                        expandablePane.managedProperty().set(true)
+                    }
+                }
+            ),
+            KeyFrame(
+                Duration.millis(200.0),
+                KeyValue( prefHeightProperty(), newHeight ),
+                KeyValue( maxHeightProperty(), newHeight ),
+                KeyValue( minHeightProperty(), newHeight ),
+                KeyValue( rectClip.heightProperty(), newHeight )
+            ),
             KeyFrame(Duration.millis(200.0),
-                { pseudoClassStateChanged(PseudoClass.getPseudoClass("expanded"), expandedProperty.get()) }
+                {
+                    pseudoClassStateChanged(PseudoClass.getPseudoClass("expanded"), expandedProperty.get())
+                    if (!expandedProperty.get()) {
+                        expandablePane.visibleProperty().set(false)
+                        expandablePane.managedProperty().set(false)
+                    }
+                }
             )
         ).play()
     }
