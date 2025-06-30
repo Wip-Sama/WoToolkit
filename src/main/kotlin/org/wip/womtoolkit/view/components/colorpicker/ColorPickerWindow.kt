@@ -30,6 +30,7 @@ import javafx.scene.paint.LinearGradient
 import javafx.scene.paint.Stop
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
+import org.wip.womtoolkit.model.LocalizationService
 import org.wip.womtoolkit.model.Lsp
 import java.awt.Color.HSBtoRGB
 import java.awt.Color.RGBtoHSB
@@ -37,6 +38,12 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.properties.Delegates
+/*
+* TODO: - Rework components hiding
+*  - Lock TextField to accept only number in theirs range
+*  - Bind text fields vale / sliders / interactable canvas to the selecting color and update them on change
+*  - SVGPAth are the wrong color
+*  */
 
 class ColorPickerWindow() : BorderPane() {
 	object Constants {
@@ -83,13 +90,12 @@ class ColorPickerWindow() : BorderPane() {
 	@FXML lateinit var alphaLabel: Label
 
 	private val selectedColorProperty = SimpleObjectProperty<Color>(Color.RED)
-	private val selectingColorProperty = SimpleObjectProperty<Color>()
-
-	val selectingColor: Color
-		get() = selectingColorProperty.value ?: Color.BLACK
-
 	val selectedColor: Color
 		get() = selectedColorProperty.value ?: Color.TRANSPARENT
+
+	private val selectingColorProperty = SimpleObjectProperty<Color>()
+	val selectingColor: Color
+		get() = selectingColorProperty.value ?: Color.BLACK
 
 	private val lastMousePositionProperty = SimpleObjectProperty<Point2D?>()
 
@@ -127,6 +133,7 @@ class ColorPickerWindow() : BorderPane() {
 
 	@FXML
 	fun initialize() {
+		/* Borders for the canvas */
 		val rectClip = Rectangle().apply {
 			arcHeight = 18.0
 			arcWidth = 18.0
@@ -141,29 +148,129 @@ class ColorPickerWindow() : BorderPane() {
 		brightnessTooltip.textProperty().bind(Lsp.lsb("colorPicker.brightness.tooltip"))
 		alphaTooltip.textProperty().bind(Lsp.lsb("colorPicker.alpha.tooltip"))
 
-		pngDisplay.image = javaClass.getResourceAsStream("/images/color_wheel.png")?.let { Image(it) }
-
-		// Update the display canvas when the base color changes
-		hueColorSlider.valueProperty().addListener { _, _, _ ->
-			updateHue()
+		if (isHueSelector) {
+			hueColorSlider.valueProperty().addListener { _, _, _ -> updateBaseHue() }
+			hueColorSlider.value = colorToInt(getBaseColor(selectedColorProperty.value)).toDouble()
+			updateBaseHue()
+			lastMousePositionProperty.value = getCoordinateFromColor(selectedColor)
+		} else {
+			pngDisplay.image = javaClass.getResourceAsStream("/images/color_wheel.png")?.let { Image(it) }
+			brightnessSlider.valueProperty().addListener { _, _, _ -> getColor() }
 		}
 
-		alphaSlider.valueProperty().addListener { _, _, _ ->
-			getColor()
+		if (isAlphaAvailable) {
+			alphaSlider.valueProperty().addListener { _, _, _ -> getColor() }
 		}
 
-		brightnessSlider.valueProperty().addListener { _, _, _ ->
-			getColor()
+		modeSelector.onMouseClicked = EventHandler {
+			modeSelector.hide()
+			Platform.runLater {
+				modeSelector.show()
+			}
 		}
 
+		fun localizeModeSelector() {
+			val index = modeSelector.selectionModel.selectedIndex
+			modeSelector.items.clear()
+			modeSelector.items.addAll(
+				Lsp.lsb("colorPicker.advancedMode.rgb").value,
+				Lsp.lsb("colorPicker.advancedMode.hue").value
+			)
+			modeSelector.selectionModel.select(index)
+		}
+
+		localizeModeSelector()
+		modeSelector.value = Lsp.lsb("colorPicker.advancedMode.rgb").value
+
+		LocalizationService.currentLocaleProperty.addListener { _, _, _ ->
+			localizeModeSelector()
+		}
+
+		selectingColorProperty.addListener { _, _, _ ->
+			// Update hex value
+			hexValue.text = if (selectingColorProperty.value != null) {
+				String.format("#%02X%02X%02X%02X",
+					(selectingColorProperty.value!!.red * 255).toInt(),
+					(selectingColorProperty.value!!.green * 255).toInt(),
+					(selectingColorProperty.value!!.blue * 255).toInt(),
+					(selectingColorProperty.value!!.opacity * 255).toInt()
+				)
+			} else {
+				""
+			}
+
+			// Update RGB values
+			if (modeSelector.selectionModel.selectedIndex == 0) {
+				firstValue.text = ((selectingColorProperty.value?.red ?: 0.0) * 255).toInt().toString()
+				secondValue.text = ((selectingColorProperty.value?.green ?: 0.0) * 255).toInt().toString()
+				thirdValue.text = ((selectingColorProperty.value?.blue ?: 0.0) * 255).toInt().toString()
+				firstLabel.text = Lsp.lsb("colorPicker.rgb.red").value
+				secondLabel.text = Lsp.lsb("colorPicker.rgb.green").value
+				thirdLabel.text = Lsp.lsb("colorPicker.rgb.blue").value
+			} else {
+				val hsb = RGBtoHSB(
+					((selectingColorProperty.value?.red ?: 0.0) * 255).toInt(),
+					((selectingColorProperty.value?.green ?: 0.0) * 255).toInt(),
+					((selectingColorProperty.value?.blue ?: 0.0) * 255).toInt(),
+					null
+				)
+				firstValue.text = hsb[0].toString()
+				secondValue.text = (hsb[1] * 100).toInt().toString()
+				thirdValue.text = (hsb[2] * 100).toInt().toString()
+				firstLabel.text = Lsp.lsb("colorPicker.hsb.hue").value
+				secondLabel.text = Lsp.lsb("colorPicker.hsb.saturation").value
+				thirdLabel.text = Lsp.lsb("colorPicker.hsb.brightness").value
+			}
+			alphaValue.text = ((selectingColorProperty.value?.opacity ?: 1.0) * 100).toInt().toString()
+			alphaLabel.text = Lsp.lsb("colorPicker.alpha").value
+
+			drawSelectedColor(
+				lastMousePositionProperty.value?.x ?: 0.0,
+				lastMousePositionProperty.value?.y ?: 0.0,
+				selectingColorProperty.value ?: Color.BLACK
+			)
+		}
+
+		fun updateSelectingColorFromTextFields() {
+			var newColor: Color
+			if (modeSelector.selectionModel.selectedIndex == 0) {
+				// RGB mode
+				val red = firstValue.text.toIntOrNull()?.coerceIn(0, 255) ?: 0
+				val green = secondValue.text.toIntOrNull()?.coerceIn(0, 255) ?: 0
+				val blue = thirdValue.text.toIntOrNull()?.coerceIn(0, 255) ?: 0
+				val alpha = alphaValue.text.toDoubleOrNull()?.coerceIn(0.0, 100.0)?.div(100) ?: 1.0
+
+				newColor = Color(red / 255.0, green / 255.0, blue / 255.0, alpha)
+			} else {
+				// HSB mode
+				val hue = firstValue.text.toIntOrNull()?.coerceIn(0, 360) ?: 0
+				val saturation = secondValue.text.toIntOrNull()?.coerceIn(0, 100)?.div(100.0) ?: 1.0
+				val brightness = thirdValue.text.toIntOrNull()?.coerceIn(0, 100)?.div(100.0) ?: 1.0
+				val alpha = alphaValue.text.toDoubleOrNull()?.coerceIn(0.0, 100.0)?.div(100) ?: 1.0
+
+				newColor = Color.hsb(hue.toDouble(), saturation, brightness, alpha)
+			}
+
+			if (selectingColorProperty.value != newColor)
+				selectingColorProperty.value = newColor
+		}
+
+		hexValue.textProperty().addListener { _, _, newValue -> }
+		firstValue.textProperty().addListener { _, _, newValue -> updateSelectingColorFromTextFields() }
+		secondValue.textProperty().addListener { _, _, newValue -> updateSelectingColorFromTextFields() }
+		thirdValue.textProperty().addListener { _, _, newValue -> updateSelectingColorFromTextFields() }
+		alphaValue.textProperty().addListener { _, _, newValue -> updateSelectingColorFromTextFields() }
+
+		/* Save the mouse position when the user interact with the canvas and get the color */
 		val storePoint = EventHandler<MouseEvent> { event ->
 			lastMousePositionProperty.value = Point2D(event.x, event.y)
 			getColor()
 		}
-
 		interactableCanvas.onMouseClicked = storePoint
 		interactableCanvas.onMouseDragged = storePoint
 
+
+		/* Auto update color preview */
 		selectedColorProperty.addListener { _, _, newColor ->
 			val radii = CornerRadii(0.0, 0.0, 8.0, 8.0, false)
 			if (newColor != null) {
@@ -172,7 +279,6 @@ class ColorPickerWindow() : BorderPane() {
 				oldColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, radii, null))
 			}
 		}
-
 		selectingColorProperty.addListener { _, _, newColor ->
 			val radii = CornerRadii(8.0, 8.0, 0.0, 0.0, false)
 			if (newColor != null) {
@@ -182,6 +288,8 @@ class ColorPickerWindow() : BorderPane() {
 			}
 		}
 
+
+		/* Show advanced settings */
 		advancedModeToggle.selectedProperty().addListener { observable, oldValue, newValue ->
 			if (newValue) {
 				advancedModeIndicator.content = Constants.EXPANDED
@@ -194,51 +302,28 @@ class ColorPickerWindow() : BorderPane() {
 		advancedElementsContainer.managedProperty().bind(advancedModeToggle.selectedProperty())
 
 
+		/* Manage components visibility */
+		hueColorSlider.isVisible = isHueSelector
+		hueColorSlider.isManaged = isHueSelector
+		canvasDisplay.isVisible = isHueSelector
+		canvasDisplay.isManaged = isHueSelector
+
+		pngDisplay.isVisible = !isHueSelector
+		pngDisplay.isManaged = !isHueSelector
+		brightnessSlider.isVisible = !isHueSelector
+		brightnessSlider.isManaged = !isHueSelector
+
+		alphaSlider.isVisible = isAlphaAvailable
+		alphaSlider.isManaged = isAlphaAvailable
 
 
-
-		if (isHueSelector) {
-			hueColorSlider.isVisible = true
-			hueColorSlider.isManaged = true
-			canvasDisplay.isVisible = true
-			canvasDisplay.isManaged = true
-
-			pngDisplay.isVisible = false
-			pngDisplay.isManaged = false
-			brightnessSlider.isVisible = false
-			brightnessSlider.isManaged = false
-
-			hueColorSlider.value = colorToInt(getBaseColor(selectedColorProperty.value)).toDouble()
-			updateHue()
-			//TODO: the cursor is still not showing
-			lastMousePositionProperty.value = getCoordinateFromColor(selectedColor)
-		} else {
-			hueColorSlider.isVisible = false
-			hueColorSlider.isManaged = false
-			canvasDisplay.isVisible = false
-			canvasDisplay.isManaged = false
-
-			pngDisplay.isVisible = true
-			pngDisplay.isManaged = true
-			brightnessSlider.isVisible = true
-			brightnessSlider.isManaged = true
-		}
-
-		if (isAlphaAvailable) {
-			alphaSlider.isVisible = true
-			alphaSlider.isManaged = true
-		} else {
-			alphaSlider.isVisible = false
-			alphaSlider.isManaged = false
-		}
-
+		/* Interactions */
 		confirmButton.onAction = EventHandler {
 			selectedColorProperty.value = selectingColorProperty.value ?: Color.BLACK
 			Platform.runLater {
 				updateColorPreview()
 			}
 		}
-
 		cancelButton.onAction = EventHandler {
 			selectingColorProperty.value = null
 			lastMousePositionProperty.value = null
@@ -265,32 +350,6 @@ class ColorPickerWindow() : BorderPane() {
 		} else {
 			newColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, upCorners, null))
 		}
-	}
-
-	private fun updateHue() {
-		val gc = canvasDisplay.graphicsContext2D
-
-		//Base color
-		gc.fill = intToColor(hueColorSlider.value.toInt())
-		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
-
-		//Brightness
-		val verticalGradient = LinearGradient(
-			0.0, 0.0, 0.0, 1.0, true, CycleMethod.NO_CYCLE,
-			listOf(Stop(0.0, Color.TRANSPARENT), Stop(1.0, Color.BLACK))
-		)
-
-		//Saturation
-		val horizontalGradient = LinearGradient(
-			0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE,
-			listOf(Stop(0.0, Color.WHITE), Stop(1.0, Color.TRANSPARENT))
-		)
-
-		gc.fill = horizontalGradient
-		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
-		gc.fill = verticalGradient
-		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
-		getColor()
 	}
 
 	private fun getColor() {
@@ -329,17 +388,6 @@ class ColorPickerWindow() : BorderPane() {
 		drawSelectedColor(x, y, selectingColorProperty.value)
 	}
 
-	private fun getCoordinateFromColor(color: Color): Point2D {
-		val baseColor = intToColor(hueColorSlider.value.toInt())
-		val saturation = 1 - (color.red - baseColor.red) / (1 - baseColor.red)
-		val brightness = 1 - (color.green - baseColor.green) / (1 - baseColor.green)
-
-		val x = saturation * canvasDisplay.width
-		val y = brightness * canvasDisplay.height
-
-		return Point2D(x, y)
-	}
-
 	private fun getColorFromHue() {
 		if (lastMousePositionProperty.value == null) return
 		val x = clamp(lastMousePositionProperty.value!!.x, 0.0, canvasDisplay.width)
@@ -356,6 +404,43 @@ class ColorPickerWindow() : BorderPane() {
 
 		selectingColorProperty.value = Color(r,g,b,a)
 		drawSelectedColor(x, y, selectingColorProperty.value)
+	}
+
+	private fun updateBaseHue() {
+		val gc = canvasDisplay.graphicsContext2D
+
+		//Base color
+		gc.fill = intToColor(hueColorSlider.value.toInt())
+		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
+
+		//Brightness
+		val verticalGradient = LinearGradient(
+			0.0, 0.0, 0.0, 1.0, true, CycleMethod.NO_CYCLE,
+			listOf(Stop(0.0, Color.TRANSPARENT), Stop(1.0, Color.BLACK))
+		)
+
+		//Saturation
+		val horizontalGradient = LinearGradient(
+			0.0, 0.0, 1.0, 0.0, true, CycleMethod.NO_CYCLE,
+			listOf(Stop(0.0, Color.WHITE), Stop(1.0, Color.TRANSPARENT))
+		)
+
+		gc.fill = horizontalGradient
+		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
+		gc.fill = verticalGradient
+		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
+		getColor()
+	}
+
+	private fun getCoordinateFromColor(color: Color): Point2D {
+		val baseColor = intToColor(hueColorSlider.value.toInt())
+		val saturation = 1 - (color.red - baseColor.red) / (1 - baseColor.red)
+		val brightness = 1 - (color.green - baseColor.green) / (1 - baseColor.green)
+
+		val x = saturation * canvasDisplay.width
+		val y = brightness * canvasDisplay.height
+
+		return Point2D(x, y)
 	}
 
 	private fun drawSelectedColor(x: Double, y: Double, color: Color, size: Double = 5.0) {

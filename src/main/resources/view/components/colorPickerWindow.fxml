@@ -60,8 +60,11 @@
                </tooltip></Slider>
             <HBox alignment="CENTER_RIGHT">
                <children>
-                  <ToggleButton fx:id="advancedModeToggle" contentDisplay="RIGHT" maxHeight="24.0" minHeight="24.0" mnemonicParsing="false" prefHeight="24.0" text="ToggleButton" />
-                  <SVGPath fx:id="advancedModeIndicator" content="M4.29289 8.29289C4.68342 7.90237 5.31658 7.90237 5.70711 8.29289L12 14.5858L18.2929 8.29289C18.6834 7.90237 19.3166 7.90237 19.7071 8.29289C20.0976 8.68342 20.0976 9.31658 19.7071 9.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L4.29289 9.70711C3.90237 9.31658 3.90237 8.68342 4.29289 8.29289Z" />
+                  <ToggleButton fx:id="advancedModeToggle" contentDisplay="RIGHT" maxHeight="24.0" minHeight="24.0" mnemonicParsing="false" prefHeight="24.0" text="ToggleButton">
+                     <graphic>
+                        <SVGPath fx:id="advancedModeIndicator" content="M4.29289 8.29289C4.68342 7.90237 5.31658 7.90237 5.70711 8.29289L12 14.5858L18.2929 8.29289C18.6834 7.90237 19.3166 7.90237 19.7071 8.29289C20.0976 8.68342 20.0976 9.31658 19.7071 9.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L4.29289 9.70711C3.90237 9.31658 3.90237 8.68342 4.29289 8.29289Z" />
+                     </graphic>
+                  </ToggleButton>
                </children>
             </HBox>
             <VBox fx:id="advancedElementsContainer" alignment="TOP_RIGHT" spacing="8.0">
@@ -94,13 +97,13 @@
                   <HBox fx:id="thirdContainer" alignment="CENTER_LEFT" spacing="8.0">
                      <children>
                         <TextField fx:id="thirdValue" prefWidth="100.0" />
-                        <Label fx:id="thirdlabel" text="Label" />
+                        <Label fx:id="thirdLabel" text="Label" />
                      </children>
                   </HBox>
-                  <HBox fx:id="opacityContainer" alignment="CENTER_LEFT" spacing="8.0">
+                  <HBox fx:id="alphaContainer" alignment="CENTER_LEFT" spacing="8.0">
                      <children>
-                        <TextField fx:id="opacityValue" prefWidth="100.0" />
-                        <Label fx:id="opacityContainer" text="Label" />
+                        <TextField fx:id="alphaValue" prefWidth="100.0" />
+                        <Label fx:id="alphaLabel" text="Label" />
                      </children>
                   </HBox>
                </children>

@@ -5,6 +5,7 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.geometry.Insets
+import javafx.geometry.Pos
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Label
 import javafx.scene.control.Separator
@@ -85,37 +86,14 @@ class GeneralSettings : VBox() {
 
 	@FXML
 	fun initialize() {
-		themeSetting.title.textProperty().bind(Lsp.lsb("settingsPage.general.theme.title"))
-		themeSetting.description.textProperty().bind(Lsp.lsb("settingsPage.general.theme.description"))
-		localizationSetting.title.textProperty().bind(Lsp.lsb("settingsPage.general.language.title"))
-		localizationSetting.description.textProperty().bind(Lsp.lsb("settingsPage.general.language.description"))
-		startingPageSetting.title.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.title"))
-		startingPageSetting.description.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.description"))
 
-		fun getSelectableColorPicker(): ColorPickerButton {
-			return ColorPickerButton().apply {
-				scope.launch(Dispatchers.IO) {
-					ApplicationSettings.userSettings.accentFlow.collectLatest { newColor ->
-						withContext(Dispatchers.JavaFx) {
-							isSelectedProperty.value = newColor == colorProperty.value
-						}
-					}
-				}
-				onAction = EventHandler {
-					ApplicationSettings.userSettings.accent = colorProperty.value
-				}
-				colorProperty.addListener { _, _, newColor ->
-					isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent
-				}
-				Platform.runLater {
-					isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent
-				}
-			}
-		}
 
 		accentSetting.apply {
 			title.textProperty().bind(Lsp.lsb("settingsPage.general.accent.title"))
 			description.textProperty().bind(Lsp.lsb("settingsPage.general.accent.description"))
+			imageContainer.center = SVGPath().apply {
+				content = Constants.ACCENT
+			}
 			quickSetting = ColorPickerButton().apply {
 				isColorPickerAvailable = true
 				colorProperty.value = ApplicationSettings.userSettings.accent
@@ -136,6 +114,28 @@ class GeneralSettings : VBox() {
 			}
 			expandableContent = VBox().apply {
 				spacing = 8.0
+
+				fun getSelectableColorPicker(): ColorPickerButton {
+					return ColorPickerButton().apply {
+						scope.launch(Dispatchers.IO) {
+							ApplicationSettings.userSettings.accentFlow.collectLatest { newColor ->
+								withContext(Dispatchers.JavaFx) {
+									isSelectedProperty.value = newColor == colorProperty.value
+								}
+							}
+						}
+						onAction = EventHandler {
+							ApplicationSettings.userSettings.accent = colorProperty.value
+						}
+						colorProperty.addListener { _, _, newColor ->
+							isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent
+						}
+						Platform.runLater {
+							isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent
+						}
+					}
+				}
+
 				children.addAll(
 					VBox().apply {
 						setMargin(this, Insets(0.0, 0.0, 0.0, 55.0))
@@ -195,80 +195,118 @@ class GeneralSettings : VBox() {
 			}
 		}
 
-		accentSetting.imageContainer.center = SVGPath().apply {
-			content = Constants.ACCENT
-		}
-
-		themeSetting.quickSetting = Switch(ApplicationSettings.userSettings.theme == "dark").apply {
-			trueLocalization = "settingsPage.general.theme.dark"
-			falseLocalization = "settingsPage.general.theme.light"
-
-			fun updateTheme() {
-				ApplicationSettings.userSettings.theme = if (state) "dark" else "light"
+		themeSetting.apply {
+			title.textProperty().bind(Lsp.lsb("settingsPage.general.theme.title"))
+			description.textProperty().bind(Lsp.lsb("settingsPage.general.theme.description"))
+			imageContainer.center = SVGPath().apply {
+				content = Constants.THEME
 			}
-			stateProperty.addListener { observable, oldValue, newValue ->
-				if (newValue != oldValue) {
-					updateTheme()
+			quickSetting = Switch(ApplicationSettings.userSettings.theme == "dark").apply {
+				trueLocalization = "settingsPage.general.theme.dark"
+				falseLocalization = "settingsPage.general.theme.light"
+
+				fun updateTheme() {
+					ApplicationSettings.userSettings.theme = if (state) "dark" else "light"
 				}
-			}
 
-			scope.launch {
-				ApplicationSettings.userSettings.themeFlow.collectLatest { newTheme ->
-					withContext(Dispatchers.JavaFx) {
-						state = newTheme == "dark"
+				stateProperty.addListener { observable, oldValue, newValue ->
+					if (newValue != oldValue) {
+						updateTheme()
+					}
+				}
+
+				scope.launch {
+					ApplicationSettings.userSettings.themeFlow.collectLatest { newTheme ->
+						withContext(Dispatchers.JavaFx) {
+							state = newTheme == "dark"
+						}
 					}
 				}
 			}
 		}
-		themeSetting.imageContainer.center = SVGPath().apply {
-			content = Constants.THEME
-		}
 
-		localizationSetting.quickSetting = ChoiceBox<String>().apply {
-			items.addAll(LocalizationService.locales)
-			value = LocalizationService.currentLocale
-			onMouseClicked = EventHandler {
-				hide()
-				Platform.runLater {
-					show()
+		localizationSetting.apply {
+			title.textProperty().bind(Lsp.lsb("settingsPage.general.language.title"))
+			description.textProperty().bind(Lsp.lsb("settingsPage.general.language.description"))
+			imageContainer.center = SVGPath().apply {
+				content = Constants.LOCALIZATION
+			}
+			quickSetting = ChoiceBox<String>().apply {
+				items.addAll(LocalizationService.locales)
+				value = LocalizationService.currentLocale
+				onMouseClicked = EventHandler {
+					hide()
+					Platform.runLater {
+						show()
+					}
+				}
+				valueProperty().addListener { _, _, newValue ->
+					ApplicationSettings.userSettings.localization = newValue
+
 				}
 			}
-			valueProperty().addListener { _, _, newValue ->
-				ApplicationSettings.userSettings.localization = newValue
-			}
-		}
-		localizationSetting.imageContainer.center = SVGPath().apply {
-			content = Constants.LOCALIZATION
 		}
 
-		startingPageSetting.quickSetting = ChoiceBox<String>().apply {
-			items.addAll("None", "Slicer", "Converter")
-			value = "None"
-			onMouseClicked = EventHandler {
-				hide()
-				Platform.runLater {
-					show()
+		//TODO: complete
+		startingPageSetting.apply {
+			title.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.title"))
+			description.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.description"))
+			imageContainer.center = SVGPath().apply {
+				content = Constants.STARTING_PAGE
+			}
+			quickSetting = ChoiceBox<String>().apply {
+				items.addAll("None", "Slicer", "Converter")
+				value = "None"
+				onMouseClicked = EventHandler {
+					hide()
+					Platform.runLater {
+						show()
+					}
+				}
+				valueProperty().addListener { _, _, newValue ->
+					println("Starting page changed to: $newValue")
 				}
 			}
-			valueProperty().addListener { _, _, newValue ->
-				println("Starting page changed to: $newValue")
-			}
-		}
-		startingPageSetting.imageContainer.center = SVGPath().apply {
-			content = Constants.STARTING_PAGE
 		}
 
 		//isColorPickerHueSelector
 		children.add(SettingElement().apply {
-			quickSetting = Switch(false).apply {
-				trueLocalization = "settingsPage.general.isColorPickerHueSelector.hueSelector"
-				falseLocalization = "settingsPage.general.isColorPickerHueSelector.imageSelector"
-			}
+			title.textProperty().bind(Lsp.lsb("settingsPage.general.colorPickerMode.title"))
+			description.textProperty().bind(Lsp.lsb("settingsPage.general.colorPickerMode.description"))
 			imageContainer.center = SVGPath().apply {
 				content = Constants.COLOR_PICKER_MODE
 			}
-			title.textProperty().bind(Lsp.lsb("settingsPage.general.isColorPickerHueSelector.title"))
-			description.textProperty().bind(Lsp.lsb("settingsPage.general.isColorPickerHueSelector.description"))
+			expandableContent = VBox().apply {
+				spacing = 8.0
+				children.addAll(
+					HBox().apply {
+						setMargin(this, Insets(0.0, 0.0, 0.0, 55.0))
+						children.addAll(
+							Switch(true).apply {
+								trueLocalization = "settingsPage.general.colorPickerMode.hueSelector"
+								falseLocalization = "settingsPage.general.colorPickerMode.imageSelector"
+							}
+						)
+
+					},
+					Separator().apply {},
+					GridPane().apply {
+						hgap = 8.0
+						vgap = 8.0
+						setMargin(this, Insets(0.0, 0.0, 0.0, 55.0))
+						add(Label().apply {
+							textProperty().bind(Lsp.lsb("settingsPage.general.colorPickerMode.hueSelector"))
+							alignment = Pos.CENTER_LEFT
+						}, 0, 0)
+						val switch = Switch(false).apply {
+							trueLocalization = "settingsPage.general.colorPickerMode.alphaAvailable"
+							falseLocalization = "settingsPage.general.colorPickerMode.alphaUnavailable"
+						}
+						add(switch, 1, 0)
+						GridPane.setHalignment(switch, javafx.geometry.HPos.RIGHT)
+					}
+				)
+			}
 		})
 	}
 }
