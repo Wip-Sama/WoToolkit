@@ -1,43 +1,35 @@
 package org.wip.womtoolkit.view.components.colorpicker
 
 import javafx.application.Platform
+import javafx.beans.property.BooleanProperty
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.geometry.Point2D
 import javafx.scene.canvas.Canvas
-import javafx.scene.control.Button
-import javafx.scene.control.ChoiceBox
-import javafx.scene.control.Label
-import javafx.scene.control.Slider
-import javafx.scene.control.TextField
-import javafx.scene.control.ToggleButton
-import javafx.scene.control.Tooltip
+import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseEvent
-import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.Background
-import javafx.scene.layout.BackgroundFill
-import javafx.scene.layout.BorderPane
-import javafx.scene.layout.CornerRadii
-import javafx.scene.layout.Pane
-import javafx.scene.layout.VBox
+import javafx.scene.layout.*
 import javafx.scene.paint.Color
 import javafx.scene.paint.CycleMethod
 import javafx.scene.paint.LinearGradient
 import javafx.scene.paint.Stop
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
+import javafx.util.StringConverter
 import org.wip.womtoolkit.model.LocalizationService
 import org.wip.womtoolkit.model.Lsp
 import java.awt.Color.HSBtoRGB
 import java.awt.Color.RGBtoHSB
+import java.util.function.UnaryOperator
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
-import kotlin.properties.Delegates
+
 /*
 * TODO: - Rework components hiding
 *  - Lock TextField to accept only number in theirs range
@@ -89,6 +81,8 @@ class ColorPickerWindow() : BorderPane() {
 	@FXML lateinit var alphaValue: TextField
 	@FXML lateinit var alphaLabel: Label
 
+	private var isUpdatingFields = false
+
 	private val selectedColorProperty = SimpleObjectProperty<Color>(Color.RED)
 	val selectedColor: Color
 		get() = selectedColorProperty.value ?: Color.TRANSPARENT
@@ -99,25 +93,8 @@ class ColorPickerWindow() : BorderPane() {
 
 	private val lastMousePositionProperty = SimpleObjectProperty<Point2D?>()
 
-	var isHueSelector: Boolean by Delegates.observable(true) { _, old, new ->
-		if (new != old) {
-			hueColorSlider.isVisible = new
-			hueColorSlider.isManaged = new
-			canvasDisplay.isVisible = new
-			canvasDisplay.isManaged = new
-
-			pngDisplay.isVisible = !new
-			pngDisplay.isManaged = !new
-			brightnessSlider.isVisible = !new
-			brightnessSlider.isManaged = !new
-		}
-	}
-	var isAlphaAvailable: Boolean by Delegates.observable(false) { _, old, new ->
-		if (new != old) {
-			alphaSlider.isVisible = new
-			alphaSlider.isManaged = new
-		}
-	}
+	var isHueSelectorProperty: BooleanProperty = SimpleBooleanProperty(true)
+	var isAlphaAvailableProperty: BooleanProperty = SimpleBooleanProperty(false)
 
 	constructor(color: Color) : this() {
 		selectedColorProperty.value = color
@@ -130,6 +107,7 @@ class ColorPickerWindow() : BorderPane() {
 			load()
 		}
 	}
+
 
 	@FXML
 	fun initialize() {
@@ -144,178 +122,11 @@ class ColorPickerWindow() : BorderPane() {
 			rectClip.height = bounds.height
 		}
 
-		hueColorTooltip.textProperty().bind(Lsp.lsb("colorPicker.hue.tooltip"))
-		brightnessTooltip.textProperty().bind(Lsp.lsb("colorPicker.brightness.tooltip"))
-		alphaTooltip.textProperty().bind(Lsp.lsb("colorPicker.alpha.tooltip"))
-
-		if (isHueSelector) {
-			hueColorSlider.valueProperty().addListener { _, _, _ -> updateBaseHue() }
-			hueColorSlider.value = colorToInt(getBaseColor(selectedColorProperty.value)).toDouble()
-			updateBaseHue()
-			lastMousePositionProperty.value = getCoordinateFromColor(selectedColor)
-		} else {
-			pngDisplay.image = javaClass.getResourceAsStream("/images/color_wheel.png")?.let { Image(it) }
-			brightnessSlider.valueProperty().addListener { _, _, _ -> getColor() }
-		}
-
-		if (isAlphaAvailable) {
-			alphaSlider.valueProperty().addListener { _, _, _ -> getColor() }
-		}
-
-		modeSelector.onMouseClicked = EventHandler {
-			modeSelector.hide()
-			Platform.runLater {
-				modeSelector.show()
-			}
-		}
-
-		fun localizeModeSelector() {
-			val index = modeSelector.selectionModel.selectedIndex
-			modeSelector.items.clear()
-			modeSelector.items.addAll(
-				Lsp.lsb("colorPicker.advancedMode.rgb").value,
-				Lsp.lsb("colorPicker.advancedMode.hue").value
-			)
-			modeSelector.selectionModel.select(index)
-		}
-
-		localizeModeSelector()
-		modeSelector.value = Lsp.lsb("colorPicker.advancedMode.rgb").value
-
-		LocalizationService.currentLocaleProperty.addListener { _, _, _ ->
-			localizeModeSelector()
-		}
-
-		selectingColorProperty.addListener { _, _, _ ->
-			// Update hex value
-			hexValue.text = if (selectingColorProperty.value != null) {
-				String.format("#%02X%02X%02X%02X",
-					(selectingColorProperty.value!!.red * 255).toInt(),
-					(selectingColorProperty.value!!.green * 255).toInt(),
-					(selectingColorProperty.value!!.blue * 255).toInt(),
-					(selectingColorProperty.value!!.opacity * 255).toInt()
-				)
-			} else {
-				""
-			}
-
-			// Update RGB values
-			if (modeSelector.selectionModel.selectedIndex == 0) {
-				firstValue.text = ((selectingColorProperty.value?.red ?: 0.0) * 255).toInt().toString()
-				secondValue.text = ((selectingColorProperty.value?.green ?: 0.0) * 255).toInt().toString()
-				thirdValue.text = ((selectingColorProperty.value?.blue ?: 0.0) * 255).toInt().toString()
-				firstLabel.text = Lsp.lsb("colorPicker.rgb.red").value
-				secondLabel.text = Lsp.lsb("colorPicker.rgb.green").value
-				thirdLabel.text = Lsp.lsb("colorPicker.rgb.blue").value
-			} else {
-				val hsb = RGBtoHSB(
-					((selectingColorProperty.value?.red ?: 0.0) * 255).toInt(),
-					((selectingColorProperty.value?.green ?: 0.0) * 255).toInt(),
-					((selectingColorProperty.value?.blue ?: 0.0) * 255).toInt(),
-					null
-				)
-				firstValue.text = hsb[0].toString()
-				secondValue.text = (hsb[1] * 100).toInt().toString()
-				thirdValue.text = (hsb[2] * 100).toInt().toString()
-				firstLabel.text = Lsp.lsb("colorPicker.hsb.hue").value
-				secondLabel.text = Lsp.lsb("colorPicker.hsb.saturation").value
-				thirdLabel.text = Lsp.lsb("colorPicker.hsb.brightness").value
-			}
-			alphaValue.text = ((selectingColorProperty.value?.opacity ?: 1.0) * 100).toInt().toString()
-			alphaLabel.text = Lsp.lsb("colorPicker.alpha").value
-
-			drawSelectedColor(
-				lastMousePositionProperty.value?.x ?: 0.0,
-				lastMousePositionProperty.value?.y ?: 0.0,
-				selectingColorProperty.value ?: Color.BLACK
-			)
-		}
-
-		fun updateSelectingColorFromTextFields() {
-			var newColor: Color
-			if (modeSelector.selectionModel.selectedIndex == 0) {
-				// RGB mode
-				val red = firstValue.text.toIntOrNull()?.coerceIn(0, 255) ?: 0
-				val green = secondValue.text.toIntOrNull()?.coerceIn(0, 255) ?: 0
-				val blue = thirdValue.text.toIntOrNull()?.coerceIn(0, 255) ?: 0
-				val alpha = alphaValue.text.toDoubleOrNull()?.coerceIn(0.0, 100.0)?.div(100) ?: 1.0
-
-				newColor = Color(red / 255.0, green / 255.0, blue / 255.0, alpha)
-			} else {
-				// HSB mode
-				val hue = firstValue.text.toIntOrNull()?.coerceIn(0, 360) ?: 0
-				val saturation = secondValue.text.toIntOrNull()?.coerceIn(0, 100)?.div(100.0) ?: 1.0
-				val brightness = thirdValue.text.toIntOrNull()?.coerceIn(0, 100)?.div(100.0) ?: 1.0
-				val alpha = alphaValue.text.toDoubleOrNull()?.coerceIn(0.0, 100.0)?.div(100) ?: 1.0
-
-				newColor = Color.hsb(hue.toDouble(), saturation, brightness, alpha)
-			}
-
-			if (selectingColorProperty.value != newColor)
-				selectingColorProperty.value = newColor
-		}
-
-		hexValue.textProperty().addListener { _, _, newValue -> }
-		firstValue.textProperty().addListener { _, _, newValue -> updateSelectingColorFromTextFields() }
-		secondValue.textProperty().addListener { _, _, newValue -> updateSelectingColorFromTextFields() }
-		thirdValue.textProperty().addListener { _, _, newValue -> updateSelectingColorFromTextFields() }
-		alphaValue.textProperty().addListener { _, _, newValue -> updateSelectingColorFromTextFields() }
-
-		/* Save the mouse position when the user interact with the canvas and get the color */
-		val storePoint = EventHandler<MouseEvent> { event ->
-			lastMousePositionProperty.value = Point2D(event.x, event.y)
-			getColor()
-		}
-		interactableCanvas.onMouseClicked = storePoint
-		interactableCanvas.onMouseDragged = storePoint
-
-
-		/* Auto update color preview */
-		selectedColorProperty.addListener { _, _, newColor ->
-			val radii = CornerRadii(0.0, 0.0, 8.0, 8.0, false)
-			if (newColor != null) {
-				oldColorPane.background = Background(BackgroundFill(newColor, radii, null))
-			} else {
-				oldColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, radii, null))
-			}
-		}
-		selectingColorProperty.addListener { _, _, newColor ->
-			val radii = CornerRadii(8.0, 8.0, 0.0, 0.0, false)
-			if (newColor != null) {
-				newColorPane.background = Background(BackgroundFill(newColor, radii, null))
-			} else {
-				newColorPane.background = Background(BackgroundFill(Color.TRANSPARENT, radii, null))
-			}
-		}
-
-
-		/* Show advanced settings */
-		advancedModeToggle.selectedProperty().addListener { observable, oldValue, newValue ->
-			if (newValue) {
-				advancedModeIndicator.content = Constants.EXPANDED
-			} else {
-				advancedModeIndicator.content = Constants.COLLAPSED
-			}
-		}
-
-		advancedElementsContainer.visibleProperty().bind(advancedModeToggle.selectedProperty())
-		advancedElementsContainer.managedProperty().bind(advancedModeToggle.selectedProperty())
-
-
-		/* Manage components visibility */
-		hueColorSlider.isVisible = isHueSelector
-		hueColorSlider.isManaged = isHueSelector
-		canvasDisplay.isVisible = isHueSelector
-		canvasDisplay.isManaged = isHueSelector
-
-		pngDisplay.isVisible = !isHueSelector
-		pngDisplay.isManaged = !isHueSelector
-		brightnessSlider.isVisible = !isHueSelector
-		brightnessSlider.isManaged = !isHueSelector
-
-		alphaSlider.isVisible = isAlphaAvailable
-		alphaSlider.isManaged = isAlphaAvailable
-
+		/* Sliders */
+		initializeSliders()
+		initializeColorPreview()
+		initializeCanvases()
+		initializeAdvancedMode()
 
 		/* Interactions */
 		confirmButton.onAction = EventHandler {
@@ -337,6 +148,301 @@ class ColorPickerWindow() : BorderPane() {
 		}
 	}
 
+	private fun initializeSliders() {
+		/* Visibility */
+		hueColorSlider.visibleProperty().bind(isHueSelectorProperty)
+		hueColorSlider.managedProperty().bind(isHueSelectorProperty)
+		brightnessSlider.visibleProperty().bind(isHueSelectorProperty.not())
+		brightnessSlider.managedProperty().bind(isHueSelectorProperty.not())
+		alphaSlider.visibleProperty().bind(isAlphaAvailableProperty)
+		alphaSlider.managedProperty().bind(isAlphaAvailableProperty)
+		hueColorTooltip.textProperty().bind(Lsp.lsb("colorPicker.hue.tooltip"))
+		brightnessTooltip.textProperty().bind(Lsp.lsb("colorPicker.brightness.tooltip"))
+		alphaTooltip.textProperty().bind(Lsp.lsb("colorPicker.alpha.tooltip"))
+
+		/* Auto update */
+		brightnessSlider.valueProperty().addListener { _, _, _ ->
+			val newColor = getColorFromPngOrHue()
+			if (newColor != null && newColor != selectingColorProperty.value) {
+				selectingColorProperty.value = newColor
+			}
+		}
+		alphaSlider.valueProperty().addListener { _, _, _ ->
+			val newColor = getColorFromPngOrHue()
+			if (newColor != null && newColor != selectingColorProperty.value) {
+				selectingColorProperty.value = newColor
+			}
+		}
+		hueColorSlider.valueProperty().addListener { _, _, _ ->
+			updateBaseHue()
+			val newColor = getColorFromHue()
+			if (newColor != null && newColor != selectingColorProperty.value) {
+				selectingColorProperty.value = newColor
+			}
+		}
+
+		/* Initialization */
+		updateBaseHue()
+		hueColorSlider.value = colorToInt(getBaseColor(selectedColorProperty.value)).toDouble()
+		lastMousePositionProperty.value = getCoordinateFromColor(selectedColor)
+	}
+
+	private fun initializeColorPreview() {
+		/* Initialization */
+		oldColorPane.background = Background(BackgroundFill(selectedColorProperty.value, CornerRadii(0.0, 0.0, 8.0, 8.0, false), null))
+		newColorPane.background = Background(BackgroundFill(selectingColorProperty.value, CornerRadii(8.0, 8.0, 0.0, 0.0, false), null))
+
+		/* Auto update */
+		selectingColorProperty.addListener { _, _, newValue ->
+			newColorPane.background = Background(BackgroundFill(newValue, CornerRadii(8.0, 8.0, 0.0, 0.0, false), null))
+		}
+	}
+
+	private fun initializeCanvases() {
+		/* Initialization */
+		pngDisplay.image = javaClass.getResourceAsStream("/images/color_wheel.png")?.let { Image(it) }
+
+		/* Visibility */
+		canvasDisplay.visibleProperty().bind(isHueSelectorProperty)
+		canvasDisplay.managedProperty().bind(isHueSelectorProperty)
+		pngDisplay.visibleProperty().bind(isHueSelectorProperty.not())
+		pngDisplay.managedProperty().bind(isHueSelectorProperty.not())
+
+		/* Mouse interactions */
+		val storePoint = EventHandler<MouseEvent> { event ->
+			lastMousePositionProperty.value = Point2D(event.x, event.y)
+		}
+		interactableCanvas.onMouseClicked = storePoint
+		interactableCanvas.onMouseDragged = storePoint
+		lastMousePositionProperty.addListener { _, _, newValue ->
+			if (newValue != null) {
+				val color = getColorFromPngOrHue()
+				if (color != null && color != selectingColorProperty.value) {
+					selectingColorProperty.value = color
+					drawSelectedColor(newValue.x, newValue.y, color)
+				}
+			}
+		}
+		selectingColorProperty.addListener { _, _, newValue ->
+			drawSelectedColor(lastMousePositionProperty.value?.x ?: 0.0, lastMousePositionProperty.value?.y ?: 0.0, newValue)
+		}
+	}
+
+	private fun initializeAdvancedMode() {
+		/* Visibility */
+		advancedElementsContainer.visibleProperty().bind(advancedModeToggle.selectedProperty())
+		advancedElementsContainer.managedProperty().bind(advancedModeToggle.selectedProperty())
+		alphaValue.visibleProperty().bind(isAlphaAvailableProperty)
+		alphaLabel.visibleProperty().bind(isAlphaAvailableProperty)
+		alphaValue.managedProperty().bind(isAlphaAvailableProperty)
+		alphaLabel.managedProperty().bind(isAlphaAvailableProperty)
+
+		/* Color updater and text limiter */
+		val limit0_360 = UnaryOperator { change: TextFormatter.Change? ->
+			var newText = change!!.controlNewText
+			if (newText.isEmpty()) {
+				change.setText("0")
+				return@UnaryOperator change
+			}
+			try {
+				if (newText.length > 1) newText = newText.replace("^0+(?!$)".toRegex(), "")
+
+				val value = newText.toInt()
+				if (value >= 0 && value <= 360) {
+					return@UnaryOperator change
+				}
+			} catch (e: NumberFormatException) {
+				return@UnaryOperator null
+			}
+			null
+		}
+		val limit0_255 = UnaryOperator { change: TextFormatter.Change? ->
+			var newText = change!!.controlNewText
+			if (newText.isEmpty()) {
+				change.setText("0")
+				return@UnaryOperator change
+			}
+			try {
+				if (newText.length > 1) newText = newText.replace("^0+(?!$)".toRegex(), "")
+
+				val value = newText.toInt()
+				if (value >= 0 && value <= 255) {
+					return@UnaryOperator change
+				}
+			} catch (e: NumberFormatException) {
+				return@UnaryOperator null
+			}
+			null
+		}
+		val limit0_100 = UnaryOperator { change: TextFormatter.Change? ->
+			var newText = change!!.controlNewText
+			if (newText.isEmpty()) {
+				change.setText("0")
+				return@UnaryOperator change
+			}
+			try {
+				if (newText.length > 1) newText = newText.replace("^0+(?!$)".toRegex(), "")
+
+				val value = newText.toInt()
+				if (value >= 0 && value <= 100) {
+					return@UnaryOperator change
+				}
+			} catch (e: NumberFormatException) {
+				return@UnaryOperator null
+			}
+			null
+		}
+
+		val converter: StringConverter<Number?> = object : StringConverter<Number?>() {
+			override fun toString(n: Number?): String {
+				return n?.toInt()?.toString() ?: "0"
+			}
+
+			override fun fromString(s: String): Number {
+				return if (s.isEmpty()) 0 else s.toInt()
+			}
+		}
+
+		hexValue.textProperty().addListener { _, _, newValue ->
+			val newColor = getColorFromHexTextField()
+			if (newColor != null && newColor != selectingColorProperty.value) {
+				selectingColorProperty.value = newColor
+			}
+		}
+		firstValue.textProperty().addListener { _, _, newValue ->
+			val newColor = getColorFromTextFields()
+			if (newColor != selectingColorProperty.value) {
+				selectingColorProperty.value = newColor
+			}
+		}
+		secondValue.textProperty().addListener { _, _, newValue ->
+			val newColor = getColorFromTextFields()
+			if (newColor != selectingColorProperty.value) {
+				selectingColorProperty.value = newColor
+			}
+		}
+		thirdValue.textProperty().addListener { _, _, newValue ->
+			val newColor = getColorFromTextFields()
+			if (newColor != selectingColorProperty.value) {
+				selectingColorProperty.value = newColor
+			}
+		}
+		alphaValue.textProperty().addListener { _, _, newValue ->
+			val newColor = getColorFromTextFields()
+			if (newColor != selectingColorProperty.value) {
+				selectingColorProperty.value = newColor
+			}
+		}
+
+		/* Mode selector */
+		modeSelector.onMouseClicked = EventHandler {
+			modeSelector.hide()
+			Platform.runLater {
+				modeSelector.show()
+			}
+		}
+		fun localizeModeSelector() {
+			val index = modeSelector.selectionModel.selectedIndex
+			modeSelector.items.clear()
+			modeSelector.items.addAll(
+				Lsp.lsb("colorPicker.advancedMode.rgb").value,
+				Lsp.lsb("colorPicker.advancedMode.hsb").value
+			)
+			modeSelector.selectionModel.select(index)
+		}
+		localizeModeSelector()
+		modeSelector.value = Lsp.lsb("colorPicker.advancedMode.rgb").value
+		LocalizationService.currentLocaleProperty.addListener { _, _, _ ->
+			localizeModeSelector()
+		}
+
+		/* */
+		alphaValue.textFormatter = TextFormatter(converter, 100, limit0_100)
+		alphaLabel.textProperty().bind(Lsp.lsb("colorPicker.advancedMode.alpha"))
+		advancedModeToggle.selectedProperty().addListener { observable, oldValue, newValue ->
+			if (newValue) {
+				advancedModeIndicator.content = Constants.EXPANDED
+			} else {
+				advancedModeIndicator.content = Constants.COLLAPSED
+			}
+		}
+
+		/* Auto update */
+		fun updateFieldsFromSelectingColor() {
+			if (isUpdatingFields) return
+			isUpdatingFields = true
+			if (selectingColorProperty.value != null) {
+				val color = selectingColorProperty.value!!
+				if (modeSelector.selectionModel.selectedIndex == 0) {
+					// RGB mode
+					firstValue.text = ((color.red * 255).toInt()).toString()
+					secondValue.text = ((color.green * 255).toInt()).toString()
+					thirdValue.text = ((color.blue * 255).toInt()).toString()
+				} else {
+					// HSB mode
+					firstValue.text = color.hue.toInt().toString()
+					secondValue.text = (color.saturation*100).toInt().toString()
+					thirdValue.text = (color.brightness*100).toInt().toString()
+				}
+				alphaValue.text = (color.opacity * 100).toInt().toString()
+				hexValue.text = "#${color.toString().substring(2, 8)}"
+			}
+			isUpdatingFields = false
+		}
+		selectingColorProperty.addListener {
+			updateFieldsFromSelectingColor()
+		}
+
+		/* Fields mode change */
+		fun updateLabelsAndTextFormatters() {
+			if (modeSelector.selectionModel.selectedIndex == 0) {
+				// RGB mode
+				firstLabel.textProperty().apply {
+					unbind()
+					bind(Lsp.lsb("colorPicker.rgb.red"))
+				}
+				secondLabel.textProperty().apply {
+					unbind()
+					bind(Lsp.lsb("colorPicker.rgb.green"))
+				}
+				thirdLabel.textProperty().apply {
+					unbind()
+					bind(Lsp.lsb("colorPicker.rgb.blue"))
+				}
+
+				firstValue.textFormatter = TextFormatter(converter, 0, limit0_255)
+				secondValue.textFormatter = TextFormatter(converter, 0, limit0_255)
+				thirdValue.textFormatter = TextFormatter(converter, 0, limit0_255)
+			} else {
+				// HSB mode
+				firstLabel.textProperty().apply {
+					unbind()
+					bind(Lsp.lsb("colorPicker.hsb.hue"))
+				}
+				secondLabel.textProperty().apply {
+					unbind()
+					bind(Lsp.lsb("colorPicker.hsb.saturation"))
+				}
+				thirdLabel.textProperty().apply {
+					unbind()
+					bind(Lsp.lsb("colorPicker.hsb.brightness"))
+				}
+
+				firstValue.textFormatter = TextFormatter(converter, 0, limit0_360)
+				secondValue.textFormatter = TextFormatter(converter, 0, limit0_100)
+				thirdValue.textFormatter = TextFormatter(converter, 0, limit0_100)
+			}
+		}
+		modeSelector.selectionModel.selectedIndexProperty().addListener { _, _, _ ->
+			updateLabelsAndTextFormatters()
+			updateFieldsFromSelectingColor()
+		}
+
+		/* Initialization */
+		updateLabelsAndTextFormatters()
+		updateFieldsFromSelectingColor()
+	}
+
 	private fun updateColorPreview() {
 		val downCorners = CornerRadii(0.0, 0.0, 8.0, 8.0, false)
 		if (selectedColorProperty.value != null) {
@@ -352,24 +458,18 @@ class ColorPickerWindow() : BorderPane() {
 		}
 	}
 
-	private fun getColor() {
-		if (isHueSelector) {
-			getColorFromHue()
-		} else {
-			getColorFromPng()
-		}
-	}
 
-	private fun getColorFromPng() {
-		if (lastMousePositionProperty.value == null) return
+
+	private fun getColorFromPng(): Color? {
+		if (lastMousePositionProperty.value == null) return null
 		var x = lastMousePositionProperty.value!!.x
 		var y = lastMousePositionProperty.value!!.y
 		val middleX = interactableCanvas.width / 2
 		val middleY = interactableCanvas.height / 2
 
 		var color = pngDisplay.image.pixelReader.getColor(
-			clamp((x / 255 * pngDisplay.image.width), 0.0, pngDisplay.image.width-1).toInt(),
-			clamp((y / 255 * pngDisplay.image.height), 0.0, pngDisplay.image.height-1).toInt(),
+			(x / 255 * pngDisplay.image.width).coerceIn(0.0, pngDisplay.image.width-1).toInt(),
+			(y / 255 * pngDisplay.image.height).coerceIn(0.0, pngDisplay.image.height-1).toInt(),
 		)
 
 		val angle = atan2(middleY - y, middleX - x)
@@ -377,21 +477,20 @@ class ColorPickerWindow() : BorderPane() {
 			x += cos(angle)
 			y += sin(angle)
 			color = pngDisplay.image.pixelReader.getColor(
-				clamp((x / interactableCanvas.width * pngDisplay.image.width), 0.0, pngDisplay.image.width-1).toInt(),
-				clamp((y / interactableCanvas.width * pngDisplay.image.height), 0.0, pngDisplay.image.height-1).toInt(),
+				(x / interactableCanvas.width * pngDisplay.image.width).coerceIn(0.0, pngDisplay.image.width-1).toInt(),
+				(y / interactableCanvas.width * pngDisplay.image.height).coerceIn(0.0, pngDisplay.image.height-1).toInt(),
 			)
 		}
 
 		val hsb = RGBtoHSB((color.red*255).toInt(), (color.green*255).toInt(), (color.blue*255).toInt(), null)
 		val awtColor = java.awt.Color(HSBtoRGB(hsb[0], hsb[1], (brightnessSlider.value/100).toFloat()))
-		selectingColorProperty.value = Color(awtColor.red / 255.0, awtColor.green / 255.0, awtColor.blue / 255.0, alphaSlider.value/100)
-		drawSelectedColor(x, y, selectingColorProperty.value)
+		return Color(awtColor.red / 255.0, awtColor.green / 255.0, awtColor.blue / 255.0, alphaSlider.value/100)
 	}
 
-	private fun getColorFromHue() {
-		if (lastMousePositionProperty.value == null) return
-		val x = clamp(lastMousePositionProperty.value!!.x, 0.0, canvasDisplay.width)
-		val y = clamp(lastMousePositionProperty.value!!.y, 0.0, canvasDisplay.height)
+	private fun getColorFromHue(): Color? {
+		if (lastMousePositionProperty.value == null) return null
+		val x = lastMousePositionProperty.value!!.x.coerceIn(0.0 , canvasDisplay.width)
+		val y = lastMousePositionProperty.value!!.y.coerceIn(0.0 , canvasDisplay.height)
 
 		val baseColor = intToColor(hueColorSlider.value.toInt())
 		val saturation = 1 - (x / canvasDisplay.width)
@@ -402,8 +501,46 @@ class ColorPickerWindow() : BorderPane() {
 		val b = ((1 - saturation) * baseColor.blue + saturation ) * brightness
 		val a = alphaSlider.value / 100
 
-		selectingColorProperty.value = Color(r,g,b,a)
-		drawSelectedColor(x, y, selectingColorProperty.value)
+		return Color(r,g,b,a)
+	}
+
+	private fun getColorFromTextFields(): Color {
+		return if (modeSelector.selectionModel.selectedIndex == 0) {
+			// RGB mode
+			val red = firstValue.text.toIntOrNull()?.coerceIn(0, 255) ?: 0
+			val green = secondValue.text.toIntOrNull()?.coerceIn(0, 255) ?: 0
+			val blue = thirdValue.text.toIntOrNull()?.coerceIn(0, 255) ?: 0
+			val alpha = alphaValue.text.toDoubleOrNull()?.coerceIn(0.0, 100.0)?.div(100) ?: 1.0
+
+			Color(red / 255.0, green / 255.0, blue / 255.0, alpha)
+		} else {
+			// HSB mode
+			val hue = firstValue.text.toIntOrNull()?.coerceIn(0, 360) ?: 0
+			val saturation = secondValue.text.toIntOrNull()?.coerceIn(0, 100)?.div(100.0) ?: 1.0
+			val brightness = thirdValue.text.toIntOrNull()?.coerceIn(0, 100)?.div(100.0) ?: 1.0
+			val alpha = alphaValue.text.toDoubleOrNull()?.coerceIn(0.0, 100.0)?.div(100) ?: 1.0
+
+			Color.hsb(hue.toDouble(), saturation, brightness, alpha)
+		}
+	}
+
+	private fun getColorFromHexTextField(): Color? {
+		val hex = hexValue.text.trim().removePrefix("#")
+		if (hex.length == 6 || hex.length == 8) {
+			// match with regex characters 0-9, a-f, A-F
+			val hexRegex = Regex("^[0-9a-fA-F]+$")
+			if (!hexRegex.matches(hex)) return null
+			return Color.web(hexValue.text)
+		}
+		return null
+	}
+
+	private fun getColorFromPngOrHue(): Color? {
+		return if (isHueSelectorProperty.value) {
+			getColorFromHue()
+		} else {
+			getColorFromPng()
+		}
 	}
 
 	private fun updateBaseHue() {
@@ -429,7 +566,6 @@ class ColorPickerWindow() : BorderPane() {
 		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
 		gc.fill = verticalGradient
 		gc.fillRect(0.0, 0.0, canvasDisplay.width, canvasDisplay.height)
-		getColor()
 	}
 
 	private fun getCoordinateFromColor(color: Color): Point2D {
