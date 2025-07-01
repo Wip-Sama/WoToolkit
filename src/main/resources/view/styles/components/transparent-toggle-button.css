@@ -1,0 +1,24 @@
+.transparent-toggle-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -womt-text;
+}
+
+.transparent-toggle-button:hover {
+    -fx-text-fill: -womt-text-muted;
+}
+
+.transparent-toggle-button:pressed {
+    -fx-text-fill: -womt-text-very-muted;
+}
+
+.transparent-toggle-button SVGPath {
+    -fx-fill: -womt-text;
+}
+
+.transparent-toggle-button:hover SVGPath {
+    -fx-fill: -womt-text-muted;
+}
+
+.transparent-toggle-button:pressed SVGPath {
+    -fx-fill: -womt-text-very-muted;
+}

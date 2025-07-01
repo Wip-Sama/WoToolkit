@@ -25,7 +25,8 @@ internal data class UserSettingsData(
 	var accentHistory: List<String>,
 	var localization: String,
 	var startingPage: String,
-	var colorPickerSettings: ColorPickerSettings
+	var colorPickerSettings: ColorPickerSettings,
+	var disableAnimations: Boolean,
 )
 
 
@@ -81,6 +82,14 @@ class UserSettings {
 			_colorPickerSettingsFlow.value = value
 		}
 
+	private val _disableAnimationsFlor: MutableStateFlow<Boolean> by lazy { MutableStateFlow(false) }
+	val disableAnimationsFlow: StateFlow<Boolean> get() = _disableAnimationsFlor
+	var disableAnimations: Boolean
+		get() = _disableAnimationsFlor.value
+		set(value) {
+			_disableAnimationsFlor.value = value
+		}
+
 	init {
 		scope.launch {
 			colorPickerSettingsFlow.onEach { newValue ->
@@ -114,6 +123,7 @@ object UserSettingsSerializer : KSerializer<UserSettings> {
 		element<String>("localization")
 		element<String>("startingPage")
 		element<ColorPickerSettings>("colorPickerSettings")
+		element<Boolean>("disableAnimations")
 	}
 
 	override fun serialize(encoder: Encoder, value: UserSettings) {
@@ -123,7 +133,8 @@ object UserSettingsSerializer : KSerializer<UserSettings> {
 			accentHistory = value.accentHistory.map { it.toString().replace("0x", "#") },
 			localization = value.localization,
 			startingPage = value.startingPage,
-			colorPickerSettings = value.colorPickerSettings
+			colorPickerSettings = value.colorPickerSettings,
+			disableAnimations = value.disableAnimations
 		)
 		UserSettingsData.serializer().serialize(encoder, data)
 	}
@@ -137,6 +148,7 @@ object UserSettingsSerializer : KSerializer<UserSettings> {
 			localization = data.localization
 			startingPage = data.startingPage
 			colorPickerSettings = data.colorPickerSettings
+			disableAnimations = data.disableAnimations
 		}
 	}
 }

@@ -11,6 +11,7 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.util.Duration
+import org.wip.womtoolkit.model.ApplicationSettings
 import kotlin.properties.Delegates
 
 //TODO: Add documentation
@@ -87,15 +88,16 @@ open class CollapsableSidebarMenu : AnchorPane() {
         }
         addComponent(collapseToggle, Positions.TOP)
         collapseToggle.onActionProperty.addListener { _, _, _ ->
-            val startWidth = this.width
             val endWidth = if (!isCollapsed) 32.0+24 else 150.0
-            val timeline = Timeline(
+            val animationDuration = if (ApplicationSettings.userSettings.disableAnimations) 1.0 else 100.0
+            Timeline(
                 KeyFrame(
-                    Duration.millis(100.0),
+                    Duration.millis(animationDuration),
                     KeyValue(prefWidthProperty(), endWidth)
                 )
-            )
-            timeline.play()
+            ).apply {
+                play()
+            }
             isCollapsed = !isCollapsed
         }
 
@@ -158,20 +160,22 @@ open class CollapsableSidebarMenu : AnchorPane() {
         }
         val y = computeSelectedIndicatorY(item)
         val midY = (y + selected_indicator.layoutY - selected_indicator.height / 2 ) / 2
-        val timeline = Timeline(
+        val animationDuration = if (ApplicationSettings.userSettings.disableAnimations) 1.0 else 40.0
+        Timeline(
             KeyFrame(Duration.ZERO,
                 KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second),
             ),
-            KeyFrame(Duration.millis(40.0),
+            KeyFrame(Duration.millis(animationDuration),
                 KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second*2),
                 KeyValue(selected_indicator.layoutYProperty(), midY)
             ),
-            KeyFrame(Duration.millis(80.0),
+            KeyFrame(Duration.millis(animationDuration*2),
                 KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second),
                 KeyValue(selected_indicator.layoutYProperty(), y)
             )
-        )
-        timeline.play()
+        ).apply {
+            play()
+        }
     }
 
     fun addComponent(component: CollapsableItem, position: Positions = Positions.TOP) {

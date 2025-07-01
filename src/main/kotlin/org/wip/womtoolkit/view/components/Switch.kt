@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import javafx.util.Duration
+import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Lsp
 import kotlin.properties.Delegates
 
@@ -58,15 +59,16 @@ class Switch() : BorderPane() {
 		})
 
 		pressedProperty().addListener { observable, oldValue, newValue ->
+			val animationDuration = if (ApplicationSettings.userSettings.disableAnimations) 1.0 else 100.0
 			if (newValue == true) {
 				Timeline(
-					KeyFrame(Duration.millis(100.0),
+					KeyFrame(Duration.millis(animationDuration),
 						KeyValue(switchStateIndicator.prefWidthProperty(), switchStateIndicator.maxWidth)
 					)
 				).play()
 			} else {
 				Timeline(
-					KeyFrame(Duration.millis(100.0),
+					KeyFrame(Duration.millis(animationDuration),
 						KeyValue(switchStateIndicator.prefWidthProperty(), switchStateIndicator.minWidth)
 					)
 				).play()
@@ -81,13 +83,14 @@ class Switch() : BorderPane() {
 
 	private fun animateTransition(value: Boolean = stateProperty.value) {
 		val endPosition = if (value == true) switchStateHolder.width-switchStateIndicator.width else 0
+		val animationDuration = if (ApplicationSettings.userSettings.disableAnimations) 1.0 else 100.0
 		Timeline(
 			KeyFrame(Duration.ZERO, { AnchorPane.clearConstraints(switchStateIndicator) } ),
 			KeyFrame(
-				Duration.millis(100.0),
+				Duration.millis(animationDuration),
 				KeyValue(switchStateIndicator.layoutXProperty(), endPosition),
 			),
-			KeyFrame(Duration.millis(100.0), {
+			KeyFrame(Duration.millis(animationDuration), {
 				if (value == true) {
 					AnchorPane.setRightAnchor(switchStateIndicator, 1.0)
 					pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), true)

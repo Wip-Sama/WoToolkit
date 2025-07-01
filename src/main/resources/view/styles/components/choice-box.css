@@ -25,7 +25,7 @@
 }
 
 .choice-box .arrow {
-    -fx-background-color: -womt-border-dark;
+    -fx-background-color: -womt-text;
     -fx-background-insets: 0;
     -fx-padding: 3 6;
     -fx-scale-x: .8;

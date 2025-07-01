@@ -14,3 +14,11 @@
 @import "components/button.css";
 @import "components/popup.css";
 @import "components/color-picker/color-picker-button.css";
+@import "components/separator.css";
+@import "components/transparent-toggle-button.css";
+
+
+
+.root .label {
+    -fx-text-fill: -womt-text;
+}

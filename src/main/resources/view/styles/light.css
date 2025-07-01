@@ -44,7 +44,3 @@
     /*Component specifics colors*/
     -womt-slider:  hsba(0, 0%, 100%, .6);  /*-womt-slider: hsb(0, 0%, 54%);*/ /*TODO: vedere se questo va bene*/
 }
-
-.root .label {
-    -fx-text-fill: -womt-text;
-}

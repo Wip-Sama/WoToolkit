@@ -108,7 +108,6 @@ class ColorPickerWindow() : BorderPane() {
 		}
 	}
 
-
 	@FXML
 	fun initialize() {
 		/* Borders for the canvas */
@@ -310,24 +309,28 @@ class ColorPickerWindow() : BorderPane() {
 			}
 		}
 		firstValue.textProperty().addListener { _, _, newValue ->
+			if (!firstValue.isFocused) return@addListener
 			val newColor = getColorFromTextFields()
 			if (newColor != selectingColorProperty.value) {
 				selectingColorProperty.value = newColor
 			}
 		}
 		secondValue.textProperty().addListener { _, _, newValue ->
+			if (!secondValue.isFocused) return@addListener
 			val newColor = getColorFromTextFields()
 			if (newColor != selectingColorProperty.value) {
 				selectingColorProperty.value = newColor
 			}
 		}
 		thirdValue.textProperty().addListener { _, _, newValue ->
+			if (!thirdValue.isFocused) return@addListener
 			val newColor = getColorFromTextFields()
 			if (newColor != selectingColorProperty.value) {
 				selectingColorProperty.value = newColor
 			}
 		}
 		alphaValue.textProperty().addListener { _, _, newValue ->
+			if (!alphaValue.isFocused) return@addListener
 			val newColor = getColorFromTextFields()
 			if (newColor != selectingColorProperty.value) {
 				selectingColorProperty.value = newColor
@@ -458,8 +461,6 @@ class ColorPickerWindow() : BorderPane() {
 		}
 	}
 
-
-
 	private fun getColorFromPng(): Color? {
 		if (lastMousePositionProperty.value == null) return null
 		var x = lastMousePositionProperty.value!!.x
@@ -580,8 +581,8 @@ class ColorPickerWindow() : BorderPane() {
 	}
 
 	private fun drawSelectedColor(x: Double, y: Double, color: Color, size: Double = 5.0) {
-		var x = clamp(x, 0.0, interactableCanvas.width - 1)
-		var y = clamp(y, 0.0, interactableCanvas.height - 1)
+		var x = x.coerceIn(0.0, interactableCanvas.width - 1)
+		var y = y.coerceIn(0.0, interactableCanvas.height - 1)
 		val gc = interactableCanvas.graphicsContext2D
 		gc.clearRect(0.0, 0.0, interactableCanvas.width, interactableCanvas.height)
 		gc.fill = Color.BLACK
@@ -610,13 +611,5 @@ class ColorPickerWindow() : BorderPane() {
 			awtColor.blue / 255.0,
 			1.0
 		)
-	}
-
-	private fun clamp(value: Double, min: Double, max: Double): Double {
-		return when {
-			value < min -> min
-			value > max -> max
-			else -> value
-		}
 	}
 }

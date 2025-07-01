@@ -44,6 +44,9 @@ class GeneralSettings : VBox() {
 			"M13.4508 2.53318C12.6128 1.82618 11.3872 1.82618 10.5492 2.53318L3.79916 8.22772C3.29241 8.65523 3 9.28447 3 9.94747V19.2526C3 20.2191 3.7835 21.0026 4.75 21.0026H7.75C8.7165 21.0026 9.5 20.2191 9.5 19.2526V15.25C9.5 14.5707 10.0418 14.018 10.7169 14.0004H13.2831C13.9582 14.018 14.5 14.5707 14.5 15.25V19.2526C14.5 20.2191 15.2835 21.0026 16.25 21.0026H19.25C20.2165 21.0026 21 20.2191 21 19.2526V9.94747C21 9.28447 20.7076 8.65523 20.2008 8.22772L13.4508 2.53318Z"
 		const val COLOR_PICKER_MODE: String =
 			"M21.0303 2.96997C19.6329 1.57251 17.3671 1.57251 15.9697 2.96997L14 4.93966L13.9874 4.9271C13.304 4.24368 12.196 4.24368 11.5125 4.92709L10.9268 5.51288C10.2433 6.1963 10.2433 7.30434 10.9268 7.98776L10.9394 8.00039L4.15914 14.7806C3.73719 15.2026 3.50013 15.7749 3.50013 16.3716V17.0591L2.21981 19.4063C1.38379 20.939 3.06141 22.6167 4.59412 21.7806L6.94138 20.5003H7.62881C8.22555 20.5003 8.79785 20.2633 9.2198 19.8413L16.0001 13.0611L16.0125 13.0735C16.696 13.757 17.804 13.757 18.4874 13.0735L19.0732 12.4878C19.7566 11.8043 19.7566 10.6963 19.0732 10.0129L19.0606 10.0003L21.0303 8.03063C22.4278 6.63317 22.4278 4.36744 21.0303 2.96997ZM12.0001 9.06105L14.9394 12.0004L8.15914 18.7806C8.01849 18.9213 7.82773 19.0003 7.62881 19.0003H6.75013C6.62465 19.0003 6.50116 19.0318 6.391 19.0919L3.87584 20.4638C3.80671 20.5015 3.75536 20.5032 3.717 20.4964C3.67227 20.4885 3.62232 20.4641 3.57935 20.4211C3.53638 20.3781 3.51196 20.3282 3.50405 20.2834C3.49726 20.2451 3.49895 20.1937 3.53665 20.1246L4.90856 17.6095C4.96865 17.4993 5.00014 17.3758 5.00014 17.2503V16.3716C5.00014 16.1727 5.07915 15.982 5.21981 15.8413L12.0001 9.06105Z"
+		const val ANIMATIONS: String =
+			"M16.0883 6.41228C16.016 6.31886 15.9377 6.2298 15.8539 6.14569C15.5417 5.83255 15.1606 5.59666 14.741 5.45683L13.3632 5.00939C13.257 4.97196 13.165 4.90253 13.1 4.81068C13.0349 4.71883 13 4.60908 13 4.49656C13 4.38404 13.0349 4.27429 13.1 4.18244C13.165 4.09058 13.257 4.02116 13.3632 3.98372L14.741 3.53628C15.1547 3.39352 15.5299 3.15705 15.837 2.84537C16.1357 2.54224 16.3623 2.17595 16.5 1.77372L16.5114 1.73963L16.9592 0.362894C16.9967 0.256782 17.0662 0.164895 17.1581 0.0998993C17.25 0.0349035 17.3598 0 17.4724 0C17.5851 0 17.6949 0.0349035 17.7868 0.0998993C17.8787 0.164895 17.9482 0.256782 17.9857 0.362894L18.4335 1.73963C18.5727 2.15819 18.8077 2.53853 19.1198 2.85041C19.432 3.1623 19.8126 3.39715 20.2315 3.53628L21.6093 3.98372L21.6368 3.99061C21.743 4.02804 21.835 4.09747 21.9 4.18932C21.9651 4.28117 22 4.39092 22 4.50344C22 4.61596 21.9651 4.72571 21.9 4.81756C21.835 4.90942 21.743 4.97884 21.6368 5.01628L20.259 5.46372C19.8402 5.60285 19.4595 5.8377 19.1474 6.14959C18.8353 6.46147 18.6003 6.84181 18.461 7.26037L18.0132 8.63711C18.0092 8.64855 18.0048 8.65983 18 8.67093C17.9605 8.76273 17.8964 8.84212 17.8144 8.9001C17.7224 8.9651 17.6126 9 17.5 9C17.3874 9 17.2776 8.9651 17.1856 8.9001C17.0937 8.8351 17.0242 8.74322 16.9868 8.63711L16.539 7.26037C16.4378 6.95331 16.2851 6.66664 16.0883 6.41228ZM23.7829 10.2132L23.0175 9.9646C22.7848 9.8873 22.5733 9.75683 22.3999 9.58356C22.2265 9.41029 22.0959 9.199 22.0186 8.96646L21.7698 8.20161C21.749 8.14266 21.7104 8.09161 21.6593 8.0555C21.6083 8.01939 21.5473 8 21.4847 8C21.4221 8 21.3611 8.01939 21.31 8.0555C21.259 8.09161 21.2204 8.14266 21.1996 8.20161L20.9508 8.96646C20.875 9.19736 20.7467 9.40761 20.5761 9.58076C20.4055 9.75392 20.1971 9.88529 19.9672 9.9646L19.2018 10.2132C19.1428 10.234 19.0917 10.2725 19.0555 10.3236C19.0194 10.3746 19 10.4356 19 10.4981C19 10.5606 19.0194 10.6216 19.0555 10.6726C19.0917 10.7236 19.1428 10.7622 19.2018 10.783L19.9672 11.0316C20.2003 11.1093 20.412 11.2403 20.5855 11.4143C20.7589 11.5882 20.8893 11.8003 20.9661 12.0335L21.2149 12.7984C21.2357 12.8573 21.2743 12.9084 21.3254 12.9445C21.3764 12.9806 21.4374 13 21.5 13C21.5626 13 21.6236 12.9806 21.6746 12.9445C21.7257 12.9084 21.7643 12.8573 21.7851 12.7984L22.0339 12.0335C22.1113 11.801 22.2418 11.5897 22.4152 11.4164C22.5886 11.2432 22.8001 11.1127 23.0328 11.0354L23.7982 10.7868C23.8572 10.766 23.9083 10.7275 23.9445 10.6764C23.9806 10.6254 24 10.5644 24 10.5019C24 10.4394 23.9806 10.3784 23.9445 10.3274C23.9083 10.2764 23.8572 10.2378 23.7982 10.217L23.7829 10.2132ZM10.251 3.00275C11.2175 3.00275 12.001 3.78625 12.001 4.75275V9.25275C12.001 10.2192 11.2175 11.0027 10.251 11.0027H4.75098C3.78448 11.0027 3.00098 10.2192 3.00098 9.25275V4.75275C3.00098 3.78625 3.78448 3.00275 4.75098 3.00275H10.251ZM7.23856 12.9845C8.20506 12.9845 8.98856 13.7681 8.98856 14.7345V19.249C8.98856 20.2155 8.20506 20.999 7.23856 20.999H4.75098C3.78448 20.999 3.00098 20.2155 3.00098 19.249V14.7345C3.00098 13.7681 3.78448 12.9845 4.75098 12.9845H7.23856ZM19.2527 12.999C20.2192 12.999 21.0027 13.7825 21.0027 14.749V19.249C21.0027 20.2155 20.2192 20.999 19.2527 20.999H12.7527C11.7862 20.999 11.0027 20.2155 11.0027 19.249V14.749L11.0085 14.6054C11.0815 13.7061 11.8345 12.999 12.7527 12.999H19.2527Z"
+
 
 		var colorPresets = mutableListOf(
 			"#c01135ff",  // Rosso Cremisi - meno vivace
@@ -86,8 +89,6 @@ class GeneralSettings : VBox() {
 
 	@FXML
 	fun initialize() {
-
-
 		accentSetting.apply {
 			title.textProperty().bind(Lsp.lsb("settingsPage.general.accent.title"))
 			description.textProperty().bind(Lsp.lsb("settingsPage.general.accent.description"))
@@ -154,8 +155,16 @@ class GeneralSettings : VBox() {
 										if (node is ColorPickerButton) {
 											if (index >= ApplicationSettings.userSettings.accentHistory.size) {
 												node.visibleProperty().set(false)
-											} else
-											node.colorProperty.value = ApplicationSettings.userSettings.accentHistory[4-index]
+											} else {
+												// Controllo aggiuntivo per evitare IndexOutOfBounds
+												val historyIndex = ApplicationSettings.userSettings.accentHistory.size - 1 - index
+												if (historyIndex in ApplicationSettings.userSettings.accentHistory.indices) {
+													node.visibleProperty().set(true)
+													node.colorProperty.value = ApplicationSettings.userSettings.accentHistory[historyIndex]
+												} else {
+													node.visibleProperty().set(false)
+												}
+											}
 										}
 									}
 								}
@@ -242,7 +251,6 @@ class GeneralSettings : VBox() {
 				}
 				valueProperty().addListener { _, _, newValue ->
 					ApplicationSettings.userSettings.localization = newValue
-
 				}
 			}
 		}
@@ -276,37 +284,33 @@ class GeneralSettings : VBox() {
 			imageContainer.center = SVGPath().apply {
 				content = Constants.COLOR_PICKER_MODE
 			}
-			expandableContent = VBox().apply {
-				spacing = 8.0
-				children.addAll(
-					HBox().apply {
-						setMargin(this, Insets(0.0, 0.0, 0.0, 55.0))
-						children.addAll(
-							Switch(true).apply {
-								trueLocalization = "settingsPage.general.colorPickerMode.hueSelector"
-								falseLocalization = "settingsPage.general.colorPickerMode.imageSelector"
-							}
-						)
+		})
 
-					},
-					Separator().apply {},
-					GridPane().apply {
-						hgap = 8.0
-						vgap = 8.0
-						setMargin(this, Insets(0.0, 0.0, 0.0, 55.0))
-						add(Label().apply {
-							textProperty().bind(Lsp.lsb("settingsPage.general.colorPickerMode.hueSelector"))
-							alignment = Pos.CENTER_LEFT
-						}, 0, 0)
-						val switch = Switch(false).apply {
-							trueLocalization = "settingsPage.general.colorPickerMode.alphaAvailable"
-							falseLocalization = "settingsPage.general.colorPickerMode.alphaUnavailable"
-						}
-						add(switch, 1, 0)
-						GridPane.setHalignment(switch, javafx.geometry.HPos.RIGHT)
-					}
-				)
+		children.add(SettingElement().apply {
+			title.textProperty().bind(Lsp.lsb("settingsPage.general.disableAnimations.title"))
+			description.textProperty().bind(Lsp.lsb("settingsPage.general.disableAnimations.description"))
+			imageContainer.center = SVGPath().apply {
+				content = Constants.ANIMATIONS
 			}
+			quickSetting = Switch(ApplicationSettings.userSettings.disableAnimations).apply {
+				trueLocalization = "settingsPage.general.disableAnimations.enabled"
+				falseLocalization = "settingsPage.general.disableAnimations.disabled"
+
+				stateProperty.addListener { observable, oldValue, newValue ->
+					if (newValue != oldValue) {
+						ApplicationSettings.userSettings.disableAnimations = newValue
+					}
+				}
+
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.disableAnimationsFlow.collectLatest { newValue ->
+						withContext(Dispatchers.JavaFx) {
+							state = newValue
+						}
+					}
+				}
+			}
+
 		})
 	}
 }

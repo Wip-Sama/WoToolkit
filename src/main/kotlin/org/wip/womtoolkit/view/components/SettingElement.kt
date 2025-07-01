@@ -17,6 +17,8 @@ import javafx.scene.layout.Pane
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.Duration
+import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.DataManager
 import org.wip.womtoolkit.model.Globals
 import kotlin.properties.Delegates
 
@@ -134,6 +136,7 @@ class SettingElement() : AnchorPane() {
         else
             displayPane.height
 
+        val animationDuration = if (ApplicationSettings.userSettings.disableAnimations) 1.0 else 200.0
         Timeline(
             KeyFrame(Duration.ZERO,
                 {
@@ -144,13 +147,13 @@ class SettingElement() : AnchorPane() {
                 }
             ),
             KeyFrame(
-                Duration.millis(200.0),
+                Duration.millis(animationDuration),
                 KeyValue( prefHeightProperty(), newHeight ),
                 KeyValue( maxHeightProperty(), newHeight ),
                 KeyValue( minHeightProperty(), newHeight ),
                 KeyValue( rectClip.heightProperty(), newHeight )
             ),
-            KeyFrame(Duration.millis(200.0),
+            KeyFrame(Duration.millis(animationDuration),
                 {
                     pseudoClassStateChanged(PseudoClass.getPseudoClass("expanded"), expandedProperty.get())
                     if (!expandedProperty.get()) {

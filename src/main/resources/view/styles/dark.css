@@ -1,59 +1,5 @@
 @import "all_components.css";
 
-.old_root {
-    /*-fx-blend-mode this might be useful*/
-
-    -womt-background-1: #202020;
-    -womt-background-normal: #2c2c2c;
-    -womt-background-light: #2d2d2d;
-    -womt-background-4: #282828;
-
-    -womt-button-rest: #00000000;
-    -womt-button-hover: rgb(94, 94, 94, 0.4); /*rgba(94, 94, 94, .5);*/
-    -womt-button-selected: rgb(94, 94, 94, 0.2); /*rgba(94, 94, 94, .3);*/
-    -womt-button-pressed: rgb(94, 94, 94, 0.3); /*rgba(94, 94, 94, .4);*/
-
-    -womt-stroke-rest: #3b3b3b;
-    -womt-stroke-hover: #3b3b3b;
-    -womt-stroke-pressed: #3b3b3b;
-    -womt-stroke-selected: -womt-stroke-pressed;
-
-    -womt-foreground-rest: #383838;
-    -womt-foreground-hover: #3d3d3d;
-    -womt-foreground-pressed: #222222;
-    -womt-foreground-selected: -womt-foreground-pressed;
-
-    -womt-indicator-rest: #9f9f9f;
-    -womt-indicator-hover: #9f9f9f;
-    -womt-indicator-pressed: -womt-accent;
-    -womt-indicator-selected: -womt-indicator-pressed;
-
-    -womt-slider: #a0a0a0;
-    -womt-slider-background: #3c3c3c;
-
-
-    -womt-accent: #700525;
-
-    -womt-border-color: #1d1d1d;
-}
-
-
-
-/*Hanno opacità per adattarsi agli sfondi???q*/
-/*
--womt-background-dark
-foreground 18
-stroke 19
-indicator 60
-
--womt-background-normal
-foreground 22
-stroke 23
-indicator 2
-
-no non è trasparenza usano più colori...
-*/
-
 .root {
     -womt-background-darkest: hsb(0, 0%, 9%);
     -womt-background-dark: hsb(0, 0%, 13%);
@@ -69,6 +15,7 @@ no non è trasparenza usano più colori...
 
     -womt-text: hsb(0, 0%, 100%);
     -womt-text-muted: hsb(0, 0%, 82%);
+    -womt-text-very-muted: hsb(0, 0%, 50%);
     -womt-text-contrast: hsb(0, 0%, 0%); /*18 / 24*/
 
     /*TODO: Button*/
@@ -98,18 +45,3 @@ no non è trasparenza usano più colori...
     /*Component specifics colors*/
     -womt-slider:  hsba(0, 0%, 100%, .6);  /*-womt-slider: hsb(0, 0%, 62%);*/ /*TODO: vedere se questo va bene*/
 }
-
-.root .label {
-    -fx-text-fill: -womt-text;
-}
-
-.separator {
-    -fx-padding: 0;
-    -fx-background-color: transparent;
-}
-
-.separator .line {
-    -fx-border-color: -womt-border-dark;
-    -fx-border-width: 1 0 0 0;
-}
-
