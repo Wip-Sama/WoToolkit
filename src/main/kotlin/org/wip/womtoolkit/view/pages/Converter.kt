@@ -3,10 +3,12 @@ package org.wip.womtoolkit.view.pages
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
+import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
+import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.input.ClipboardContent
@@ -20,6 +22,8 @@ import javafx.util.Duration
 import org.wip.womtoolkit.TAB_DRAG_KEY
 import org.wip.womtoolkit.model.ApplicationSettings
 import java.util.Collections
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.collections.set
 
 class Converter : BorderPane() {
@@ -29,13 +33,13 @@ class Converter : BorderPane() {
 	private val nodeTimelines = mutableMapOf<Node, Timeline>()
 	private var lastTargetIndex: Int? = null
 
+
 	init {
 		FXMLLoader(javaClass.getResource("/view/pages/converter.fxml")).apply {
 			setRoot(this@Converter)
 			setController(this@Converter)
 			load()
 		}
-
 
 		buttonContainer.children.forEach {
 			it.onMouseClicked = EventHandler {

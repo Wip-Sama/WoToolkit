@@ -9,89 +9,41 @@
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
+<?import org.wip.womtoolkit.view.components.SelectedFilesContainer?>
 <?import org.wip.womtoolkit.view.components.Switch?>
 
-<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" styleClass="content_pane" stylesheets="@../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="501.0" prefWidth="518.0" styleClass="content_pane" stylesheets="@../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <padding>
         <Insets bottom="12.0" left="8.0" right="8.0" top="12.0" />
     </padding>
    <top>
-      <HBox spacing="8.0" BorderPane.alignment="CENTER">
-         <children>
-            <GridPane HBox.hgrow="ALWAYS">
-              <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <TextField maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                  <Label text="Minimum height" />
-               </children>
-            </GridPane>
-            <GridPane HBox.hgrow="ALWAYS">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <TextField maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                  <Label text="Desired height" />
-               </children>
-            </GridPane>
-            <GridPane HBox.hgrow="ALWAYS">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <TextField maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-                  <Label text="Maximum height" />
-               </children>
-            </GridPane>
-            <GridPane>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <Switch GridPane.rowIndex="1" />
-                  <Label text="Search Direction" />
-               </children>
-            </GridPane>
-         </children>
+      <VBox spacing="8.0" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="8.0" />
          </BorderPane.margin>
-      </HBox>
-   </top>
-   <bottom>
-      <VBox alignment="TOP_RIGHT" spacing="8.0" BorderPane.alignment="CENTER">
          <children>
-            <ToggleButton contentDisplay="RIGHT" mnemonicParsing="false" styleClass="transparent-toggle-button" text="Advanced mode">
-               <graphic>
-                  <SVGPath content="M4.29289 8.29289C4.68342 7.90237 5.31658 7.90237 5.70711 8.29289L12 14.5858L18.2929 8.29289C18.6834 7.90237 19.3166 7.90237 19.7071 8.29289C20.0976 8.68342 20.0976 9.31658 19.7071 9.70711L12.7071 16.7071C12.3166 17.0976 11.6834 17.0976 11.2929 16.7071L4.29289 9.70711C3.90237 9.31658 3.90237 8.68342 4.29289 8.29289Z" />
-               </graphic>
-            </ToggleButton>
-            <HBox alignment="CENTER_RIGHT" spacing="8.0">
+            <HBox spacing="8.0">
                <children>
-                  <GridPane>
+                  <GridPane HBox.hgrow="ALWAYS">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <TextField maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                        <Label text="Minimum height" />
+                     </children>
+                  </GridPane>
+                  <GridPane HBox.hgrow="ALWAYS">
                      <columnConstraints>
                         <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
                      </columnConstraints>
@@ -100,8 +52,21 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Switch GridPane.rowIndex="1" />
-                        <Label text="Parallel execution" />
+                        <TextField maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                        <Label text="Desired height" />
+                     </children>
+                  </GridPane>
+                  <GridPane HBox.hgrow="ALWAYS">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <TextField maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                        <Label text="Maximum height" />
                      </children>
                   </GridPane>
                   <GridPane>
@@ -114,44 +79,12 @@
                      </rowConstraints>
                      <children>
                         <Switch GridPane.rowIndex="1" />
-                        <Label text="Also save as archive" />
-                     </children>
-                  </GridPane>
-                  <GridPane>
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Label text="Output formats" />
-                        <ChoiceBox maxWidth="1.7976931348623157E308" minHeight="34.0" prefHeight="34.0" GridPane.rowIndex="1" />
-                     </children>
-                  </GridPane>
-                  <GridPane>
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <Label text="Cut tollerance" />
-                        <TextField prefWidth="100.0" GridPane.rowIndex="1" />
+                        <Label text="Search Direction" />
                      </children>
                   </GridPane>
                </children>
             </HBox>
-         </children>
-      </VBox>
-   </bottom>
-   <center>
-      <VBox spacing="8.0" BorderPane.alignment="CENTER">
-         <children>
-            <HBox maxWidth="1.7976931348623157E308" spacing="8.0">
+            <HBox spacing="8.0">
                <children>
                   <TextField maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                   <Button maxHeight="34.0" minHeight="34.0" mnemonicParsing="false" prefHeight="34.0">
@@ -171,7 +104,124 @@
                   </Button>
                </children>
             </HBox>
-            <ScrollPane />
+         </children>
+      </VBox>
+   </top>
+   <bottom>
+      <VBox fx:id="advancedModeContainer" alignment="TOP_RIGHT" spacing="8.0" BorderPane.alignment="CENTER">
+         <children>
+            <ToggleButton fx:id="advancedModeToggle" contentDisplay="RIGHT" mnemonicParsing="false" styleClass="transparent-toggle-button" text="Advanced mode">
+               <graphic>
+                  <SVGPath fx:id="advancedIndicator" content="M4.29289 15.7071C4.68342 16.0976 5.31658 16.0976 5.70711 15.7071L12 9.41421L18.2929 15.7071C18.6834 16.0976 19.3166 16.0976 19.7071 15.7071C20.0976 15.3166 20.0976 14.6834 19.7071 14.2929L12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L4.29289 14.2929C3.90237 14.6834 3.90237 15.3166 4.29289 15.7071Z" />
+               </graphic>
+            </ToggleButton>
+            <ScrollPane fx:id="advancedModeContent" prefHeight="80.0" vbarPolicy="NEVER">
+               <content>
+                  <HBox alignment="CENTER_RIGHT" spacing="8.0">
+                     <children>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Switch GridPane.rowIndex="1" />
+                              <Label text="Save in subfolder" />
+                           </children>
+                        </GridPane>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Subfolder name" />
+                              <TextField prefWidth="100.0" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Switch GridPane.rowIndex="1" />
+                              <Label text="Parallel execution" />
+                           </children>
+                        </GridPane>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Switch GridPane.rowIndex="1" />
+                              <Label text="Also save as archive" />
+                           </children>
+                        </GridPane>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Output formats" />
+                              <ChoiceBox maxWidth="1.7976931348623157E308" minHeight="34.0" prefHeight="34.0" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Label text="Cut tollerance" />
+                              <TextField prefWidth="100.0" GridPane.rowIndex="1" />
+                           </children>
+                        </GridPane>
+                     </children>
+                  </HBox>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
+   </bottom>
+   <center>
+      <VBox spacing="8.0" BorderPane.alignment="CENTER">
+         <children>
+            <ScrollPane>
+               <content>
+                  <FlowPane hgap="8.0" vgap="8.0">
+                     <children>
+                        <SelectedFilesContainer />
+                        <SelectedFilesContainer />
+                        <SelectedFilesContainer />
+                        <SelectedFilesContainer />
+                        <SelectedFilesContainer />
+                        <SelectedFilesContainer />
+                        <SelectedFilesContainer />
+                     </children>
+                  </FlowPane>
+               </content>
+            </ScrollPane>
          </children>
          <BorderPane.margin>
             <Insets bottom="8.0" />

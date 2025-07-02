@@ -1,5 +1,5 @@
-@import "components/collapsablesidemenu/collapsablesidebarmenu.css";
-@import "components/collapsablesidemenu/collapsablecomponent.css";
+@import "components/custom/collapsablesidemenu/collapsablesidebarmenu.css";
+@import "components/custom/collapsablesidemenu/collapsablecomponent.css";
 @import "components/text-field.css";
 @import "components/scroll-bar.css";
 @import "pages/mainWindow.css";
@@ -7,13 +7,13 @@
 @import "components/combo-box.css";
 @import "components/choice-box.css";
 @import "components/context-menu.css";
-@import "components/switch.css";
-@import "components/settingElement.css";
-@import "components/color-picker/color-picker-window.css";
+@import "components/custom/switch.css";
+@import "components/custom/settingElement.css";
+@import "components/custom/color-picker/color-picker-window.css";
 @import "components/slider.css";
 @import "components/button.css";
 @import "components/popup.css";
-@import "components/color-picker/color-picker-button.css";
+@import "components/custom/color-picker/color-picker-button.css";
 @import "components/separator.css";
 @import "components/transparent-toggle-button.css";
 @import "components/scroll-pane.css";
