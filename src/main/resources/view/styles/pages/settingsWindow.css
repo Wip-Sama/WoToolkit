@@ -2,19 +2,6 @@
     -fx-background-color: transparent;
 }
 
-.settings_window .scroll-pane {
-    -fx-background-color: transparent;
-}
-
-.settings_window .scroll-pane .viewport {
-    -fx-background-color: transparent;
-}
-
-.settings_window .scroll-pane .corner {
-    -fx-background-color: transparent;
-}
-
-
 .settings_window AnchorPane {
     -fx-background-color: transparent;
 }

@@ -16,9 +16,13 @@
 @import "components/color-picker/color-picker-button.css";
 @import "components/separator.css";
 @import "components/transparent-toggle-button.css";
+@import "components/scroll-pane.css";
 
 
-
-.root .label {
+.label {
     -fx-text-fill: -womt-text;
+}
+
+SVGPath {
+    -fx-fill: -womt-text;
 }

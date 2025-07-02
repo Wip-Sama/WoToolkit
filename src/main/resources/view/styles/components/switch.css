@@ -23,7 +23,7 @@ Suona meglio in inglese la frase che tradotta*/
 
 .switch:selected AnchorPane {
     -fx-background-color: transparent, -womt-accent;
-    -fx-background-insets: 0, 1;
+    -fx-background-insets: 0, .5;
     -fx-background-radius: 11.5, 11.5;
 }
 
