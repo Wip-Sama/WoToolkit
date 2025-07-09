@@ -1,154 +1,100 @@
 package org.wip.womtoolkit.model.database.entities
 
-import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.paint.Color
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.Transient
 
 @Serializable
-internal data class UserSettingsData(
-	var theme: String,
-	var accent: String,
-	var accentHistory: List<String>,
-	var localization: String,
-	var startingPage: String,
-	var colorPickerSettings: ColorPickerSettings,
-	var disableAnimations: Boolean,
-)
-
-
-@Serializable(with = UserSettingsSerializer::class)
 class UserSettings {
+	@Transient
 	private val scope = MainScope()
 
-	private val _themeFlow: MutableStateFlow<String> by lazy { MutableStateFlow("dark") }
-	val themeFlow: StateFlow<String> get() = _themeFlow
-	var theme: String
-		get() = _themeFlow.value
-		set(value) {
-			_themeFlow.value = value
-		}
+	@Transient
+	val theme = MutableStateFlow("dark")
 
-	private val _accentFlow: MutableStateFlow<Color> by lazy { MutableStateFlow(Color.web("#ff0000ff")) }
-	val accentFlow: StateFlow<Color> get() = _accentFlow
-	var accent: Color
-		get() = _accentFlow.value
-		set(value) {
-			_accentFlow.value = value
-		}
+	@Transient
+	val accent: MutableStateFlow<Color> = MutableStateFlow(Color.web("#ff0000ff")!!)
 
-	private val _accentHistoryFlow: MutableStateFlow<List<Color>> by lazy { MutableStateFlow(emptyList()) }
-	val accentHistoryFlow: StateFlow<List<Color>> get() = _accentHistoryFlow
-	var accentHistory: List<Color>
-		get() = _accentHistoryFlow.value
-		set(value) {
-			_accentHistoryFlow.value = value
-		}
+	@Transient
+	val accentHistory: MutableStateFlow<List<Color>> = MutableStateFlow(emptyList())
 
-	private val _localizationFlow: MutableStateFlow<String> by lazy { MutableStateFlow("enEN") }
-	val localizationFlow: StateFlow<String> get() = _localizationFlow
-	var localization: String
-		get() = _localizationFlow.value
-		set(value) {
-			_localizationFlow.value = value
-		}
+	@Transient
+	val localization = MutableStateFlow("enEN")
 
-	private val _startingPageFlow: MutableStateFlow<String> by lazy { MutableStateFlow("None") }
-	val startingPageFlow: StateFlow<String> get() = _startingPageFlow
-	var startingPage: String
-		get() = _startingPageFlow.value
-		set(value) {
-			_startingPageFlow.value = value
-		}
+	@Transient
+	val startingPage = MutableStateFlow("None")
 
-	private val _colorPickerSettingsFlow: MutableStateFlow<ColorPickerSettings> by lazy { MutableStateFlow(ColorPickerSettings()) }
-	val colorPickerSettingsFlow: StateFlow<ColorPickerSettings> get() = _colorPickerSettingsFlow.asStateFlow()
-	var colorPickerSettings: ColorPickerSettings
-		get() = _colorPickerSettingsFlow.value
-		set(value) {
-			_colorPickerSettingsFlow.value = value
-		}
+	@Transient
+	val colorPickerSettings = MutableStateFlow(ColorPickerSettings())
 
-	private val _disableAnimationsFlor: MutableStateFlow<Boolean> by lazy { MutableStateFlow(false) }
-	val disableAnimationsFlow: StateFlow<Boolean> get() = _disableAnimationsFlor
-	var disableAnimations: Boolean
-		get() = _disableAnimationsFlor.value
-		set(value) {
-			_disableAnimationsFlor.value = value
-		}
+	@Transient
+	var disableAnimations = MutableStateFlow(false)
+
+	// Serializable properties for persistence
+	var themeValue: String = "dark"
+	var accentValue: String = "#ff0000ff"
+	var accentHistoryValue: List<String> = emptyList()
+	var localizationValue: String = "enEN"
+	var startingPageValue: String = "None"
+	var disableAnimationsValue: Boolean = false
 
 	init {
+		// Initialize StateFlows from serializable values
+		theme.value = themeValue
+		accent.value = Color.web(accentValue)!!
+		accentHistory.value = accentHistoryValue.map { Color.web(it)!! }
+		localization.value = localizationValue
+		startingPage.value = startingPageValue
+		disableAnimations.value = disableAnimationsValue
+
 		scope.launch {
-			colorPickerSettingsFlow.onEach { newValue ->
-				if (colorPickerSettings !== newValue) { //si potrebbe usare un controllo per puntatore !==
-					colorPickerSettings = newValue
+			colorPickerSettings.onEach { newValue ->
+				if (colorPickerSettings.value !== newValue) {
+					colorPickerSettings.value = newValue
 				}
 			}.collect()
 		}
+
 		scope.launch {
-			accentFlow.collectLatest {
-				accentHistory = accentHistory.toMutableList().apply {
+			accent.collectLatest {
+				accentHistory.value = accentHistory.value.toMutableList().apply {
 					if (!contains(it)) {
 						add(it)
 					}
 				}.takeLast(5)
 			}
-			accentHistoryFlow.collectLatest { history ->
+
+			accentHistory.collectLatest { history ->
 				if (history.size > 5) {
-					_accentHistoryFlow.value = history.takeLast(5)
+					accentHistory.value = history.takeLast(5)
 				}
 			}
 		}
-	}
-}
 
-object UserSettingsSerializer : KSerializer<UserSettings> {
-	override val descriptor: SerialDescriptor = buildClassSerialDescriptor("UserSettings") {
-		element<String>("theme")
-		element<String>("accent")
-		element<List<String>>("accentHistory")
-		element<String>("localization")
-		element<String>("startingPage")
-		element<ColorPickerSettings>("colorPickerSettings")
-		element<Boolean>("disableAnimations")
-	}
-
-	override fun serialize(encoder: Encoder, value: UserSettings) {
-		val data = UserSettingsData(
-			theme = value.theme,
-			accent = value.accent.toString().replace("0x", "#"),
-			accentHistory = value.accentHistory.map { it.toString().replace("0x", "#") },
-			localization = value.localization,
-			startingPage = value.startingPage,
-			colorPickerSettings = value.colorPickerSettings,
-			disableAnimations = value.disableAnimations
-		)
-		UserSettingsData.serializer().serialize(encoder, data)
-	}
-
-	override fun deserialize(decoder: Decoder): UserSettings {
-		val data = UserSettingsData.serializer().deserialize(decoder)
-		return UserSettings().apply {
-			theme = data.theme
-			accent = Color.web(data.accent)
-			accentHistory = data.accentHistory.map { Color.web(it) }
-			localization = data.localization
-			startingPage = data.startingPage
-			colorPickerSettings = data.colorPickerSettings
-			disableAnimations = data.disableAnimations
+		// Sync StateFlow changes back to serializable properties
+		scope.launch {
+			theme.collectLatest { themeValue = it }
+		}
+		scope.launch {
+			accent.collectLatest { accentValue = it.toString() }
+		}
+		scope.launch {
+			accentHistory.collectLatest { accentHistoryValue = it.map { color -> color.toString() } }
+		}
+		scope.launch {
+			localization.collectLatest { localizationValue = it }
+		}
+		scope.launch {
+			startingPage.collectLatest { startingPageValue = it }
+		}
+		scope.launch {
+			disableAnimations.collectLatest { disableAnimationsValue = it }
 		}
 	}
 }

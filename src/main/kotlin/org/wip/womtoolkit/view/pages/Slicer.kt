@@ -4,18 +4,21 @@ import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
 import javafx.application.Platform
-import javafx.css.PseudoClass
+import javafx.beans.property.Property
+import javafx.beans.property.SimpleIntegerProperty
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.TextFormatter
 import javafx.scene.control.ToggleButton
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.FlowPane
 import javafx.scene.layout.VBox
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.Duration
 import org.wip.womtoolkit.model.ApplicationSettings
-import kotlin.times
+import java.util.function.UnaryOperator
 
 class Slicer : BorderPane() {
     object Constants {
@@ -25,14 +28,16 @@ class Slicer : BorderPane() {
             "M4.29289 15.7071C4.68342 16.0976 5.31658 16.0976 5.70711 15.7071L12 9.41421L18.2929 15.7071C18.6834 16.0976 19.3166 16.0976 19.7071 15.7071C20.0976 15.3166 20.0976 14.6834 19.7071 14.2929L12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L4.29289 14.2929C3.90237 14.6834 3.90237 15.3166 4.29289 15.7071Z"
     }
 
-    @FXML
-    lateinit var advancedModeToggle: ToggleButton
-    @FXML
-    lateinit var advancedIndicator: SVGPath
-    @FXML
-    lateinit var advancedModeContainer: VBox
-    @FXML
-    lateinit var advancedModeContent: ScrollPane
+    val minimumHeightProperty: SimpleIntegerProperty = SimpleIntegerProperty(100)
+    val desiredHeightProperty: SimpleIntegerProperty = SimpleIntegerProperty(10000)
+    val maximumHeightProperty: SimpleIntegerProperty = SimpleIntegerProperty(10000)
+
+    @FXML lateinit var advancedModeToggle: ToggleButton
+    @FXML lateinit var advancedIndicator: SVGPath
+    @FXML lateinit var advancedModeContainer: VBox
+    @FXML lateinit var advancedModeContent: ScrollPane
+    @FXML lateinit var queuePane: ScrollPane
+    @FXML lateinit var queueFlow: FlowPane
 
     val rectClip = Rectangle().apply {
         arcHeight = 13.0
@@ -50,6 +55,11 @@ class Slicer : BorderPane() {
     @FXML
     fun initialize() {
         initializeAdvancedMode()
+        queuePane.widthProperty().addListener { _, _, newValue ->
+            queueFlow.prefWidth = newValue.toDouble() - 20.0
+            queueFlow.minWidth = newValue.toDouble() - 20.0
+            queueFlow.maxWidth = newValue.toDouble() - 20.0
+        }
     }
 
     private fun initializeAdvancedMode() {
@@ -64,7 +74,7 @@ class Slicer : BorderPane() {
             else
                 advancedModeToggle.height
 
-            val animationDuration = if (ApplicationSettings.userSettings.disableAnimations) 1.0 else 200.0
+            val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 200.0
             Timeline(
                 KeyFrame(
                     Duration.millis(animationDuration),

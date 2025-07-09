@@ -17,6 +17,9 @@
 @import "components/separator.css";
 @import "components/transparent-toggle-button.css";
 @import "components/scroll-pane.css";
+@import "components/list-view.css";
+@import "components/progress-bar.css";
+@import "components/custom/selected-files-container.css";
 
 
 .label {

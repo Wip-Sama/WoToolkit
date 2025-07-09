@@ -1,0 +1,17 @@
+.selected-files-container {
+    -fx-background-color: -womt-border-dark, -womt-background-light;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 6, 5;
+}
+
+.selected-files-container .progress-bar {
+    -fx-background-color: transparent;
+}
+
+.selected-files-container .scroll-pane {
+    -fx-background-color: -womt-background-lightest;
+    -fx-background-radius: 5;
+
+    -fx-border-color: -womt-border-light;
+    -fx-border-radius: 5;
+}

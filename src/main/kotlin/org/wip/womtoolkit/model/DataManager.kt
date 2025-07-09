@@ -1,13 +1,30 @@
 package org.wip.womtoolkit.model
 
+import javafx.scene.paint.Color
+import kotlinx.coroutines.flow.MutableStateFlow
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import org.wip.womtoolkit.utils.serializers.ColorSerializer
+import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 
 object DataManager {
 	val jarDir: String = System.getProperty("user.dir")
 	val dataFolder: Path = Path.of(jarDir, "Data")
 	val applicationSettings: Path = Path.of(jarDir, "Data", "applicationSettings.json")
+
+	val module = SerializersModule {
+		contextual(MutableStateFlow::class) { MutableStateFlowSerializer(ColorSerializer()) }
+		contextual(Color::class, ColorSerializer())
+	}
+
+	val customJsonSerializer = Json {
+		serializersModule = module
+		prettyPrint = true
+		encodeDefaults = true
+		isLenient = true // Allows for lenient parsing of JSON
+	}
 
 	fun init() {
 		// Initialization phase
@@ -18,15 +35,12 @@ object DataManager {
 		loadApplicationSettingsJSON()
 
 		// Forced sync phase
-		LocalizationService.currentLocaleProperty.addListener { _, _, newLocale ->
-
-		}
+		LocalizationService.currentLocaleProperty.addListener { _, _, newLocale -> }
 	}
 
 	fun close() {
 		writeJson()
 	}
-
 
 	private fun validateOrCreateDataFolder() {
 		//Is invalid
@@ -44,7 +58,7 @@ object DataManager {
 	private fun validateOrCreateApplicationSettingsJSON() {
 		if (!checkItsFileAndICanReadWrite(applicationSettings)) {
 			try {
-				val out = Json.encodeToString(ApplicationSettings.serializer(), ApplicationSettings)
+				val out = customJsonSerializer.encodeToString(ApplicationSettings.serializer(), ApplicationSettings)
 				Files.createFile(applicationSettings).also {
 					Files.write(applicationSettings, out.toByteArray())
 				}
@@ -86,8 +100,7 @@ object DataManager {
 	private fun loadApplicationSettingsJSON() {
 		try {
 			val jsonString = Files.readString(applicationSettings)
-			val appSettings = Json.decodeFromString(ApplicationSettings.serializer(), jsonString)
-			println(appSettings)
+			val appSettings = customJsonSerializer.decodeFromString(ApplicationSettings.serializer(), jsonString)
 		} catch (e: Exception) {
 			throw IllegalStateException("Failed to read JSON database", e)
 		}
@@ -95,7 +108,8 @@ object DataManager {
 
 	private fun writeJson() {
 		try {
-			val jsonString = Json.encodeToString(ApplicationSettings)
+			val jsonString = customJsonSerializer.encodeToString(ApplicationSettings)
+			println(jsonString)
 			Files.writeString(applicationSettings, jsonString)
 		} catch (e: Exception) {
 			throw IllegalStateException("Failed to write JSON database", e)

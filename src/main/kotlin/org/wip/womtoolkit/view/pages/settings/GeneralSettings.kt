@@ -97,15 +97,15 @@ class GeneralSettings : VBox() {
 			}
 			quickSetting = ColorPickerButton().apply {
 				isColorPickerAvailable = true
-				colorProperty.value = ApplicationSettings.userSettings.accent
+				colorProperty.value = ApplicationSettings.userSettings.accent.value
 
 				colorProperty.addListener { _, _, newColor ->
 					if (newColor != ApplicationSettings.userSettings.accent)
-						ApplicationSettings.userSettings.accent = newColor
+						ApplicationSettings.userSettings.accent.value = newColor
 				}
 
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.accentFlow.collectLatest { newColor ->
+					ApplicationSettings.userSettings.accent.collectLatest { newColor ->
 						withContext(Dispatchers.JavaFx) {
 							if (newColor != colorProperty.value)
 								colorProperty.value = newColor
@@ -119,20 +119,20 @@ class GeneralSettings : VBox() {
 				fun getSelectableColorPicker(): ColorPickerButton {
 					return ColorPickerButton().apply {
 						scope.launch(Dispatchers.IO) {
-							ApplicationSettings.userSettings.accentFlow.collectLatest { newColor ->
+							ApplicationSettings.userSettings.accent.collectLatest { newColor ->
 								withContext(Dispatchers.JavaFx) {
 									isSelectedProperty.value = newColor == colorProperty.value
 								}
 							}
 						}
 						onAction = EventHandler {
-							ApplicationSettings.userSettings.accent = colorProperty.value
+							ApplicationSettings.userSettings.accent.value = colorProperty.value
 						}
 						colorProperty.addListener { _, _, newColor ->
-							isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent
+							isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent.value
 						}
 						Platform.runLater {
-							isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent
+							isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent.value
 						}
 					}
 				}
@@ -153,14 +153,14 @@ class GeneralSettings : VBox() {
 								fun updateColorPickerButtons() {
 									children.forEachIndexed { index, node ->
 										if (node is ColorPickerButton) {
-											if (index >= ApplicationSettings.userSettings.accentHistory.size) {
+											if (index >= ApplicationSettings.userSettings.accentHistory.value.size) {
 												node.visibleProperty().set(false)
 											} else {
 												// Controllo aggiuntivo per evitare IndexOutOfBounds
-												val historyIndex = ApplicationSettings.userSettings.accentHistory.size - 1 - index
-												if (historyIndex in ApplicationSettings.userSettings.accentHistory.indices) {
+												val historyIndex = ApplicationSettings.userSettings.accentHistory.value.size - 1 - index
+												if (historyIndex in ApplicationSettings.userSettings.accentHistory.value.indices) {
 													node.visibleProperty().set(true)
-													node.colorProperty.value = ApplicationSettings.userSettings.accentHistory[historyIndex]
+													node.colorProperty.value = ApplicationSettings.userSettings.accentHistory.value[historyIndex]
 												} else {
 													node.visibleProperty().set(false)
 												}
@@ -170,7 +170,7 @@ class GeneralSettings : VBox() {
 								}
 
 								scope.launch(Dispatchers.IO) {
-									ApplicationSettings.userSettings.accentHistoryFlow.collectLatest { newColors ->
+									ApplicationSettings.userSettings.accentHistory.collectLatest { newColors ->
 										withContext(Dispatchers.JavaFx) {
 											updateColorPickerButtons()
 										}
@@ -210,12 +210,12 @@ class GeneralSettings : VBox() {
 			imageContainer.center = SVGPath().apply {
 				content = Constants.THEME
 			}
-			quickSetting = Switch(ApplicationSettings.userSettings.theme == "dark").apply {
+			quickSetting = Switch(ApplicationSettings.userSettings.theme.value == "dark").apply {
 				trueLocalization = "settingsPage.general.theme.dark"
 				falseLocalization = "settingsPage.general.theme.light"
 
 				fun updateTheme() {
-					ApplicationSettings.userSettings.theme = if (state) "dark" else "light"
+					ApplicationSettings.userSettings.theme.value = if (state) "dark" else "light"
 				}
 
 				stateProperty.addListener { observable, oldValue, newValue ->
@@ -225,7 +225,7 @@ class GeneralSettings : VBox() {
 				}
 
 				scope.launch {
-					ApplicationSettings.userSettings.themeFlow.collectLatest { newTheme ->
+					ApplicationSettings.userSettings.theme.collectLatest { newTheme ->
 						withContext(Dispatchers.JavaFx) {
 							state = newTheme == "dark"
 						}
@@ -250,7 +250,7 @@ class GeneralSettings : VBox() {
 					}
 				}
 				valueProperty().addListener { _, _, newValue ->
-					ApplicationSettings.userSettings.localization = newValue
+					ApplicationSettings.userSettings.localization.value = newValue
 				}
 			}
 		}
@@ -292,18 +292,18 @@ class GeneralSettings : VBox() {
 			imageContainer.center = SVGPath().apply {
 				content = Constants.ANIMATIONS
 			}
-			quickSetting = Switch(ApplicationSettings.userSettings.disableAnimations).apply {
+			quickSetting = Switch(ApplicationSettings.userSettings.disableAnimations.value).apply {
 				trueLocalization = "settingsPage.general.disableAnimations.enabled"
 				falseLocalization = "settingsPage.general.disableAnimations.disabled"
 
 				stateProperty.addListener { observable, oldValue, newValue ->
 					if (newValue != oldValue) {
-						ApplicationSettings.userSettings.disableAnimations = newValue
+						ApplicationSettings.userSettings.disableAnimations.value = newValue
 					}
 				}
 
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.disableAnimationsFlow.collectLatest { newValue ->
+					ApplicationSettings.userSettings.disableAnimations.collectLatest { newValue ->
 						withContext(Dispatchers.JavaFx) {
 							state = newValue
 						}

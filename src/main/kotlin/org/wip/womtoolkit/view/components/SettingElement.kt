@@ -136,7 +136,7 @@ class SettingElement() : AnchorPane() {
         else
             displayPane.height
 
-        val animationDuration = if (ApplicationSettings.userSettings.disableAnimations) 1.0 else 200.0
+        val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 200.0
         Timeline(
             KeyFrame(Duration.ZERO,
                 {

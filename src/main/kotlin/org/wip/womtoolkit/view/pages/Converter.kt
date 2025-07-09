@@ -47,6 +47,7 @@ class Converter : BorderPane() {
 			}
 
 			it.onDragDropped = EventHandler<DragEvent?> { event ->
+				if (event == null || it !is Button) return@EventHandler
 				val db = event.dragboard
 				var success = false
 				if (db.hasString()) {
@@ -73,6 +74,7 @@ class Converter : BorderPane() {
 			}
 
 			it.onDragDetected = EventHandler<MouseEvent?> { event ->
+				if (event == null || it !is Button) return@EventHandler
 				val dragBoard = it.startDragAndDrop(TransferMode.MOVE)
 				val clipboardContent = ClipboardContent()
 				clipboardContent.putString(TAB_DRAG_KEY)
@@ -84,6 +86,7 @@ class Converter : BorderPane() {
 			}
 
 			it.onDragOver = EventHandler<DragEvent?> { event ->
+				if (event == null || it !is Button) return@EventHandler
 				val dragBoard = event.dragboard
 				val source = draggingTab.get()
 				if (dragBoard.hasString()
@@ -104,7 +107,7 @@ class Converter : BorderPane() {
 
 						fun animateNode(node: Node, deltaY: Double, onFinished: (() -> Unit)? = null) {
 							nodeTimelines[node]?.stop()
-							val animationDuration = if (ApplicationSettings.userSettings.disableAnimations) 1.0 else 100.0
+							val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 100.0
 							val timeline = Timeline(
 								KeyFrame(Duration.ZERO, KeyValue(node.translateYProperty(), 0.0)),
 								KeyFrame(Duration.millis(animationDuration), KeyValue(node.translateYProperty(), deltaY))

@@ -82,7 +82,7 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		icons.add(Image(javaClass.getResource("/icons/icon.png")?.toExternalForm()))
 
 		scope.launch {
-			ApplicationSettings.userSettings.themeFlow.collectLatest { newTheme ->
+			ApplicationSettings.userSettings.theme.collectLatest { newTheme ->
 				withContext(Dispatchers.JavaFx) { //withContext can be substituted with Platform.runLater before scope
 					updateStyles()
 				}
@@ -90,7 +90,7 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		}
 
 		scope.launch {
-			ApplicationSettings.userSettings.accentFlow.collectLatest { newAccent ->
+			ApplicationSettings.userSettings.accent.collectLatest { newAccent ->
 				withContext(Dispatchers.JavaFx) {
 					updateStyles()
 				}
@@ -98,7 +98,7 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		}
 
 		scope.launch {
-			ApplicationSettings.userSettings.localizationFlow.collectLatest { newLocale ->
+			ApplicationSettings.userSettings.localization.collectLatest { newLocale ->
 				withContext(Dispatchers.JavaFx) {
 					updateLocale()
 				}
@@ -233,28 +233,28 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 
 	private fun updateStyles() {
 		scene.stylesheets.clear()
-		val cssUrl = javaClass.getResource("/view/styles/${ApplicationSettings.userSettings.theme}.css")
+		val cssUrl = javaClass.getResource("/view/styles/${ApplicationSettings.userSettings.theme.value}.css")
 		if (cssUrl != null) {
 			scene.stylesheets.add(cssUrl.toExternalForm())
 		} else {
-			println("File CSS non trovato: /view/styles/${ApplicationSettings.userSettings.theme}.css")
+			println("File CSS non trovato: /view/styles/${ApplicationSettings.userSettings.theme.value}.css")
 		}
 
 		captionColor = Color.valueOf(
-			cssReader.getValueFromCssFile("/view/styles/${ApplicationSettings.userSettings.theme}.css", "womt-text-color-1") ?: "#000000"
+			cssReader.getValueFromCssFile("/view/styles/${ApplicationSettings.userSettings.theme.value}.css", "womt-text-color-1") ?: "#000000"
 		)
 		titleBarColor = Color.valueOf(
-			cssReader.getValueFromCssFile("/view/styles/${ApplicationSettings.userSettings.theme}.css", "womt-background-1") ?: "#000000"
+			cssReader.getValueFromCssFile("/view/styles/${ApplicationSettings.userSettings.theme.value}.css", "womt-background-1") ?: "#000000"
 		)
 
-		val accentColor = ApplicationSettings.userSettings.accent.toString().replace("0x", "#")
+		val accentColor = ApplicationSettings.userSettings.accent.value.toString().replace("0x", "#")
 		scene.root.style = "-womt-accent: $accentColor;"
 
 		ProcessBuilder()
 	}
 
 	private fun updateLocale() {
-		LocalizationService.currentLocale = ApplicationSettings.userSettings.localization
+		LocalizationService.currentLocale = ApplicationSettings.userSettings.localization.value
 	}
 
 	@FXML

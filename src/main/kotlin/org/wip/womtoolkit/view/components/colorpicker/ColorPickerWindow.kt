@@ -255,6 +255,7 @@ class ColorPickerWindow() : BorderPane() {
 			}
 			null
 		}
+
 		val limit0_255 = UnaryOperator { change: TextFormatter.Change? ->
 			var newText = change!!.controlNewText
 			if (newText.isEmpty()) {

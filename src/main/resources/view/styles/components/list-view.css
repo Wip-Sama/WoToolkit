@@ -1,0 +1,37 @@
+.list-view {
+    -fx-background-color: -womt-background-lightest;
+    -fx-background-radius: 5;
+    -fx-border-color: -womt-border-light;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 5;
+    -fx-background-insets: 1 0 1 0;
+    -fx-text-fill: -womt-text;
+    -fx-padding: 3 0 2 7;
+}
+
+.list-view .list-cell:hover {
+    -fx-background-color: -womt-foreground-hover;
+}
+
+.list-view .list-cell:empty:hover {
+    -fx-background-color: transparent;
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: -womt-foreground-selected;
+}
+
+.list-view .list-cell:drag-over {
+    -fx-background-color: -womt-accent;
+}
+
+
+.list-view .list-cell:empty:drag-over {
+    -fx-background-color: transparent;
+}
