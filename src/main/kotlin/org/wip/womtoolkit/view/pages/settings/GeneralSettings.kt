@@ -5,7 +5,6 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.geometry.Insets
-import javafx.geometry.Pos
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Label
 import javafx.scene.control.Separator
@@ -113,7 +112,7 @@ class GeneralSettings : VBox() {
 					}
 				}
 			}
-			expandableContent = VBox().apply {
+			_expandableContent = VBox().apply {
 				spacing = 8.0
 
 				fun getSelectableColorPicker(): ColorPickerButton {

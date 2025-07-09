@@ -8,20 +8,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowColorSerializer
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowListColorSerializer
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 
 @Serializable
 class UserSettings {
-	@Transient
-	private val scope = MainScope()
-
 	@Serializable(MutableStateFlowSerializer::class)
-	val theme: MutableStateFlow<String> = MutableStateFlow("dark")
+	val theme = MutableStateFlow("dark")
 
-//	@Transient
 	@Serializable(MutableStateFlowColorSerializer::class)
 	val accent: MutableStateFlow<Color> = MutableStateFlow(Color.web("#ff0000ff")!!)
 
@@ -38,9 +33,11 @@ class UserSettings {
 	val colorPickerSettings = MutableStateFlow(ColorPickerSettings())
 
 	@Serializable(MutableStateFlowSerializer::class)
-	var disableAnimations = MutableStateFlow(false)
+	val disableAnimations = MutableStateFlow(false)
 
 	init {
+		val scope = MainScope()
+
 		scope.launch {
 			colorPickerSettings.onEach { newValue ->
 				if (colorPickerSettings.value !== newValue) {

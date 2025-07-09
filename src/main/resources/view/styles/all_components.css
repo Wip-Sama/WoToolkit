@@ -29,3 +29,7 @@
 SVGPath {
     -fx-fill: -womt-text;
 }
+
+SVGPath:disabled {
+    -fx-fill: -womt-text-muted;
+}

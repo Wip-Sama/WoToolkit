@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.css.PseudoClass
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -18,8 +19,8 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.Duration
 import org.wip.womtoolkit.model.ApplicationSettings
-import org.wip.womtoolkit.model.DataManager
 import org.wip.womtoolkit.model.Globals
+import org.wip.womtoolkit.model.Lsp
 import kotlin.properties.Delegates
 
 /**
@@ -42,20 +43,53 @@ class SettingElement() : AnchorPane() {
     @FXML lateinit var displayPane: BorderPane
     @FXML lateinit var rightContainer: HBox
 
+    private val _contentProperty: SimpleStringProperty = SimpleStringProperty("")
+    fun getContent(): String = _contentProperty.get()
+    fun setContent(value: String) = _contentProperty.set(value)
+
+    private val _titleLocalizationProperty = SimpleStringProperty("")
+    fun getTitleLocalization(): String = _titleLocalizationProperty.get()
+    fun setTitleLocalization(value: String) = _titleLocalizationProperty.set(value)
+
+    private val _descriptionLocalizationProperty = SimpleStringProperty("")
+    fun getDescriptionLocalization(): String = _descriptionLocalizationProperty.get()
+    fun setDescriptionLocalization(value: String) = _descriptionLocalizationProperty.set(value)
+
     val expandedProperty = SimpleBooleanProperty(false)
 
-    var expandableContent: Pane? by Delegates.observable(null) { _, oldValue, newValue ->
+    var _expandableContent: Pane? by Delegates.observable(null) { _, oldValue, newValue ->
         expandedIndicator.isManaged = newValue != null
         expandedIndicator.isVisible = newValue != null
         expandablePane.top = newValue
         displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), newValue != null)
+    }
+    fun getExpandableContent(): Pane? = _expandableContent
+    fun setExpandableContent(value: Pane?) { _expandableContent = value }
+
+    // Aggiungi questo per SceneBuilder
+    fun getExpandableChildren(): javafx.collections.ObservableList<Node> {
+        if (_expandableContent == null) {
+            _expandableContent = Pane()
+        }
+        return _expandableContent!!.children
+    }
+
+    fun getExpandableChild(): Node? = _expandableContent?.children?.firstOrNull()
+    fun setExpandableChild(value: Node?) {
+        if (_expandableContent == null) {
+            _expandableContent = Switch()
+        }
+        _expandableContent!!.children.clear()
+        if (value != null) {
+            _expandableContent!!.children.add(value)
+        }
     }
 
     var quickSetting: Node? by Delegates.observable(null) { _, oldValue, newValue ->
         rightContainer.children.remove(oldValue)
         rightContainer.children.add(0, newValue)
         newValue?.hoverProperty()?.addListener { _, _, hover ->
-            if (expandableContent == null)
+            if (_expandableContent == null)
                 return@addListener
             if (hover) {
                 displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), false)
@@ -64,6 +98,8 @@ class SettingElement() : AnchorPane() {
             }
         }
     }
+//    fun getQuickSetting(): Node? = quickSetting
+//    fun setQuickSetting(value: Node?) { quickSetting = value }
 
     val rectClip = Rectangle().apply {
         arcHeight = 13.0
@@ -82,7 +118,7 @@ class SettingElement() : AnchorPane() {
 
         expandedProperty.addListener { _, _, newValue ->
             animateExpand()
-            if (expandableContent == null) {
+            if (_expandableContent == null) {
                 Globals.logger?.warning("Expandable content is null, cannot expand setting element")
                 expandedProperty.set(false)
                 return@addListener
@@ -107,12 +143,24 @@ class SettingElement() : AnchorPane() {
             if (quickSetting != null && isDescendantOf(evt.target as? Node, quickSetting!!)) {
                 return@EventHandler
             }
-            if (expandableContent != null) {
+            if (_expandableContent != null) {
                 expandedProperty.set(!expandedProperty.get())
             }
         }
         expandedIndicator.isManaged = false
         expandedIndicator.isVisible = false
+
+        _titleLocalizationProperty.addListener {
+            title.textProperty().bind(Lsp.lsb(_titleLocalizationProperty.value))
+        }
+        _descriptionLocalizationProperty.addListener {
+            description.textProperty().bind(Lsp.lsb(_descriptionLocalizationProperty.value))
+        }
+        _contentProperty.addListener { _, _, newValue ->
+            imageContainer.center = SVGPath().apply {
+                content = newValue
+            }
+        }
     }
 
     private fun isDescendantOf(node: Node?, ancestor: Node): Boolean {
@@ -129,7 +177,7 @@ class SettingElement() : AnchorPane() {
             pseudoClassStateChanged(PseudoClass.getPseudoClass("expanded"), expandedProperty.get())
 
         val newHeight = if (expandedProperty.get())
-                (expandableContent?.height ?: 0.0) +
+                (_expandableContent?.height ?: 0.0) +
                         (expandablePane.padding?.top ?: 8.0) +
                         (expandablePane.padding?.bottom ?: 8.0) +
                         displayPane.height

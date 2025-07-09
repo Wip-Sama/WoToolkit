@@ -5,6 +5,7 @@ module org.wip.womtoolkit {
     requires java.management;
 
     requires kotlin.stdlib;
+    requires kotlin.reflect;
     requires kotlinx.coroutines.core;
     requires kotlinx.coroutines.javafx;
     requires kotlinx.serialization.core;
@@ -16,6 +17,8 @@ module org.wip.womtoolkit {
 
     requires nfx.core;
 
+    opens org.wip.womtoolkit.model to kotlin.reflect;
+    opens org.wip.womtoolkit.model.database.entities to kotlin.reflect;
     opens org.wip.womtoolkit to javafx.graphics, javafx.fxml;
     opens org.wip.womtoolkit.view.components to javafx.fxml;
     opens org.wip.womtoolkit.view.components.collapsablesidebarmenu to javafx.fxml;
