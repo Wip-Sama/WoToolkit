@@ -9,50 +9,38 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import org.wip.womtoolkit.utils.serializers.MutableStateFlowColorSerializer
+import org.wip.womtoolkit.utils.serializers.MutableStateFlowListColorSerializer
+import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 
 @Serializable
 class UserSettings {
 	@Transient
 	private val scope = MainScope()
 
-	@Transient
-	val theme = MutableStateFlow("dark")
+	@Serializable(MutableStateFlowSerializer::class)
+	val theme: MutableStateFlow<String> = MutableStateFlow("dark")
 
-	@Transient
+//	@Transient
+	@Serializable(MutableStateFlowColorSerializer::class)
 	val accent: MutableStateFlow<Color> = MutableStateFlow(Color.web("#ff0000ff")!!)
 
-	@Transient
+	@Serializable(MutableStateFlowListColorSerializer::class)
 	val accentHistory: MutableStateFlow<List<Color>> = MutableStateFlow(emptyList())
 
-	@Transient
+	@Serializable(MutableStateFlowSerializer::class)
 	val localization = MutableStateFlow("enEN")
 
-	@Transient
+	@Serializable(MutableStateFlowSerializer::class)
 	val startingPage = MutableStateFlow("None")
 
-	@Transient
+	@Serializable(MutableStateFlowSerializer::class)
 	val colorPickerSettings = MutableStateFlow(ColorPickerSettings())
 
-	@Transient
+	@Serializable(MutableStateFlowSerializer::class)
 	var disableAnimations = MutableStateFlow(false)
 
-	// Serializable properties for persistence
-	var themeValue: String = "dark"
-	var accentValue: String = "#ff0000ff"
-	var accentHistoryValue: List<String> = emptyList()
-	var localizationValue: String = "enEN"
-	var startingPageValue: String = "None"
-	var disableAnimationsValue: Boolean = false
-
 	init {
-		// Initialize StateFlows from serializable values
-		theme.value = themeValue
-		accent.value = Color.web(accentValue)!!
-		accentHistory.value = accentHistoryValue.map { Color.web(it)!! }
-		localization.value = localizationValue
-		startingPage.value = startingPageValue
-		disableAnimations.value = disableAnimationsValue
-
 		scope.launch {
 			colorPickerSettings.onEach { newValue ->
 				if (colorPickerSettings.value !== newValue) {
@@ -75,26 +63,6 @@ class UserSettings {
 					accentHistory.value = history.takeLast(5)
 				}
 			}
-		}
-
-		// Sync StateFlow changes back to serializable properties
-		scope.launch {
-			theme.collectLatest { themeValue = it }
-		}
-		scope.launch {
-			accent.collectLatest { accentValue = it.toString() }
-		}
-		scope.launch {
-			accentHistory.collectLatest { accentHistoryValue = it.map { color -> color.toString() } }
-		}
-		scope.launch {
-			localization.collectLatest { localizationValue = it }
-		}
-		scope.launch {
-			startingPage.collectLatest { startingPageValue = it }
-		}
-		scope.launch {
-			disableAnimations.collectLatest { disableAnimationsValue = it }
 		}
 	}
 }

@@ -8,9 +8,9 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-class ColorSerializer : KSerializer<Color> {
-	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Color", PrimitiveKind.STRING)
-	override fun serialize(encoder: Encoder, value: Color) = encoder.encodeString(value.toString())
+object ColorSerializer : KSerializer<Color> {
+	override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("color", PrimitiveKind.STRING)
+	override fun serialize(encoder: Encoder, value: Color) = encoder.encodeString("#${value.toString().substring(2, 8)}")
 	override fun deserialize(decoder: Decoder): Color = Color.web(decoder.decodeString())
 }
 

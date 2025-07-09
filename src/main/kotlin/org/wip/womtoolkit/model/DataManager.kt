@@ -15,8 +15,8 @@ object DataManager {
 	val applicationSettings: Path = Path.of(jarDir, "Data", "applicationSettings.json")
 
 	val module = SerializersModule {
-		contextual(MutableStateFlow::class) { MutableStateFlowSerializer(ColorSerializer()) }
-		contextual(Color::class, ColorSerializer())
+		contextual(MutableStateFlow::class) { MutableStateFlowSerializer(ColorSerializer) }
+		contextual(Color::class, ColorSerializer)
 	}
 
 	val customJsonSerializer = Json {
@@ -58,7 +58,7 @@ object DataManager {
 	private fun validateOrCreateApplicationSettingsJSON() {
 		if (!checkItsFileAndICanReadWrite(applicationSettings)) {
 			try {
-				val out = customJsonSerializer.encodeToString(ApplicationSettings.serializer(), ApplicationSettings)
+				val out = customJsonSerializer.encodeToString(ApplicationSettings)
 				Files.createFile(applicationSettings).also {
 					Files.write(applicationSettings, out.toByteArray())
 				}
@@ -100,9 +100,10 @@ object DataManager {
 	private fun loadApplicationSettingsJSON() {
 		try {
 			val jsonString = Files.readString(applicationSettings)
-			val appSettings = customJsonSerializer.decodeFromString(ApplicationSettings.serializer(), jsonString)
+			customJsonSerializer.decodeFromString(ApplicationSettings.serializer(), jsonString)
+			println("ApplicationSettings loaded successfully: $ApplicationSettings")
 		} catch (e: Exception) {
-			throw IllegalStateException("Failed to read JSON database", e)
+			println("Failed to load ApplicationSettings, using defaults: ${e.message}")
 		}
 	}
 
@@ -110,7 +111,7 @@ object DataManager {
 		try {
 			val jsonString = customJsonSerializer.encodeToString(ApplicationSettings)
 			println(jsonString)
-			Files.writeString(applicationSettings, jsonString)
+//			Files.writeString(applicationSettings, jsonString)
 		} catch (e: Exception) {
 			throw IllegalStateException("Failed to write JSON database", e)
 		}
