@@ -4,12 +4,13 @@ import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
 import javafx.application.Platform
-import javafx.beans.property.Property
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
+import javafx.scene.control.Button
+import javafx.scene.control.ChoiceBox
 import javafx.scene.control.ScrollPane
-import javafx.scene.control.TextFormatter
+import javafx.scene.control.TextField
 import javafx.scene.control.ToggleButton
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
@@ -18,7 +19,9 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.Duration
 import org.wip.womtoolkit.model.ApplicationSettings
-import java.util.function.UnaryOperator
+import org.wip.womtoolkit.model.Globals
+import org.wip.womtoolkit.view.components.NumberTextField
+import org.wip.womtoolkit.view.components.Switch
 
 class Slicer : BorderPane() {
     object Constants {
@@ -39,6 +42,25 @@ class Slicer : BorderPane() {
     @FXML lateinit var queuePane: ScrollPane
     @FXML lateinit var queueFlow: FlowPane
 
+    @FXML lateinit var minimumHeight: NumberTextField
+    @FXML lateinit var desiredHeight: NumberTextField
+    @FXML lateinit var maximumHeight: NumberTextField
+    @FXML lateinit var searchDirection: Switch
+    @FXML lateinit var saveInSubfolder: Switch
+    @FXML lateinit var subfolderName: TextField
+    @FXML lateinit var saveAsArchive: Switch
+    @FXML lateinit var archiveName: TextField
+    @FXML lateinit var archiveFormat: ChoiceBox<String>
+    @FXML lateinit var parallelExecution: Switch
+    @FXML lateinit var outputFormat: ChoiceBox<String>
+    @FXML lateinit var cutTolerance: NumberTextField
+
+    @FXML lateinit var folderPath: TextField
+    @FXML lateinit var addFolder: Button
+    @FXML lateinit var execute: Button
+    @FXML lateinit var searchFile: Button
+    @FXML lateinit var searchFolder: Button
+
     val rectClip = Rectangle().apply {
         arcHeight = 13.0
         arcWidth = 13.0
@@ -55,6 +77,7 @@ class Slicer : BorderPane() {
     @FXML
     fun initialize() {
         initializeAdvancedMode()
+        initializeDefaults()
         queuePane.widthProperty().addListener { _, _, newValue ->
             queueFlow.prefWidth = newValue.toDouble() - 20.0
             queueFlow.minWidth = newValue.toDouble() - 20.0
@@ -63,9 +86,6 @@ class Slicer : BorderPane() {
     }
 
     private fun initializeAdvancedMode() {
-        advancedModeContainer.clip = rectClip
-        rectClip.widthProperty().bind(advancedModeContainer.widthProperty())
-
         fun animateExpand() {
             val newHeight = if (advancedModeToggle.isSelected)
                 (advancedModeToggle.height) +
@@ -85,6 +105,7 @@ class Slicer : BorderPane() {
             ).play()
         }
 
+        /* On Change */
         advancedModeToggle.selectedProperty().addListener { _, oldValue, newValue ->
             if (newValue != oldValue) {
                 animateExpand()
@@ -93,11 +114,13 @@ class Slicer : BorderPane() {
         }
 
         /* Initialize */
+        advancedModeContainer.clip = rectClip
+        rectClip.widthProperty().bind(advancedModeContainer.widthProperty())
+        rectClip.heightProperty().bind(advancedModeContainer.heightProperty())
         advancedModeContent.isVisible = false
         advancedModeContent.isManaged = false
-        rectClip.heightProperty().bind(advancedModeContainer.heightProperty())
 
-        Platform.runLater {
+        advancedModeToggle.heightProperty().addListener { _, _, newValue ->
             val newHeight = if (advancedModeToggle.isSelected)
                 (advancedModeToggle.height) +
                         (advancedModeContainer.spacing * (advancedModeContainer.children.size - 1)) +
@@ -110,5 +133,22 @@ class Slicer : BorderPane() {
             advancedModeContent.isVisible = true
             advancedModeContent.isManaged = true
         }
+    }
+
+    private fun initializeDefaults() {
+        minimumHeight.text = ApplicationSettings.slicerSettings.minimumHeight.value.toString()
+        desiredHeight.text = ApplicationSettings.slicerSettings.desiredHeight.value.toString()
+        maximumHeight.text = ApplicationSettings.slicerSettings.maximumHeight.value.toString()
+        searchDirection.state = ApplicationSettings.slicerSettings.searchDirection.value
+        saveInSubfolder.state = ApplicationSettings.slicerSettings.saveInSubFolder.value
+        subfolderName.text = ApplicationSettings.slicerSettings.subFolderName.value
+        saveAsArchive.state = ApplicationSettings.slicerSettings.saveInArchive.value
+        archiveName.text = ApplicationSettings.slicerSettings.archiveName.value
+        archiveFormat.items.addAll(Globals.ARCHIVE_OUTPUT_FORMATS)
+        archiveFormat.value = ApplicationSettings.slicerSettings.archiveFormat.value
+        parallelExecution.state = ApplicationSettings.slicerSettings.parallelExecution.value
+        outputFormat.items.addAll(Globals.IMAGE_OUTPUT_FORMATS)
+        outputFormat.value = ApplicationSettings.slicerSettings.outputFormat.value
+        cutTolerance.text = ApplicationSettings.slicerSettings.cutTolerance.value.toString()
     }
 }
