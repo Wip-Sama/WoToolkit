@@ -75,7 +75,7 @@ class SlicerSettings : VBox() {
 			}
 			expandableContent = SingleSettingGrid().apply {
 				add(LabelWithLocalization().apply {
-					localizationKey = "settingsPage.slicer.subfolder.folderName"
+					localizationKey = "settingsPage.slicer.subFolder.folderName"
 				}, 0, 0)
 				add(TextField().apply {
 					text = ApplicationSettings.slicerSettings.subFolderName.value
