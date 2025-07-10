@@ -57,39 +57,18 @@ class SettingElement() : AnchorPane() {
 
     val expandedProperty = SimpleBooleanProperty(false)
 
-    var _expandableContent: Pane? by Delegates.observable(null) { _, oldValue, newValue ->
+    var expandableContent: Pane? by Delegates.observable(null) { _, oldValue, newValue ->
         expandedIndicator.isManaged = newValue != null
         expandedIndicator.isVisible = newValue != null
         expandablePane.top = newValue
         displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), newValue != null)
-    }
-    fun getExpandableContent(): Pane? = _expandableContent
-    fun setExpandableContent(value: Pane?) { _expandableContent = value }
-
-    // Aggiungi questo per SceneBuilder
-    fun getExpandableChildren(): javafx.collections.ObservableList<Node> {
-        if (_expandableContent == null) {
-            _expandableContent = Pane()
-        }
-        return _expandableContent!!.children
-    }
-
-    fun getExpandableChild(): Node? = _expandableContent?.children?.firstOrNull()
-    fun setExpandableChild(value: Node?) {
-        if (_expandableContent == null) {
-            _expandableContent = Switch()
-        }
-        _expandableContent!!.children.clear()
-        if (value != null) {
-            _expandableContent!!.children.add(value)
-        }
     }
 
     var quickSetting: Node? by Delegates.observable(null) { _, oldValue, newValue ->
         rightContainer.children.remove(oldValue)
         rightContainer.children.add(0, newValue)
         newValue?.hoverProperty()?.addListener { _, _, hover ->
-            if (_expandableContent == null)
+            if (expandableContent == null)
                 return@addListener
             if (hover) {
                 displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), false)
@@ -118,7 +97,7 @@ class SettingElement() : AnchorPane() {
 
         expandedProperty.addListener { _, _, newValue ->
             animateExpand()
-            if (_expandableContent == null) {
+            if (expandableContent == null) {
                 Globals.logger?.warning("Expandable content is null, cannot expand setting element")
                 expandedProperty.set(false)
                 return@addListener
@@ -143,7 +122,7 @@ class SettingElement() : AnchorPane() {
             if (quickSetting != null && isDescendantOf(evt.target as? Node, quickSetting!!)) {
                 return@EventHandler
             }
-            if (_expandableContent != null) {
+            if (expandableContent != null) {
                 expandedProperty.set(!expandedProperty.get())
             }
         }
@@ -177,7 +156,7 @@ class SettingElement() : AnchorPane() {
             pseudoClassStateChanged(PseudoClass.getPseudoClass("expanded"), expandedProperty.get())
 
         val newHeight = if (expandedProperty.get())
-                (_expandableContent?.height ?: 0.0) +
+                (expandableContent?.height ?: 0.0) +
                         (expandablePane.padding?.top ?: 8.0) +
                         (expandablePane.padding?.bottom ?: 8.0) +
                         displayPane.height

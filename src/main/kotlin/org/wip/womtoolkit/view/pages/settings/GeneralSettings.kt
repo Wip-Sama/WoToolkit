@@ -112,7 +112,7 @@ class GeneralSettings : VBox() {
 					}
 				}
 			}
-			_expandableContent = VBox().apply {
+			expandableContent = VBox().apply {
 				spacing = 8.0
 
 				fun getSelectableColorPicker(): ColorPickerButton {
