@@ -19,12 +19,10 @@ import javafx.scene.image.ImageView
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.StackPane
 import javafx.util.Callback
 import org.wip.womtoolkit.model.Lsp
-import kotlin.div
+import kotlin.math.max
 import kotlin.properties.Delegates
-import kotlin.times
 
 //TODO: the should zoom from mouse position not relative to the top left corner
 class SelectedFilesContainer : BorderPane() {
@@ -40,7 +38,7 @@ class SelectedFilesContainer : BorderPane() {
 	@FXML lateinit var fileSize: Label
 	@FXML lateinit var zoomLevel: Label
 
-	private val imageHolder = StackPane()
+	private val imageHolder = BorderPane()
 	private val dragOverPseudoClass = javafx.css.PseudoClass.getPseudoClass("drag-over")
 	private val zoomProperty = SimpleDoubleProperty(1.0)
 	private var mousePosition = SimpleObjectProperty<Pair<Double, Double>>()
@@ -89,21 +87,20 @@ class SelectedFilesContainer : BorderPane() {
 		}
 
 		imageHolder.apply {
-			children.add(previewImage)
-			alignment = javafx.geometry.Pos.CENTER
+			center = previewImage
+			setAlignment(previewImage, javafx.geometry.Pos.CENTER)
+			onMouseEntered = EventHandler { cursor = Cursor.OPEN_HAND }
+			onMousePressed = EventHandler { cursor = Cursor.CLOSED_HAND }
+			onMouseReleased = EventHandler { cursor = Cursor.OPEN_HAND }
+			onMouseExited = EventHandler { cursor = Cursor.DEFAULT }
 			onScroll = EventHandler { e: javafx.scene.input.ScrollEvent ->
 				if (e.isControlDown) {
 					e.consume()
 					val zoomFactor = if (e.deltaY > 0) 1.1 else 0.9
 					val newZoom = zoomProperty.value * zoomFactor
-					zoomProperty.value = newZoom.coerceIn(1.0, 10.0)
-					mousePosition.value = Pair(e.x, e.y)
+					zoomProperty.value = newZoom.coerceIn(0.1, 10.0)
 				}
 			}
-			onMouseEntered = EventHandler { cursor = Cursor.OPEN_HAND }
-			onMousePressed = EventHandler { cursor = Cursor.CLOSED_HAND }
-			onMouseReleased = EventHandler { cursor = Cursor.OPEN_HAND }
-			onMouseExited = EventHandler { cursor = Cursor.DEFAULT }
 		}
 
 		previewPane.apply {
@@ -113,10 +110,15 @@ class SelectedFilesContainer : BorderPane() {
 			content = imageHolder
 			widthProperty().addListener { _, _, _ -> updateImageHolderSizeAnsPosition() }
 			heightProperty().addListener { _, _, _ -> updateImageHolderSizeAnsPosition() }
+			onMouseMoved = EventHandler { event ->
+				mousePosition.value = Pair(event.x, event.y)
+			}
+			hvalueProperty().addListener { _, _, _ -> println("${previewPane.hvalue}\t${previewPane.vvalue}") }
+			vvalueProperty().addListener { _, _, _ -> println("${previewPane.hvalue}\t${previewPane.vvalue}") }
 		}
 
 		zoomProperty.addListener { _, _, newV ->
-			updateImageHolderSizeAnsPosition(mousePosition.value?.first, mousePosition.value?.second)
+			updateImageHolderSizeAnsPosition(mousePosition.value)
 			fitImage(newV.toDouble())
 		}
 
@@ -127,31 +129,29 @@ class SelectedFilesContainer : BorderPane() {
 		}
 	}
 
-	private fun updateImageHolderSizeAnsPosition(mouseX: Double? = null, mouseY: Double? = null) {
+	private fun updateImageHolderSizeAnsPosition(mousePosition: Pair<Double, Double>? = null) {
 		val img = previewImage.image
-		if (img != null) {
-			// Salva la posizione relativa corrente
-			val currentRelativeX = previewPane.hvalue
-			val currentRelativeY = previewPane.vvalue
+		if (img == null) return
+		val currentRelativeX = previewPane.hvalue
+		val currentRelativeY = previewPane.vvalue
 
-			val oldW = imageHolder.width
-			val oldH = imageHolder.height
+		val oldW = imageHolder.width
+		val oldH = imageHolder.height
 
-			val newHeight = 2 * previewPane.width * zoomProperty.value
-			val newWidth = 2 * previewPane.height * zoomProperty.value
+		val newWidth = max(previewPane.viewportBounds.width, previewPane.viewportBounds.width * zoomProperty.value)
+		val newHeight = max(previewPane.viewportBounds.height, previewPane.viewportBounds.height * zoomProperty.value)
 
-			imageHolder.minWidth = newWidth
-			imageHolder.minHeight = newHeight
-			imageHolder.prefWidth = imageHolder.minWidth
-			imageHolder.prefHeight = imageHolder.minHeight
+		imageHolder.minWidth = newWidth
+		imageHolder.minHeight = newHeight
+		imageHolder.prefWidth = newWidth
+		imageHolder.prefHeight = newHeight
 
-			if (oldW > 0 && oldH > 0) {
-				val scaleFactorX = newWidth / oldW
-				val scaleFactorY = newHeight / oldH
+		if (oldW > 0 && oldH > 0) {
+			val scaleFactorX = newWidth / oldW
+			val scaleFactorY = newHeight / oldH
 
-				previewPane.hvalue = (currentRelativeX * scaleFactorX).coerceIn(0.0, 1.0)
-				previewPane.vvalue = (currentRelativeY * scaleFactorY).coerceIn(0.0, 1.0)
-			}
+			previewPane.hvalue = (currentRelativeX * scaleFactorX).coerceIn(0.0, 1.0)
+			previewPane.vvalue = (currentRelativeY * scaleFactorY).coerceIn(0.0, 1.0)
 		}
 	}
 
@@ -281,10 +281,10 @@ class SelectedFilesContainer : BorderPane() {
 
 		previewImage.image?.let { img ->
 			if (img.height > img.width) {
-				previewImage.fitHeight = previewPane.height * scale
+				previewImage.fitHeight = previewPane.viewportBounds.height * scale
 				previewImage.fitWidth = previewImage.fitHeight * (img.width / img.height)
 			} else {
-				previewImage.fitWidth = previewPane.width * scale
+				previewImage.fitWidth = previewPane.viewportBounds.width * scale
 				previewImage.fitHeight = previewImage.fitWidth * (img.height / img.width)
 			}
 		}

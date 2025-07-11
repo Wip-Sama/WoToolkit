@@ -15,7 +15,6 @@ import javafx.scene.control.ToggleButton
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.stage.DirectoryChooser
@@ -127,10 +126,10 @@ class Slicer : BorderPane() {
             }
         }
 
-        queuePane.widthProperty().addListener { _, _, newValue ->
-            queueFlow.prefWidth = newValue.toDouble() - 20.0
-            queueFlow.minWidth = newValue.toDouble() - 20.0
-            queueFlow.maxWidth = newValue.toDouble() - 20.0
+        queuePane.widthProperty().addListener { _, _, value ->
+            queueFlow.prefWidth = value.toDouble()
+            queueFlow.minWidth = value.toDouble()
+            queueFlow.maxWidth = value.toDouble()
         }
     }
 

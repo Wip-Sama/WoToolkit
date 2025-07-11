@@ -64,7 +64,7 @@
             <Insets bottom="8.0" />
          </BorderPane.margin>
          <center>
-            <ScrollPane fx:id="previewPane" fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" maxWidth="400.0" pannable="true" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
+            <ScrollPane fx:id="previewPane" fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="ALWAYS" maxWidth="400.0" pannable="true" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
                <content>
                   <ImageView fx:id="previewImage" focusTraversable="true" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" smooth="false" />
                </content>
