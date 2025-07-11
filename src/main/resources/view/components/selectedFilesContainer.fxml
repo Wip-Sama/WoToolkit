@@ -8,7 +8,6 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -20,7 +19,7 @@
    <top>
       <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <children>
-            <Label text="something very very very long that is a path" textOverrun="LEADING_ELLIPSIS">
+            <Label fx:id="inputPathLabel" text="something very very very long that is a path" textOverrun="LEADING_ELLIPSIS">
                <tooltip>
                   <Tooltip text="Input folder" />
                </tooltip>
@@ -67,20 +66,16 @@
          <center>
             <ScrollPane fx:id="previewPane" fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" maxWidth="400.0" pannable="true" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
                <content>
-                  <ImageView fx:id="previewImage" focusTraversable="true" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../images/color_wheel.png" />
-                     </image>
-                  </ImageView>
+                  <ImageView fx:id="previewImage" focusTraversable="true" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" smooth="false" />
                </content>
             </ScrollPane>
          </center>
          <top>
             <HBox alignment="TOP_RIGHT" spacing="8.0">
                <children>
-                  <Label minWidth="80.0" text="weight:" />
-                  <Label minWidth="80.0" text="size:" />
-                  <Label minWidth="80.0" text="zoom: " />
+                  <Label fx:id="fileWeight" minWidth="80.0" text="weight:" />
+                  <Label fx:id="fileSize" minWidth="80.0" text="size:" />
+                  <Label fx:id="zoomLevel" minWidth="80.0" text="zoom: " />
                </children>
                <BorderPane.margin>
                   <Insets bottom="4.0" right="4.0" />
@@ -103,8 +98,8 @@
                   <Insets bottom="4.0" left="4.0" />
                </BorderPane.margin>
                <children>
-                  <Label minWidth="90.0" text="Δheight:" />
-                  <Label minWidth="90.0" text="Δwidth:" />
+                  <Label fx:id="mediumHeight" minWidth="90.0" text="Δheight:" />
+                  <Label fx:id="mediumWidth" minWidth="90.0" text="Δwidth:" />
                </children>
             </HBox>
          </top>

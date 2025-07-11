@@ -3,8 +3,8 @@ package org.wip.womtoolkit.view.pages
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
-import javafx.application.Platform
 import javafx.beans.property.SimpleIntegerProperty
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.Button
@@ -15,13 +15,18 @@ import javafx.scene.control.ToggleButton
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.FlowPane
 import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
+import javafx.stage.DirectoryChooser
+import javafx.stage.FileChooser
 import javafx.util.Duration
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.view.components.NumberTextField
+import org.wip.womtoolkit.view.components.SelectedFilesContainer
 import org.wip.womtoolkit.view.components.Switch
+import java.io.File
 
 class Slicer : BorderPane() {
     object Constants {
@@ -78,6 +83,50 @@ class Slicer : BorderPane() {
     fun initialize() {
         initializeAdvancedMode()
         initializeDefaults()
+        folderPath.text = "C:\\Users\\sgroo\\Pictures\\converted"
+
+        val fileChooser = FileChooser().apply {
+            extensionFilters.add(
+                FileChooser.ExtensionFilter("Image Files", Globals.IMAGE_INPUT_FORMATS.map { "*.$it" }),
+            )
+        }
+        searchFile.onAction = EventHandler {
+           fileChooser.showOpenMultipleDialog(this.scene.window)
+        }
+
+        val directoryChooser = DirectoryChooser().apply {
+            title = "Select Directory"
+        }
+        searchFolder.onAction = EventHandler {
+            directoryChooser.showDialog(this.scene.window)?.let { dir ->
+                folderPath.text = dir.absolutePath
+            }
+        }
+
+        addFolder.onAction = EventHandler {
+            if (folderPath.text.isNotBlank()) {
+                queueFlow.children.addLast(
+                    //TODO: this is bad, loaded files and variables should be container in the model not the ui
+                SelectedFilesContainer().apply {
+                        inputPath = folderPath.text
+                        outputPath = if (saveInSubfolder.state) {
+                            "${folderPath.text}/${subfolderName.text}"
+                        } else {
+                            folderPath.text
+                        }
+                        File(folderPath.text).listFiles { it ->
+                            it.isFile && Globals.IMAGE_INPUT_FORMATS.any { ext -> it.extension.equals(ext, ignoreCase = true) }
+                        }?.map { it.name }?.let { fileList ->
+                            this.fileList = fileList
+                        } ?: run {
+                            this.fileList = emptyList()
+                        }
+                    }
+                )
+                folderPath.text = ""
+            }
+        }
+
         queuePane.widthProperty().addListener { _, _, newValue ->
             queueFlow.prefWidth = newValue.toDouble() - 20.0
             queueFlow.minWidth = newValue.toDouble() - 20.0

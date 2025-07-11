@@ -2,7 +2,7 @@ package org.wip.womtoolkit.view.components.collapsablesidebarmenu
 
 import javafx.beans.property.BooleanProperty
 
-//For now it just prevent people from putting garbage inside CollapsableSidebarMenu
+//For now, it just prevents people from putting garbage inside the CollapsableSidebarMenu
 interface CollapsableItem {
 	var selectable: Boolean
 	var localizationKey: String?
