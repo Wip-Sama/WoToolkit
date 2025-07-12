@@ -50,7 +50,7 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 
 	private val scope = MainScope()
 
-	object Constants {
+	companion object {
 		const val MINIMIZE: String = // chrome minimize (hardest)
 			"M0.554306 1.1109C0.554306 0.932457 0.698965 0.787798 0.877407 0.787798H5.40082C5.57926 0.787798 5.72392 0.932457 5.72392 1.1109C5.72392 1.28934 5.57926 1.434 5.40082 1.434H0.877407C0.698965 1.434 0.554306 1.28934 0.554306 1.1109Z"
 		const val MAXIMIZE: String = // maximize
@@ -128,8 +128,8 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		sidebarMenu.selectedItemProperty.addListener(ChangeListener { _, _, new ->
 			if (new != null) {
 				val n: Pane = new as Pane
-				Constants.page_indicator.unbind()
-				Constants.page_indicator.bind(LocalizationService.lsb(new.localizationKey))
+				page_indicator.unbind()
+				page_indicator.bind(LocalizationService.lsb(new.localizationKey))
 
 				contentPane.center = when (n.id) {
 					"slicer" -> Slicer()
@@ -140,25 +140,25 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 			}
 		})
 
-		info.textProperty().bind(Constants.page_indicator)
+		info.textProperty().bind(page_indicator)
 
 		sidebarMenu.apply {
 			addComponent(CollapsableComponent().apply {
 				id = "slicer"
 				localizationKey = "menu.slicer"
-				icon.content = Constants.SLICER
+				icon.content = SLICER
 			}, CollapsableSidebarMenu.Positions.TOP)
 
 			addComponent(CollapsableComponent().apply {
 				id = "converter"
 				localizationKey = "menu.converter"
-				icon.content = Constants.CONVERTER
+				icon.content = CONVERTER
 			}, CollapsableSidebarMenu.Positions.TOP)
 
 			addComponent(CollapsableComponent().apply {
 				id = "settings"
 				localizationKey = "menu.settings"
-				icon.content = Constants.SETTINGS
+				icon.content = SETTINGS
 			}, CollapsableSidebarMenu.Positions.BOTTOM)
 		}
 
@@ -171,9 +171,9 @@ open class MainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 		if (maximizeButton.graphic is SVGPath) {
 			val path = maximizeButton.graphic as SVGPath
 			if (state == WindowState.MAXIMIZED) {
-				path.content = Constants.REDUCE
+				path.content = REDUCE
 			} else if (state == WindowState.NORMAL) {
-				path.content = Constants.MAXIMIZE
+				path.content = MAXIMIZE
 			}
 		}
 	}

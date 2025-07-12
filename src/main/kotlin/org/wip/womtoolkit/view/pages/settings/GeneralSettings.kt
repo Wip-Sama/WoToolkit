@@ -32,7 +32,7 @@ import org.wip.womtoolkit.model.Lsp
  * It contains: Accent color, Theme color, Language, Starting page.
  * */
 class GeneralSettings : VBox() {
-	object Constants {
+	companion object {
 		const val LOCALIZATION: String =
 			"M9.56258 7.50543L9.61862 7.62215L14.9259 20.6267C15.1346 21.1381 14.8892 21.7217 14.3779 21.9304C13.903 22.1242 13.3658 21.9265 13.1244 21.4879L13.0741 21.3824L11.693 17.999H5.40701L3.91608 21.4056C3.71043 21.8754 3.18729 22.1078 2.70853 21.9612L2.599 21.9206C2.1292 21.715 1.89681 21.1918 2.04333 20.7131L2.08394 20.6036L7.77668 7.59899C8.11338 6.82981 9.1713 6.80444 9.56258 7.50543ZM19 2C19.5128 2 19.9355 2.38604 19.9933 2.88338L20 3L19.9998 7H21C21.5128 7 21.9355 7.38604 21.9933 7.88338L22 8C22 8.51284 21.614 8.93551 21.1166 8.99327L21 9H19.9998L20 16C20 16.5128 19.614 16.9355 19.1166 16.9933L19 17C18.4872 17 18.0645 16.614 18.0067 16.1166L18 16V3C18 2.44772 18.4477 2 19 2ZM8.66047 10.5674L6.28201 15.999H10.877L8.66047 10.5674ZM11 2H16C16.5128 2 16.9355 2.38604 16.9933 2.88338L17 3V5.97488C17 8.18401 15.2091 9.97488 13 9.97488C12.4477 9.97488 12 9.52716 12 8.97488C12 8.42259 12.4477 7.97488 13 7.97488C14.0544 7.97488 14.9182 7.159 14.9945 6.12414L15 5.97488V4H11C10.4477 4 10 3.55228 10 3C10 2.48716 10.386 2.06449 10.8834 2.00673L11 2H16H11Z"
 		const val THEME: String =
@@ -92,7 +92,7 @@ class GeneralSettings : VBox() {
 			title.textProperty().bind(Lsp.lsb("settingsPage.general.accent.title"))
 			description.textProperty().bind(Lsp.lsb("settingsPage.general.accent.description"))
 			imageContainer.center = SVGPath().apply {
-				content = Constants.ACCENT
+				content = ACCENT
 			}
 			quickSetting = ColorPickerButton().apply {
 				isColorPickerAvailable = true
@@ -192,7 +192,7 @@ class GeneralSettings : VBox() {
 								for (x in 0..4) {
 									for (y in 0..3) {
 										val color = getSelectableColorPicker()
-										color.colorProperty.value = Color.web(Constants.colorPresets[x * 4 + y])
+										color.colorProperty.value = Color.web(colorPresets[x * 4 + y])
 										add(color, x, y)
 									}
 								}
@@ -207,7 +207,7 @@ class GeneralSettings : VBox() {
 			title.textProperty().bind(Lsp.lsb("settingsPage.general.theme.title"))
 			description.textProperty().bind(Lsp.lsb("settingsPage.general.theme.description"))
 			imageContainer.center = SVGPath().apply {
-				content = Constants.THEME
+				content = THEME
 			}
 			quickSetting = Switch(ApplicationSettings.userSettings.theme.value == "dark").apply {
 				trueLocalization = "settingsPage.general.theme.dark"
@@ -237,7 +237,7 @@ class GeneralSettings : VBox() {
 			title.textProperty().bind(Lsp.lsb("settingsPage.general.language.title"))
 			description.textProperty().bind(Lsp.lsb("settingsPage.general.language.description"))
 			imageContainer.center = SVGPath().apply {
-				content = Constants.LOCALIZATION
+				content = LOCALIZATION
 			}
 			quickSetting = ChoiceBox<String>().apply {
 				items.addAll(LocalizationService.locales)
@@ -259,7 +259,7 @@ class GeneralSettings : VBox() {
 			title.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.title"))
 			description.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.description"))
 			imageContainer.center = SVGPath().apply {
-				content = Constants.STARTING_PAGE
+				content = STARTING_PAGE
 			}
 			quickSetting = ChoiceBox<String>().apply {
 				items.addAll("None", "Slicer", "Converter")
@@ -281,7 +281,7 @@ class GeneralSettings : VBox() {
 			title.textProperty().bind(Lsp.lsb("settingsPage.general.colorPickerMode.title"))
 			description.textProperty().bind(Lsp.lsb("settingsPage.general.colorPickerMode.description"))
 			imageContainer.center = SVGPath().apply {
-				content = Constants.COLOR_PICKER_MODE
+				content = COLOR_PICKER_MODE
 			}
 		})
 
@@ -289,7 +289,7 @@ class GeneralSettings : VBox() {
 			title.textProperty().bind(Lsp.lsb("settingsPage.general.disableAnimations.title"))
 			description.textProperty().bind(Lsp.lsb("settingsPage.general.disableAnimations.description"))
 			imageContainer.center = SVGPath().apply {
-				content = Constants.ANIMATIONS
+				content = ANIMATIONS
 			}
 			quickSetting = Switch(ApplicationSettings.userSettings.disableAnimations.value).apply {
 				trueLocalization = "settingsPage.general.disableAnimations.enabled"
