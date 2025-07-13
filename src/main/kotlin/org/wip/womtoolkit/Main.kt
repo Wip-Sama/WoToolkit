@@ -1,34 +1,31 @@
 package org.wip.womtoolkit
 
-import javafx.animation.KeyFrame
-import javafx.animation.KeyValue
-import javafx.animation.Timeline
 import javafx.application.Application
-import javafx.beans.property.ObjectProperty
-import javafx.beans.property.SimpleObjectProperty
-import javafx.event.EventHandler
-import javafx.scene.Node
-import javafx.scene.Scene
-import javafx.scene.control.TitledPane
-import javafx.scene.input.ClipboardContent
-import javafx.scene.input.DragEvent
-import javafx.scene.input.MouseEvent
-import javafx.scene.input.TransferMode
-import javafx.scene.layout.Pane
-import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
 import javafx.stage.Stage
-import javafx.util.Duration
-import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.DataManager
-import org.wip.womtoolkit.utils.serializers.ColorSerializer
-import org.wip.womtoolkit.view.pages.MainWindow
-import java.util.*
+import org.wip.womtoolkit.view.pages.LinuxMainWindow
+import org.wip.womtoolkit.view.pages.WindowsMainWindow
 
 class WomToolkit : Application() {
 	override fun start(primaryStage: Stage) {
 		DataManager.init()
-		MainWindow()
+
+		val osName = System.getProperty("os.name").lowercase()
+		println("Operating System: $osName")
+		when {
+			osName.contains("win") -> {
+				println("Initializing Windows Main Window")
+				WindowsMainWindow()
+			}
+			osName.contains("linux") -> {
+				println("Initializing Linux Main Window")
+				LinuxMainWindow(primaryStage)
+			}
+			else -> {
+				println("Unsupported OS. Exiting.")
+				System.exit(1)
+			}
+		}
 	}
 	override fun stop() {
 		DataManager.close()
