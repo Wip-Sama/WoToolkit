@@ -1,10 +1,11 @@
-package org.wip.womtoolkit.model
+package org.wip.womtoolkit.model.services.localization
 
 import javafx.beans.Observable
 import javafx.beans.binding.Bindings
 import javafx.beans.binding.StringBinding
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableValue
+import org.wip.womtoolkit.model.Globals
 import java.io.File
 import java.net.JarURLConnection
 import java.util.concurrent.Callable
@@ -25,10 +26,10 @@ object LocalizationService {
 		get() = currentLocaleProperty.get()
 		set(value) {
 			if (value !in availableLocales) {
-				Globals.logger?.warning("Language '$value' not found, falling back to '${currentLocaleProperty.get()}'")
+				Globals.logger.warning("Language '$value' not found, falling back to '${currentLocaleProperty.get()}'")
 				currentLocaleProperty.set(currentLocaleProperty.get())
 			} else {
-				Globals.logger?.info("Language changed to '$value'")
+				Globals.logger.info("Language changed to '$value'")
 				localizations.putIfAbsent(value, LocalizationMap(value))
 				currentLocaleProperty.set(value)
 			}

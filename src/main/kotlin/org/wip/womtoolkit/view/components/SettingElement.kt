@@ -20,7 +20,7 @@ import javafx.scene.shape.SVGPath
 import javafx.util.Duration
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
-import org.wip.womtoolkit.model.Lsp
+import org.wip.womtoolkit.model.services.localization.Lsp
 import kotlin.properties.Delegates
 
 /**
@@ -98,7 +98,7 @@ class SettingElement() : AnchorPane() {
         expandedProperty.addListener { _, _, newValue ->
             animateExpand()
             if (expandableContent == null) {
-                Globals.logger?.warning("Expandable content is null, cannot expand setting element")
+                Globals.logger.warning("Expandable content is null, cannot expand setting element")
                 expandedProperty.set(false)
                 return@addListener
             }

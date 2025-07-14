@@ -22,10 +22,10 @@
 
     -womt-accent: #700525;
 
-    -womt-button-rest: #00000000;
-    -womt-button-hover: rgb(94, 94, 94, 0.4); /*rgba(94, 94, 94, .5);*/
-    -womt-button-selected: rgb(94, 94, 94, 0.2); /*rgba(94, 94, 94, .3);*/
-    -womt-button-pressed: rgb(94, 94, 94, 0.3); /*rgba(94, 94, 94, .4);*/
+    -womt-button-rest: hsba(0, 0%, 30%, 0);
+    -womt-button-hover: hsba(0, 0%, 30%, 50); /*rgba(94, 94, 94, .5);*/
+    -womt-button-selected: hsba(0, 0%, 30%, 60); /*rgba(94, 94, 94, .3);*/
+    -womt-button-pressed: hsba(0, 0%, 30%, 70); /*rgba(94, 94, 94, .4);*/
 
     -womt-foreground-rest: hsb(0, 0%, 22%); /*18 / 22 / 24*/
     -womt-foreground-hover: hsb(0, 0%, 24%); /*24 / 25*/
@@ -42,6 +42,12 @@
     -womt-indicator-pressed: hsb(0, 0%, 60%);
     -womt-indicator-selected: -womt-accent;
 
+    -womt-success: hsb(120, 100%, 40%);
+    -womt-warning: hsb(60, 100%, 40%);
+    -womt-error: hsb(0, 100%, 40%);
+    -womt-info: hsb(240, 100%, 40%);
+
     /*Component specifics colors*/
     -womt-slider: hsba(0, 0%, 100%, .6);  /*-womt-slider: hsb(0, 0%, 62%);*/ /*TODO: vedere se questo va bene*/
 }
+

@@ -1,0 +1,12 @@
+.transparent-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 7;
+}
+
+.transparent-button:hover {
+    -fx-background-color: -womt-button-hover;
+}
+
+.transparent-button:pressed {
+    -fx-background-color: -womt-button-pressed;
+}

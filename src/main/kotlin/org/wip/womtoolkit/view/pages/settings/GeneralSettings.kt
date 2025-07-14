@@ -24,8 +24,8 @@ import org.wip.womtoolkit.view.components.Switch
 import org.wip.womtoolkit.view.components.colorpicker.ColorPickerButton
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
-import org.wip.womtoolkit.model.LocalizationService
-import org.wip.womtoolkit.model.Lsp
+import org.wip.womtoolkit.model.services.localization.LocalizationService
+import org.wip.womtoolkit.model.services.localization.Lsp
 
 /**
  * @author Wip

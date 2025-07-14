@@ -25,4 +25,5 @@ module org.wip.womtoolkit {
     opens org.wip.womtoolkit.view.components.colorpicker to javafx.fxml;
     opens org.wip.womtoolkit.view.pages to javafx.fxml;
     opens org.wip.womtoolkit.view.pages.settings to javafx.fxml;
+    opens org.wip.womtoolkit.view.components.notifications to javafx.fxml;
 }

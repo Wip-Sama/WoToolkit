@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import org.wip.womtoolkit.view.components.LocalizedLabel?>
+<?import org.wip.womtoolkit.view.components.LocalizedTooltip?>
+
+<fx:root fx:id="basePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="280.0" styleClass="notification-window" stylesheets="@../../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <bottom>
+      <BorderPane fx:id="progressBarContainer" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="28.0" BorderPane.alignment="CENTER">
+         <bottom>
+            <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.4" BorderPane.alignment="CENTER" />
+         </bottom>
+      </BorderPane>
+   </bottom>
+   <top>
+      <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="dismiss" maxHeight="24.0" maxWidth="24.0" minHeight="24.0" minWidth="24.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" styleClass="transparent-button">
+               <graphic>
+                  <SVGPath content="M4.39705 4.55379L4.46967 4.46967C4.73594 4.2034 5.1526 4.1792 5.44621 4.39705L5.53033 4.46967L12 10.939L18.4697 4.46967C18.7626 4.17678 19.2374 4.17678 19.5303 4.46967C19.8232 4.76256 19.8232 5.23744 19.5303 5.53033L13.061 12L19.5303 18.4697C19.7966 18.7359 19.8208 19.1526 19.6029 19.4462L19.5303 19.5303C19.2641 19.7966 18.8474 19.8208 18.5538 19.6029L18.4697 19.5303L12 13.061L5.53033 19.5303C5.23744 19.8232 4.76256 19.8232 4.46967 19.5303C4.17678 19.2374 4.17678 18.7626 4.46967 18.4697L10.939 12L4.46967 5.53033C4.2034 5.26406 4.1792 4.8474 4.39705 4.55379L4.46967 4.46967L4.39705 4.55379Z" scaleX="0.65" scaleY="0.65" />
+               </graphic>
+               <tooltip>
+                  <LocalizedTooltip text="Empty Tooltip" />
+               </tooltip>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </padding>
+      </HBox>
+   </top>
+   <left>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="48.0" prefWidth="48.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets left="8.0" />
+         </BorderPane.margin>
+         <center>
+            <SVGPath fx:id="icon" content="M12.0016 1.99902C17.5253 1.99902 22.0031 6.47687 22.0031 12.0006C22.0031 17.5243 17.5253 22.0021 12.0016 22.0021C6.47785 22.0021 2 17.5243 2 12.0006C2 6.47687 6.47785 1.99902 12.0016 1.99902ZM12 10.5C11.5858 10.5 11.25 10.8358 11.25 11.25V16.25C11.25 16.6642 11.5858 17 12 17C12.4142 17 12.75 16.6642 12.75 16.25V11.25C12.75 10.8358 12.4142 10.5 12 10.5ZM12 9C12.5523 9 13 8.55228 13 8C13 7.44772 12.5523 7 12 7C11.4477 7 11 7.44772 11 8C11 8.55228 11.4477 9 12 9Z" scaleX="1.8" scaleY="1.8" />
+         </center>
+      </BorderPane>
+   </left>
+   <center>
+      <LocalizedLabel fx:id="label" BorderPane.alignment="CENTER_LEFT">
+         <BorderPane.margin>
+            <Insets left="16.0" />
+         </BorderPane.margin>
+      </LocalizedLabel>
+   </center>
+</fx:root>

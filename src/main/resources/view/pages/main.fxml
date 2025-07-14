@@ -6,15 +6,17 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableSidebarMenu?>
 
-<AnchorPane fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+<AnchorPane fx:id="mainPane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <BorderPane fx:id="basePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: -womt-background-dark;" styleClass="base" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane fx:id="basePane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: -womt-background-dark;" styleClass="base" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
             <BorderPane fx:id="contentPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
                <styleClass>
                   <String fx:value="content_pane" />
                   <String fx:value="content_pane_border" />
-               </styleClass></BorderPane>
+               </styleClass>
+            </BorderPane>
          </center>
          <left>
             <CollapsableSidebarMenu fx:id="sidebarMenu" collapsed="true" minWidth="-Infinity" prefWidth="54.0" BorderPane.alignment="TOP_LEFT" />

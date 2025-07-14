@@ -28,7 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
-import org.wip.womtoolkit.model.Lsp
+import org.wip.womtoolkit.model.services.localization.Lsp
 import org.wip.womtoolkit.model.processing.ElementToProcess
 import kotlin.math.max
 import kotlin.properties.Delegates
@@ -62,10 +62,9 @@ class SelectedFilesContainer : BorderPane() {
 	var inputPath: String? by Delegates.observable(null) { _, _, newValue ->
 			inputPathLabel.text = newValue
 		}
-	//not really needed
 	var outputPath: String? by Delegates.observable(null) { _, oldValue, newValue ->
 		if (oldValue == newValue) return@observable
-	}
+	} //not really needed
 	var fileList: List<String> by Delegates.observable(emptyList()) { _, _, newValue ->
 		selectedFilesList.items.setAll(newValue)
 		updateImageListInfo()

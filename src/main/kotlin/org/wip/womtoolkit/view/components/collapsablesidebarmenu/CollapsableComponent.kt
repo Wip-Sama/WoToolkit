@@ -8,7 +8,7 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
 import javafx.scene.shape.SVGPath
-import org.wip.womtoolkit.model.LocalizationService
+import org.wip.womtoolkit.model.services.localization.LocalizationService
 
 /**
  * @author WIP

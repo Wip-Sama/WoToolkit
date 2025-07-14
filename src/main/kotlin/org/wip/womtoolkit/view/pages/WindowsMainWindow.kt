@@ -9,10 +9,10 @@ import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Scene
 import javafx.scene.image.Image
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import javafx.scene.layout.StackPane
 import javafx.scene.paint.Color
 import javafx.stage.StageStyle
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableComponent
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableSidebarMenu
-import org.wip.womtoolkit.model.LocalizationService
+import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.utils.cssReader
 import xss.it.nfx.AbstractNfxUndecoratedWindow
 import xss.it.nfx.HitSpot
@@ -47,7 +47,7 @@ open class WindowsMainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 	@FXML lateinit var basePane: BorderPane
 	@FXML lateinit var contentPane: BorderPane
 	@FXML lateinit var buttonContainer: HBox
-	@FXML lateinit var mainPane: AnchorPane
+//	@FXML lateinit var mainPane: StackPane
 
 	private val scope = MainScope()
 	private val customTitleBar = CustomTitleBar()

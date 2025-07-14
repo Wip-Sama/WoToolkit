@@ -1,0 +1,47 @@
+.notification-window {
+    -fx-background-color: -womt-background-lightest;
+    -fx-background-radius: 10;
+    -fx-border-color: -womt-border-light;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 9;
+}
+
+.notification-window .progress-bar > .bar {
+    -fx-background-color: -womt-background-lightest;
+    -fx-background-insets: 0;
+    /*-fx-background-radius: 0.583em; *//* 7 */
+    -fx-background-radius: 0;
+    -fx-padding: 0.35em;
+}
+
+.notification-window .progress-bar:indeterminate > .bar {
+    -fx-background-color: -womt-background-lightest;
+
+}
+
+.notification-window .progress-bar > .track {
+    -fx-background-color: -womt-border-light;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0 0 10 10;
+}
+
+.notification-window:warning,
+.notification-window:warning .progress-bar > .bar,
+.notification-window:warning .progress-bar:indeterminate > .bar {
+    -fx-background-color: -womt-warning;
+}
+.notification-window:info,
+.notification-window:info .progress-bar > .bar,
+.notification-window:info .progress-bar:indeterminate > .bar  {
+    -fx-background-color: -womt-info;
+}
+.notification-window:success,
+.notification-window:success .progress-bar > .bar,
+.notification-window:success .progress-bar:indeterminate > .bar {
+    -fx-background-color: -womt-success;
+}
+.notification-window:error,
+.notification-window:error .progress-bar > .bar,
+.notification-window:error .progress-bar:indeterminate > .bar {
+    -fx-background-color: -womt-error;
+}

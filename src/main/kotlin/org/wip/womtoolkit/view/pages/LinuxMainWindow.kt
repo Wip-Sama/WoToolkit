@@ -9,10 +9,10 @@ import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.image.Image
-import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import javafx.scene.layout.StackPane
 import javafx.stage.Stage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -21,8 +21,7 @@ import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wip.womtoolkit.model.ApplicationSettings
-import org.wip.womtoolkit.model.Globals
-import org.wip.womtoolkit.model.LocalizationService
+import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.view.components.PageIndicator
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableComponent
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableSidebarMenu
@@ -56,7 +55,7 @@ class LinuxMainWindow(
 	@FXML lateinit var pageIndicator: PageIndicator
 	@FXML lateinit var contentPane: BorderPane
 	@FXML lateinit var buttonContainer: HBox
-	@FXML lateinit var mainPane: AnchorPane
+//	@FXML lateinit var mainPane: StackPane
 
 	val workingJavaClass = LinuxMainWindow::class.java
 	val scope = MainScope()

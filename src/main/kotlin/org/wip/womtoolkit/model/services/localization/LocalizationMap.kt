@@ -1,5 +1,6 @@
-package org.wip.womtoolkit.model
+package org.wip.womtoolkit.model.services.localization
 
+import org.wip.womtoolkit.model.Globals
 import java.util.*
 
 //TODO: Add documentation
@@ -11,7 +12,7 @@ class LocalizationMap(private val language: String) {
 	init {
 		javaClass.getResourceAsStream("${Globals.LOCALES_PATH}$language.properties").use {
 			if (it == null) {
-				Globals.logger?.warning("Localization file for language: '$language' not found")
+				Globals.logger.warning("Localization file for language: '$language' not found")
 				throw IllegalArgumentException("Localization file for language: '$language' not found")
 			}
 			properties.load(it)
@@ -21,7 +22,7 @@ class LocalizationMap(private val language: String) {
 	fun getLocale(key: String?): String {
 		val value = properties.getProperty(key) ?: "__MISSING_${key}_${language}__"
 		if (value == "__MISSING__") {
-			Globals.logger?.warning("Missing property: $key in $language")
+			Globals.logger.warning("Missing property: $key in $language")
 		}
 		return value
 	}

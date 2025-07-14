@@ -1,7 +1,7 @@
 package org.wip.womtoolkit.view.components
 
 import javafx.scene.control.Tooltip
-import org.wip.womtoolkit.model.Lsp
+import org.wip.womtoolkit.model.services.localization.Lsp
 
 class LocalizedTooltip: Tooltip() {
 	private var _localizationKey: String? = null

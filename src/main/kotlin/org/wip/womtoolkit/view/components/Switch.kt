@@ -17,7 +17,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import javafx.util.Duration
 import org.wip.womtoolkit.model.ApplicationSettings
-import org.wip.womtoolkit.model.Lsp
+import org.wip.womtoolkit.model.services.localization.Lsp
 import kotlin.properties.Delegates
 
 class Switch() : BorderPane() {

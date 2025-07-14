@@ -8,7 +8,7 @@ import javafx.scene.layout.BorderPane
 import org.wip.womtoolkit.view.components.PageIndicator
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableComponent
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableSidebarMenu
-import org.wip.womtoolkit.model.LocalizationService
+import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.view.pages.settings.AboutSettings
 import org.wip.womtoolkit.view.pages.settings.ConverterSettings
 import org.wip.womtoolkit.view.pages.settings.GeneralSettings

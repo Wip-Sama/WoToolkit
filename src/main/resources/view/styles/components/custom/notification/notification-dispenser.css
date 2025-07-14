@@ -1,0 +1,22 @@
+
+.notification-dispenser {
+    -fx-background-color: -womt-background-lightest;
+    -fx-background-radius: 10;
+    -fx-border-color: -womt-border-light;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 9;
+}
+
+.notification-dispenser:info {
+    -fx-background-color: -womt-info;
+}
+.notification-dispenser:warning {
+    -fx-background-color: -womt-warning;
+}
+.notification-dispenser:success {
+    -fx-background-color: -womt-success;
+}
+.notification-dispenser:error {
+    -fx-background-color: -womt-error;
+}
+

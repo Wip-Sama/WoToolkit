@@ -21,8 +21,8 @@ import javafx.scene.paint.Stop
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.StringConverter
-import org.wip.womtoolkit.model.LocalizationService
-import org.wip.womtoolkit.model.Lsp
+import org.wip.womtoolkit.model.services.localization.LocalizationService
+import org.wip.womtoolkit.model.services.localization.Lsp
 import java.awt.Color.HSBtoRGB
 import java.awt.Color.RGBtoHSB
 import java.util.function.UnaryOperator
