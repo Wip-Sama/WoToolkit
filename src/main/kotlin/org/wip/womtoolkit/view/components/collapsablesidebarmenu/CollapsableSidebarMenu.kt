@@ -147,6 +147,7 @@ open class CollapsableSidebarMenu : AnchorPane() {
     }
 
     private fun animateSelectedIndicator(item: CollapsableItem) {
+        selected_indicator.toFront()
         if (selectedItem == null) {
             selected_indicator.visibleProperty().set(false)
         } else {
@@ -158,15 +159,16 @@ open class CollapsableSidebarMenu : AnchorPane() {
             }
             selectedIndicatorOriginalSize = Pair(selected_indicator.prefWidth, selected_indicator.prefHeight)
         }
+
         val y = computeSelectedIndicatorY(item)
-        val midY = (y + selected_indicator.layoutY - selected_indicator.height / 2 ) / 2
+        val midY = (y + selected_indicator.layoutY - selected_indicator.height / 2) / 2
         val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 40.0
         Timeline(
             KeyFrame(Duration.ZERO,
                 KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second),
             ),
             KeyFrame(Duration.millis(animationDuration),
-                KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second*2),
+                KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second * 2),
                 KeyValue(selected_indicator.layoutYProperty(), midY)
             ),
             KeyFrame(Duration.millis(animationDuration*2),

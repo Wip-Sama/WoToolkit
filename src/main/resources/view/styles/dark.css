@@ -23,9 +23,9 @@
     -womt-accent: #700525;
 
     -womt-button-rest: hsba(0, 0%, 30%, 0);
-    -womt-button-hover: hsba(0, 0%, 30%, 50); /*rgba(94, 94, 94, .5);*/
-    -womt-button-selected: hsba(0, 0%, 30%, 60); /*rgba(94, 94, 94, .3);*/
-    -womt-button-pressed: hsba(0, 0%, 30%, 70); /*rgba(94, 94, 94, .4);*/
+    -womt-button-hover: hsba(0, 0%, 30%, .5); /*rgba(94, 94, 94, .5);*/
+    -womt-button-selected: hsba(0, 0%, 30%, .6); /*rgba(94, 94, 94, .3);*/
+    -womt-button-pressed: hsba(0, 0%, 30%, .7); /*rgba(94, 94, 94, .4);*/
 
     -womt-foreground-rest: hsb(0, 0%, 22%); /*18 / 22 / 24*/
     -womt-foreground-hover: hsb(0, 0%, 24%); /*24 / 25*/
