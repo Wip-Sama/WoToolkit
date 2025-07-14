@@ -8,11 +8,10 @@ import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Separator
 import javafx.scene.control.TextField
 import javafx.scene.control.TextFormatter
-import javafx.scene.layout.GridPane
 import javafx.scene.layout.VBox
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
-import org.wip.womtoolkit.view.components.LabelWithLocalization
+import org.wip.womtoolkit.view.components.LocalizedLabel
 import org.wip.womtoolkit.view.components.NumberTextField
 import org.wip.womtoolkit.view.components.SettingElement
 import org.wip.womtoolkit.view.components.SingleSettingGrid
@@ -74,7 +73,7 @@ class SlicerSettings : VBox() {
 				}
 			}
 			expandableContent = SingleSettingGrid().apply {
-				add(LabelWithLocalization().apply {
+				add(LocalizedLabel().apply {
 					localizationKey = "settingsPage.slicer.subFolder.folderName"
 				}, 0, 0)
 				add(TextField().apply {
@@ -108,7 +107,7 @@ class SlicerSettings : VBox() {
 				spacing = 8.0
 				children.addAll(
 					SingleSettingGrid().apply {
-						add(LabelWithLocalization().apply {
+						add(LocalizedLabel().apply {
 							localizationKey = "settingsPage.slicer.archive.archiveName"
 						}, 0, 0)
 						add(TextField().apply {
@@ -131,7 +130,7 @@ class SlicerSettings : VBox() {
 					},
 					Separator(),
 					SingleSettingGrid().apply {
-						add(LabelWithLocalization().apply {
+						add(LocalizedLabel().apply {
 							localizationKey = "settingsPage.slicer.archive.archiveFormat"
 						}, 0, 0)
 						add(ChoiceBox<String>().apply {

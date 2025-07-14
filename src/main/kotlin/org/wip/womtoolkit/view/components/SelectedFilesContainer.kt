@@ -11,11 +11,13 @@ import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.Cursor
 import javafx.scene.Node
+import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
 import javafx.scene.control.ProgressBar
 import javafx.scene.control.ScrollPane
+import javafx.scene.control.TextField
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.ClipboardContent
@@ -45,6 +47,9 @@ class SelectedFilesContainer : BorderPane() {
 	@FXML lateinit var fileSize: Label
 	@FXML lateinit var zoomLevel: Label
 	@FXML lateinit var progressBar: ProgressBar
+	@FXML lateinit var outputFolderField: TextField
+	@FXML lateinit var remove: Button
+	@FXML lateinit var execute: Button //not really useful by itself since we do not know the operation to execute but others can listen to it
 
 	private val imageHolder = BorderPane()
 	private val dragOverPseudoClass = PseudoClass.getPseudoClass("drag-over")
@@ -57,7 +62,10 @@ class SelectedFilesContainer : BorderPane() {
 	var inputPath: String? by Delegates.observable(null) { _, _, newValue ->
 			inputPathLabel.text = newValue
 		}
-	var outputPath: String? = null
+	//not really needed
+	var outputPath: String? by Delegates.observable(null) { _, oldValue, newValue ->
+		if (oldValue == newValue) return@observable
+	}
 	var fileList: List<String> by Delegates.observable(emptyList()) { _, _, newValue ->
 		selectedFilesList.items.setAll(newValue)
 		updateImageListInfo()
@@ -83,6 +91,21 @@ class SelectedFilesContainer : BorderPane() {
 		initializeDefaults()
 		initializeImageControls()
 		initializeSelectedFilesList()
+
+		inputPathLabel.onMouseClicked = EventHandler {
+			if (inputPath != null) {
+				Platform.runLater {
+					val clipboard = javafx.scene.input.Clipboard.getSystemClipboard()
+					val content = ClipboardContent()
+					content.putString(inputPath ?: "")
+					clipboard.setContent(content)
+				}
+			}
+		}
+
+		outputFolderField.textProperty().addListener { _, _, newValue ->
+			elementToProcess?.setOutputFolder(outputFolderField.text)
+		}
 	}
 
 	private fun initializeDefaults() {
@@ -123,8 +146,6 @@ class SelectedFilesContainer : BorderPane() {
 			onMouseMoved = EventHandler { event ->
 				mousePosition.value = Pair(event.x, event.y)
 			}
-			hvalueProperty().addListener { _, _, _ -> println("${previewPane.hvalue}\t${previewPane.vvalue}") }
-			vvalueProperty().addListener { _, _, _ -> println("${previewPane.hvalue}\t${previewPane.vvalue}") }
 		}
 
 		zoomProperty.addListener { _, _, newV ->
@@ -142,7 +163,7 @@ class SelectedFilesContainer : BorderPane() {
 	private fun initializeSelectedFilesList() {
 		selectedFilesList.apply {
 			isEditable = false
-			placeholder = LabelWithLocalization().apply { localizationKey = "selectedFilesContainer.noSelectedFiles" }
+			placeholder = LocalizedLabel().apply { localizationKey = "selectedFilesContainer.noSelectedFiles" }
 		}
 
 		selectedFilesList.cellFactory = Callback {
@@ -217,7 +238,7 @@ class SelectedFilesContainer : BorderPane() {
 			elementToProcess.outputFolder.collect { folder ->
 				if (outputPath != folder) {
 					with(Dispatchers.JavaFx) {
-						outputPath = folder
+						outputFolderField.text = folder
 					}
 				}
 			}

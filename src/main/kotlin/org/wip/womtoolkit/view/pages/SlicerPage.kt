@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.processing.Slicer
+import org.wip.womtoolkit.model.processing.SlicerSingleUseSettings
 import org.wip.womtoolkit.view.components.NumberTextField
 import org.wip.womtoolkit.view.components.SelectedFilesContainer
 import org.wip.womtoolkit.view.components.Switch
@@ -37,6 +38,7 @@ class SlicerPage : BorderPane() {
             "M4.29289 15.7071C4.68342 16.0976 5.31658 16.0976 5.70711 15.7071L12 9.41421L18.2929 15.7071C18.6834 16.0976 19.3166 16.0976 19.7071 15.7071C20.0976 15.3166 20.0976 14.6834 19.7071 14.2929L12.7071 7.29289C12.3166 6.90237 11.6834 6.90237 11.2929 7.29289L4.29289 14.2929C3.90237 14.6834 3.90237 15.3166 4.29289 15.7071Z"
     }
 
+    // FXML components
     @FXML lateinit var advancedModeToggle: ToggleButton
     @FXML lateinit var advancedIndicator: SVGPath
     @FXML lateinit var advancedModeContainer: VBox
@@ -44,6 +46,7 @@ class SlicerPage : BorderPane() {
     @FXML lateinit var queuePane: ScrollPane
     @FXML lateinit var queueFlow: FlowPane
 
+    // Temp data fields
     @FXML lateinit var minimumHeight: NumberTextField
     @FXML lateinit var desiredHeight: NumberTextField
     @FXML lateinit var maximumHeight: NumberTextField
@@ -57,6 +60,7 @@ class SlicerPage : BorderPane() {
     @FXML lateinit var outputFormat: ChoiceBox<String>
     @FXML lateinit var cutTolerance: NumberTextField
 
+    // User input fields
     @FXML lateinit var folderPath: TextField
     @FXML lateinit var addFromUserInput: Button
     @FXML lateinit var execute: Button
@@ -98,13 +102,13 @@ class SlicerPage : BorderPane() {
 
         searchFile.onAction = EventHandler {
             fileChooser.showOpenMultipleDialog(this.scene.window)?.let {
-                Slicer.addElementFromFiles(it.map { file -> file.absolutePath })
+                Slicer.addElementFromFiles(it.map { file -> file.absolutePath }, )
             }
         }
 
         searchFolder.onAction = EventHandler {
             directoryChooser.showDialog(this.scene.window)?.let { dir ->
-                Slicer.addElementFromFolder(inputFolder = dir.absolutePath)
+                Slicer.addElementFromFolder(inputFolder = dir.absolutePath, createSingleUseSettings())
             }
         }
 
@@ -119,26 +123,50 @@ class SlicerPage : BorderPane() {
 
 
                 // For now we will assume only one folder path is provided
-                Slicer.addElementFromFolder(inputFolder = folderPath.text)
-                folderPath.text = ""
+                try {
+                    Slicer.addElementFromFolder(inputFolder = folderPath.text, createSingleUseSettings())
+                    //TODO: the notification should tell the user that the path was not found or is not a directory instead of throwing an exception
+                } finally {
+                    folderPath.text = ""
+                }
             }
         }
 
         scope.launch {
-            Slicer.queue.collect { it ->
-                it.forEach { element ->
-                    val s = SelectedFilesContainer().apply {
-                        bindToElementToProcess(element)
-                    }
-
+            Slicer.queue.collect { queue ->
+                queue.forEach { element ->
                     queueFlow.children.any { child ->
                         child is SelectedFilesContainer && child.getBoundElementToProcess() == element
                     }.let { exists ->
                         if (!exists) {
-                            queueFlow.children.add(s)
+                            queueFlow.children.add(SelectedFilesContainer().apply {
+                                bindToElementToProcess(element)
+                                execute.onAction = EventHandler {
+                                    scope.launch {
+                                        Slicer.processOne(getBoundElementToProcess()!!, createSingleUseSettings())
+                                    }
+                                }
+                                remove.onAction = EventHandler {
+                                    scope.launch {
+                                        Slicer.removeElement(getBoundElementToProcess()!!)
+                                    }
+                                }
+                            })
                         }
                     }
                 }
+                queueFlow.children.filterIsInstance<SelectedFilesContainer>().forEach { container ->
+                    if (!queue.contains(container.getBoundElementToProcess()!!)) {
+                        queueFlow.children.remove(container)
+                    }
+                }
+            }
+        }
+
+        execute.onAction = EventHandler {
+            scope.launch {
+                // We do not want this thing to be blocking the UI thread
+                Slicer.processAll(createSingleUseSettings())
             }
         }
 
@@ -214,5 +242,22 @@ class SlicerPage : BorderPane() {
         outputFormat.items.addAll(Globals.IMAGE_OUTPUT_FORMATS)
         outputFormat.value = ApplicationSettings.slicerSettings.outputFormat.value
         cutTolerance.text = ApplicationSettings.slicerSettings.cutTolerance.value.toString()
+    }
+
+    private fun createSingleUseSettings(): SlicerSingleUseSettings {
+        return SlicerSingleUseSettings(
+            minimumHeight = minimumHeight.text.toIntOrNull() ?: ApplicationSettings.slicerSettings.minimumHeight.value,
+            desiredHeight = desiredHeight.text.toIntOrNull() ?: ApplicationSettings.slicerSettings.desiredHeight.value,
+            maximumHeight = maximumHeight.text.toIntOrNull() ?: ApplicationSettings.slicerSettings.maximumHeight.value,
+            searchDirection = searchDirection.state,
+            saveInSubfolder = saveInSubfolder.state,
+            subfolderName = subfolderName.text.ifBlank { ApplicationSettings.slicerSettings.subFolderName.value },
+            saveAsArchive = saveAsArchive.state,
+            archiveName = archiveName.text.ifBlank { ApplicationSettings.slicerSettings.archiveName.value },
+            archiveFormat = archiveFormat.value ?: ApplicationSettings.slicerSettings.archiveFormat.value,
+            parallelExecution = parallelExecution.state,
+            outputFormat = outputFormat.value ?: ApplicationSettings.slicerSettings.outputFormat.value,
+            cutTolerance = cutTolerance.text.toIntOrNull() ?: ApplicationSettings.slicerSettings.cutTolerance.value
+        )
     }
 }

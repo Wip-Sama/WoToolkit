@@ -42,10 +42,6 @@ class Converter : BorderPane() {
 		}
 
 		buttonContainer.children.forEach {
-			it.onMouseClicked = EventHandler {
-				println("clicked!")
-			}
-
 			it.onDragDropped = EventHandler<DragEvent?> { event ->
 				if (event == null || it !is Button) return@EventHandler
 				val db = event.dragboard

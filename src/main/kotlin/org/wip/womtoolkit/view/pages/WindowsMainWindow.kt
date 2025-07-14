@@ -146,11 +146,7 @@ open class WindowsMainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 	private fun updateStyles() {
 		scene.stylesheets.clear()
 		val cssUrl = javaClass.getResource("/view/styles/${ApplicationSettings.userSettings.theme.value}.css")
-		if (cssUrl != null) {
-			scene.stylesheets.add(cssUrl.toExternalForm())
-		} else {
-			println("File CSS non trovato: /view/styles/${ApplicationSettings.userSettings.theme.value}.css")
-		}
+		scene.stylesheets.add(cssUrl?.toExternalForm())
 
 		captionColor = Color.valueOf(
 			cssReader.getValueFromCssFile("/view/styles/${ApplicationSettings.userSettings.theme.value}.css", "womt-text-color-1") ?: "#000000"

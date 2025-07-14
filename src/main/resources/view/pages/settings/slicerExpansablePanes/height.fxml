@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import org.wip.womtoolkit.view.components.LabelWithLocalization?>
+<?import org.wip.womtoolkit.view.components.LocalizedLabel?>
 <?import org.wip.womtoolkit.view.components.NumberTextField?>
 
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="8.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
@@ -20,7 +20,7 @@
                 <RowConstraints vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <LabelWithLocalization fx:id="minimumHeightLabel" localizationKey="settingsPage.slicer.height.minimumHeight" />
+                <LocalizedLabel fx:id="minimumHeightLabel" localizationKey="settingsPage.slicer.height.minimumHeight" />
                 <NumberTextField fx:id="minimumHeightField" defaultValue="10.0" text="100" GridPane.columnIndex="1" />
             </children>
             <VBox.margin>
@@ -41,7 +41,7 @@
                 <Insets left="55.0" right="8.0" />
             </VBox.margin>
             <children>
-                <LabelWithLocalization fx:id="desiredHeightLabel" localizationKey="enabled" GridPane.rowIndex="1" />
+                <LocalizedLabel fx:id="desiredHeightLabel" localizationKey="enabled" GridPane.rowIndex="1" />
                 <NumberTextField fx:id="desiredHeightField" defaultValue="1.0" minimum="1.0" text="10000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </children>
         </GridPane>
@@ -59,7 +59,7 @@
                 <Insets left="55.0" right="8.0" />
             </VBox.margin>
             <children>
-                <LabelWithLocalization fx:id="maximumHeightLabel" localizationKey="enabled" GridPane.rowIndex="1" />
+                <LocalizedLabel fx:id="maximumHeightLabel" localizationKey="enabled" GridPane.rowIndex="1" />
                 <NumberTextField fx:id="maximumHeightField" defaultValue="1.0" minimum="1.0" text="10000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </children>
         </GridPane>

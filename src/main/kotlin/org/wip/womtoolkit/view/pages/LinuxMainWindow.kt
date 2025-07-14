@@ -21,6 +21,7 @@ import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.LocalizationService
 import org.wip.womtoolkit.view.components.PageIndicator
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableComponent
@@ -147,11 +148,7 @@ class LinuxMainWindow(
 		scene.apply {
 			stylesheets.clear()
 			val cssUrl = workingJavaClass.getResource("/view/styles/${ApplicationSettings.userSettings.theme.value}.css")
-			if (cssUrl != null) {
-				stylesheets.add(cssUrl.toExternalForm())
-			} else {
-				println("File CSS non trovato: /view/styles/${ApplicationSettings.userSettings.theme.value}.css")
-			}
+			stylesheets.add(cssUrl?.toExternalForm())
 
 			val accentColor = ApplicationSettings.userSettings.accent.value.toString().replace("0x", "#")
 			root.style = "-womt-accent: $accentColor;"

@@ -3,7 +3,6 @@ package org.wip.womtoolkit.model.processing
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
@@ -20,18 +19,26 @@ object Slicer {
 	val queue: StateFlow<List<ElementToProcess>>
 		get() = _queue.asStateFlow()
 
-	private fun processElementParallel(element: ElementToProcess) {
-		Thread { processElement(element) }.start()
+	private fun processElementParallel(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
+		Thread { processElement(element, settings) }.start()
 	}
 
-	private fun processElement(element: ElementToProcess) {
+	private fun processElement(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
 		with(element) {
 			lock.withLock {
 				val channels = mutableListOf<FileChannel>()
 				val locks = mutableListOf<FileLock>()
 
-				elements.value.forEach { file->
-					val channel = FileChannel.open(Paths.get(file), StandardOpenOption.READ)
+				elements.value.forEach { file ->
+					var fullPath: java.nio.file.Path
+
+					if (inputFolder.value.isNotEmpty()) {
+						fullPath = Paths.get(inputFolder.value, file)
+					} else {
+						fullPath = Paths.get(file)
+					}
+
+					val channel = FileChannel.open(fullPath, StandardOpenOption.WRITE, StandardOpenOption.READ)
 					val lock = channel.lock()
 					channels.add(channel)
 					locks.add(lock)
@@ -39,7 +46,7 @@ object Slicer {
 
 				// ora che siamo protetti da stronzi che vogliono cancellarci i file possiamo processarli
 				// qui la call alle funzioni di slicing o al modulo python
-
+				println("Something tried to happen")
 
 				locks.forEach { it.release() }
 				channels.forEach { it.close() }
@@ -57,31 +64,47 @@ object Slicer {
 	/**
 	 * @throws IllegalStateException if the element at index is not ready for processing (missing output folder or elements)
 	 * */
-	fun processOne(index: Int = 0, parallelExecutionOnProcessingStart: Boolean = ApplicationSettings.slicerSettings.parallelExecution.value) {
+	fun processOne(index: Int = 0, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
+		val s = settings.copy()
 		_queue.value.getOrNull(index)?.let {
 			if (!canProcessElement(it)) {
 				Globals.logger.info("Element at index $index is not ready for processing: ${it.elements.value}, output folder: ${it.outputFolder.value}")
 				throw IllegalStateException("Element at index $index is not ready for processing")
 			}
 
-			if (parallelExecutionOnProcessingStart)
-				processElementParallel(it)
+			if (s.parallelExecution)
+				processElementParallel(it, s)
 			else
-				processElement(it)
+				processElement(it, s)
 		}
 	}
 
-	fun processSome(indexes: List<Int>) {
-		val parallelExecutionOnProcessingStart = ApplicationSettings.slicerSettings.parallelExecution.value
+	fun processOne(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
+		val s = settings.copy()
+
+		if (!canProcessElement(element)) {
+			Globals.logger.info("Element is not ready for processing: ${element.elements.value}, output folder: ${element.outputFolder.value}")
+			//TODO: Notify user
+			return
+		}
+
+		if (s.parallelExecution)
+			processElementParallel(element, s)
+		else
+			processElement(element, s)
+	}
+
+	fun processSome(indexes: List<Int>, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
+		val s = settings.copy()
 		for (index in indexes) {
-			processOne(index, parallelExecutionOnProcessingStart)
+			processOne(index, s)
 		}
 	}
 
-	fun processAll() {
-		val parallelExecutionOnProcessingStart = ApplicationSettings.slicerSettings.parallelExecution.value
+	fun processAll(settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
+		val s = settings.copy()
 		for (index in _queue.value.indices) {
-			processOne(index, parallelExecutionOnProcessingStart)
+			processOne(index, s)
 		}
 	}
 
@@ -100,12 +123,13 @@ object Slicer {
 	 * */
 	fun addElementFromFolder(
 		inputFolder: String,
-		outputFolder: String = if (ApplicationSettings.slicerSettings.saveInSubFolder.value) {
-			"${inputFolder}\\${ApplicationSettings.slicerSettings.subFolderName.value}"
+		settings: SlicerSingleUseSettings = SlicerSingleUseSettings(),
+		outputFolder: String = if (settings.saveInSubfolder) {
+			"${inputFolder}\\${settings.subfolderName}"
 		} else {
 			inputFolder
 		},
-		supportedFormats: List<String> = Globals.IMAGE_INPUT_FORMATS
+		supportedFormats: List<String> = Globals.IMAGE_INPUT_FORMATS,
 	) {
 		val elements = mutableListOf<String>()
 		val folderPath = Paths.get(inputFolder)
@@ -120,7 +144,8 @@ object Slicer {
 			element.inputFolder.value == inputFolder
 		}.let { exists ->
 			if (exists) {
-				throw IllegalArgumentException("Element with input folder $inputFolder already exists in the queue")
+				//TODO: Should notify the user that the folder was discarded because it was already present
+				return // we do not want to add the same folder again
 			}
 		}
 
@@ -161,18 +186,17 @@ object Slicer {
 			}
 
 			addElement(ElementToProcess(
-				elements = _files.toMutableList()
+				elements = _files.toMutableList(),
+				outputFolder = outputFolder
 			))
 		}
 	}
 
 	fun removeElement(element: ElementToProcess) {
-		_queue.value.remove(element)
-		_queue.value = _queue.value.toMutableList() // trigger flow update
+		_queue.value = _queue.value.filter { it != element }.toMutableList()
 	}
 
 	fun clearQueue() {
-		_queue.value.clear()
-		_queue.value = _queue.value.toMutableList() // trigger flow update
+		_queue.value = mutableListOf()
 	}
 }

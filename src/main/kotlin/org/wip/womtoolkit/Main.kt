@@ -3,6 +3,7 @@ package org.wip.womtoolkit
 import javafx.application.Application
 import javafx.stage.Stage
 import org.wip.womtoolkit.model.DataManager
+import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.view.pages.LinuxMainWindow
 import org.wip.womtoolkit.view.pages.WindowsMainWindow
 
@@ -11,18 +12,18 @@ class WomToolkit : Application() {
 		DataManager.init()
 
 		val osName = System.getProperty("os.name").lowercase()
-		println("Operating System: $osName")
+		Globals.logger.info("Operating System: $osName")
 		when {
 			osName.contains("win") -> {
-				println("Initializing Windows Main Window")
+				Globals.logger.info("Initializing Windows Main Window")
 				WindowsMainWindow()
 			}
 			osName.contains("linux") -> {
-				println("Initializing Linux Main Window")
+				Globals.logger.info("Initializing Linux Main Window")
 				LinuxMainWindow(primaryStage)
 			}
 			else -> {
-				println("Unsupported OS. Exiting.")
+				Globals.logger.warning("Unsupported OS. Exiting.")
 				System.exit(1)
 			}
 		}

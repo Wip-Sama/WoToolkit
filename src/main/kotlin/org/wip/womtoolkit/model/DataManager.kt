@@ -62,10 +62,10 @@ object DataManager {
 				Files.createFile(applicationSettings).also {
 					Files.write(applicationSettings, out.toByteArray())
 				}
-				println(out)
+				Globals.logger.info(out)
 			} catch (e: Exception) {
 				//TODO: something better than this
-				Globals.logger?.warning("Failed to create application settings JSON: $applicationSettings")
+				Globals.logger.warning("Failed to create application settings JSON: $applicationSettings")
 				throw IllegalStateException("Failed to create application settings JSON: $applicationSettings", e)
 			}
 		}
@@ -101,9 +101,9 @@ object DataManager {
 		try {
 			val jsonString = Files.readString(applicationSettings)
 			customJsonSerializer.decodeFromString(ApplicationSettings.serializer(), jsonString)
-			println("ApplicationSettings loaded successfully: $ApplicationSettings")
+			Globals.logger.info("ApplicationSettings loaded successfully: $ApplicationSettings")
 		} catch (e: Exception) {
-			println("Failed to load ApplicationSettings, using defaults: ${e.message}")
+			Globals.logger.warning("Failed to load ApplicationSettings, using defaults: ${e.message}")
 		}
 	}
 

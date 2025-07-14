@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
-<?import org.wip.womtoolkit.view.components.LabelWithLocalization?>
+<?import org.wip.womtoolkit.view.components.LocalizedLabel?>
 <?import org.wip.womtoolkit.view.components.NumberTextField?>
 <?import org.wip.womtoolkit.view.components.Switch?>
 
@@ -39,7 +39,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <LabelWithLocalization localizationKey="slicer.height.minimumHeight" />
+                        <LocalizedLabel localizationKey="slicer.height.minimumHeight" />
                         <NumberTextField fx:id="minimumHeight" maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
@@ -52,7 +52,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <LabelWithLocalization localizationKey="slicer.height.desiredHeight" />
+                        <LocalizedLabel localizationKey="slicer.height.desiredHeight" />
                         <NumberTextField fx:id="desiredHeight" maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
@@ -66,7 +66,7 @@
                         <RowConstraints />
                      </rowConstraints>
                      <children>
-                        <LabelWithLocalization localizationKey="slicer.height.maximumHeight" />
+                        <LocalizedLabel localizationKey="slicer.height.maximumHeight" />
                         <NumberTextField fx:id="maximumHeight" maxWidth="1.7976931348623157E308" prefWidth="100.0" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
@@ -80,7 +80,7 @@
                      </rowConstraints>
                      <children>
                         <Switch fx:id="searchDirection" falseLocalization="slicer.searchDirection.toMinimum" trueLocalization="slicer.searchDirection.toMaximum" GridPane.rowIndex="1" />
-                        <LabelWithLocalization localizationKey="slicer.searchDirection" />
+                        <LocalizedLabel localizationKey="slicer.searchDirection" />
                      </children>
                   </GridPane>
                </children>
@@ -135,7 +135,7 @@
                            </rowConstraints>
                            <children>
                               <Switch fx:id="saveInSubfolder" falseLocalization="slicer.subfolder.disabled" trueLocalization="slicer.subfolder.enabled" GridPane.rowIndex="1" />
-                              <LabelWithLocalization localizationKey="slicer.subFolder" />
+                              <LocalizedLabel localizationKey="slicer.subFolder" />
                            </children>
                         </GridPane>
                         <GridPane>
@@ -148,7 +148,7 @@
                            </rowConstraints>
                            <children>
                               <TextField fx:id="subfolderName" prefWidth="100.0" GridPane.rowIndex="1" />
-                              <LabelWithLocalization localizationKey="slicer.subFolder.folderName" />
+                              <LocalizedLabel localizationKey="slicer.subFolder.folderName" />
                            </children>
                         </GridPane>
                         <GridPane>
@@ -161,7 +161,7 @@
                            </rowConstraints>
                            <children>
                               <Switch fx:id="saveAsArchive" falseLocalization="slicer.archive.disabled" trueLocalization="slicer.archive.enabled" GridPane.rowIndex="1" />
-                              <LabelWithLocalization localizationKey="slicer.archive" />
+                              <LocalizedLabel localizationKey="slicer.archive" />
                            </children>
                         </GridPane>
                         <GridPane>
@@ -174,7 +174,7 @@
                            </rowConstraints>
                            <children>
                               <TextField fx:id="archiveName" prefWidth="100.0" GridPane.rowIndex="1" />
-                              <LabelWithLocalization localizationKey="slicer.archive.archiveName" />
+                              <LocalizedLabel localizationKey="slicer.archive.archiveName" />
                            </children>
                         </GridPane>
                         <GridPane layoutX="539.0" layoutY="10.0">
@@ -187,7 +187,7 @@
                            </rowConstraints>
                            <children>
                               <ChoiceBox fx:id="archiveFormat" maxWidth="1.7976931348623157E308" minHeight="34.0" prefHeight="34.0" GridPane.rowIndex="1" />
-                              <LabelWithLocalization localizationKey="slicer.archive.archiveFormat" />
+                              <LocalizedLabel localizationKey="slicer.archive.archiveFormat" />
                            </children>
                         </GridPane>
                         <GridPane>
@@ -200,7 +200,7 @@
                            </rowConstraints>
                            <children>
                               <Switch fx:id="parallelExecution" falseLocalization="slicer.parallelExecution.disabled" trueLocalization="slicer.parallelExecution.enabled" GridPane.rowIndex="1" />
-                              <LabelWithLocalization localizationKey="slicer.parallelExecution" />
+                              <LocalizedLabel localizationKey="slicer.parallelExecution" />
                            </children>
                         </GridPane>
                         <GridPane>
@@ -213,7 +213,7 @@
                            </rowConstraints>
                            <children>
                               <ChoiceBox fx:id="outputFormat" maxWidth="1.7976931348623157E308" minHeight="34.0" prefHeight="34.0" GridPane.rowIndex="1" />
-                              <LabelWithLocalization localizationKey="slicer.outputFormat" />
+                              <LocalizedLabel localizationKey="slicer.outputFormat" />
                            </children>
                         </GridPane>
                         <GridPane>
@@ -225,7 +225,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <LabelWithLocalization localizationKey="slicer.cutTolerance" />
+                              <LocalizedLabel localizationKey="slicer.cutTolerance" />
                               <NumberTextField fx:id="cutTolerance" prefWidth="100.0" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>

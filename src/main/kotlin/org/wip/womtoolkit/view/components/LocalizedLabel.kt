@@ -3,8 +3,7 @@ package org.wip.womtoolkit.view.components
 import javafx.scene.control.Label
 import org.wip.womtoolkit.model.Lsp
 
-
-class LabelWithLocalization: Label() {
+class LocalizedLabel: Label() {
 	private var _localizationKey: String? = null
 	var localizationKey: String?
 		get() = _localizationKey
