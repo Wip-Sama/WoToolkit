@@ -4,6 +4,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 
+
+//TODO: add recursive folder add as an option, maybe parametrized
 @Serializable
 data class SlicerSettings(
 	@Serializable(with = MutableStateFlowSerializer::class)

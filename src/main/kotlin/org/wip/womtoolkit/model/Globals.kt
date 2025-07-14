@@ -21,9 +21,9 @@ object Globals {
 			.inputArguments.any { it.contains("-agentlib:jdwp") }
 	}
 
-	val logger: Logger? = Logger.getLogger(javaClass.getName())
+	val logger: Logger = Logger.getLogger(javaClass.getName())
 
 	init {
-		logger?.level = Level.WARNING
+		logger.level = Level.WARNING
 	}
 }

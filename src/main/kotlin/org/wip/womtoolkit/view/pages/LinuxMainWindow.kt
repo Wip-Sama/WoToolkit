@@ -86,11 +86,15 @@ class LinuxMainWindow(
 					updateStyles()
 				}
 			}
+		}
+		scope.launch {
 			ApplicationSettings.userSettings.accent.collectLatest { newAccent ->
 				withContext(Dispatchers.JavaFx) {
 					updateStyles()
 				}
 			}
+		}
+		scope.launch {
 			ApplicationSettings.userSettings.localization.collectLatest { newLocale ->
 				withContext(Dispatchers.JavaFx) {
 					updateLocale()
@@ -129,7 +133,7 @@ class LinuxMainWindow(
 					val n: Pane = new as Pane
 
 					contentPane.center = when (n.id) {
-						"slicer" -> Slicer()
+						"slicer" -> SlicerPage()
 						"converter" -> Converter()
 						"settings" -> Settings()
 						else -> null

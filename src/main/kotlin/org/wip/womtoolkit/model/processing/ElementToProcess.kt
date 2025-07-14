@@ -9,12 +9,13 @@ import kotlin.concurrent.withLock
 
 // Warning: this class does not ensure the lack of duplicates in the element list.
 // Should be Thread-safe.
-open class ElementsToProcess{
+open class ElementToProcess{
 	val lock: Lock = ReentrantLock()
 
 	private val _elements: MutableStateFlow<MutableList<String>>
 	private val _outputFolder: MutableStateFlow<String>
 	private val _progress: MutableStateFlow<Double>
+	private val _inputFolder: MutableStateFlow<String>
 
 	val elements: StateFlow<List<String>>
 		get() = _elements.asStateFlow()
@@ -22,23 +23,27 @@ open class ElementsToProcess{
 		get() = _outputFolder.asStateFlow()
 	val progress: StateFlow<Double>
 		get() = _progress.asStateFlow()
+	val inputFolder: StateFlow<String>
+		get() = _inputFolder.asStateFlow()
 
 	constructor(
 		elements: List<String>,
-		outputFolder: String,
-		progress: Double,
+		outputFolder: String = "",
+		progress: Double = 0.0,
+		inputFolder: String = ""
 	) {
 		this._elements = MutableStateFlow(elements.toMutableList())
 		this._outputFolder = MutableStateFlow(outputFolder)
 		this._progress = MutableStateFlow(progress)
+		this._inputFolder = MutableStateFlow(inputFolder)
 	}
 
-	/** Change the element at index e1 with the element at index e2.
+	/** Swap the element at index e1 with the element at index e2.
 	 * @param e1 index of the first element to swap
 	 * @param e2 index of the second element to swap
 	 * @throws IndexOutOfBoundsException if e1 or e2 are out of bounds of the element list
 	 * */
-	fun changeElementPosition(e1: Int, e2: Int) {
+	fun swapElementPosition(e1: Int, e2: Int) {
 		lock.withLock {
 			if (e1 in _elements.value.indices && e2 in _elements.value.indices) {
 				val temp = _elements.value[e1]
@@ -50,6 +55,19 @@ open class ElementsToProcess{
 			}
 		}
 	}
+
+	fun moveElementToPosition(element: Int, position: Int) {
+		lock.withLock {
+			if (position in _elements.value.indices) {
+				val e = _elements.value.removeAt(element)
+				_elements.value.add(position, e)
+			} else {
+				throw IndexOutOfBoundsException("Position out of bounds: $position, size=${_elements.value.size}")
+			}
+		}
+	}
+
+	//TODO: Validation for each value changed
 
 	fun setElements(elements: MutableList<String>) {
 		lock.withLock {
@@ -66,6 +84,12 @@ open class ElementsToProcess{
 	fun setProgress(progress: Double) {
 		lock.withLock {
 			_progress.value = progress
+		}
+	}
+
+	fun setInputFolder(inputFolder: String) {
+		lock.withLock {
+			_inputFolder.value = inputFolder
 		}
 	}
 }

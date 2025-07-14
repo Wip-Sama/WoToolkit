@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.SVGPath?>
 
-<fx:root styleClass="selected-files-container" stylesheets="@../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="626.0" maxWidth="524.0" styleClass="selected-files-container" stylesheets="@../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <HBox alignment="CENTER" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
          <children>
@@ -49,7 +49,7 @@
             </TextField>
             <HBox maxWidth="1.7976931348623157E308">
                <children>
-                  <ProgressBar maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                  <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
          </children>
@@ -64,7 +64,7 @@
             <Insets bottom="8.0" />
          </BorderPane.margin>
          <center>
-            <ScrollPane fx:id="previewPane" fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="ALWAYS" maxWidth="400.0" pannable="true" vbarPolicy="ALWAYS" BorderPane.alignment="CENTER">
+            <ScrollPane fx:id="previewPane" fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER" maxWidth="400.0" pannable="true" vbarPolicy="NEVER" BorderPane.alignment="CENTER">
                <content>
                   <ImageView fx:id="previewImage" focusTraversable="true" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true" smooth="false" />
                </content>

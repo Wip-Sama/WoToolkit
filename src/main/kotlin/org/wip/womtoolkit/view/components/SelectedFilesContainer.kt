@@ -5,6 +5,7 @@ import javafx.application.Platform
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.css.PseudoClass
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -13,6 +14,7 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.control.ListCell
 import javafx.scene.control.ListView
+import javafx.scene.control.ProgressBar
 import javafx.scene.control.ScrollPane
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -20,7 +22,12 @@ import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
 import javafx.scene.layout.BorderPane
 import javafx.util.Callback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
 import org.wip.womtoolkit.model.Lsp
+import org.wip.womtoolkit.model.processing.ElementToProcess
 import kotlin.math.max
 import kotlin.properties.Delegates
 
@@ -37,9 +44,10 @@ class SelectedFilesContainer : BorderPane() {
 	@FXML lateinit var fileWeight: Label
 	@FXML lateinit var fileSize: Label
 	@FXML lateinit var zoomLevel: Label
+	@FXML lateinit var progressBar: ProgressBar
 
 	private val imageHolder = BorderPane()
-	private val dragOverPseudoClass = javafx.css.PseudoClass.getPseudoClass("drag-over")
+	private val dragOverPseudoClass = PseudoClass.getPseudoClass("drag-over")
 	private val zoomProperty = SimpleDoubleProperty(1.0)
 	private var mousePosition = SimpleObjectProperty<Pair<Double, Double>>()
 	private var draggingTab = SimpleObjectProperty<ListView<String>>()
@@ -54,11 +62,13 @@ class SelectedFilesContainer : BorderPane() {
 		selectedFilesList.items.setAll(newValue)
 		updateImageListInfo()
 		if (newValue.isNotEmpty()) {
-			changeImage(Image("file:${newValue.first()}"))
-		} else {
-			changeImage(null)
+			refreshImage()
 		}
 	}
+
+	private var elementToProcess: ElementToProcess? = null
+
+	val scope = MainScope()
 
 	init {
 		FXMLLoader(javaClass.getResource("/view/components/selectedFilesContainer.fxml")).apply {
@@ -129,32 +139,6 @@ class SelectedFilesContainer : BorderPane() {
 		}
 	}
 
-	private fun updateImageHolderSizeAnsPosition(mousePosition: Pair<Double, Double>? = null) {
-		val img = previewImage.image
-		if (img == null) return
-		val currentRelativeX = previewPane.hvalue
-		val currentRelativeY = previewPane.vvalue
-
-		val oldW = imageHolder.width
-		val oldH = imageHolder.height
-
-		val newWidth = max(previewPane.viewportBounds.width, previewPane.viewportBounds.width * zoomProperty.value)
-		val newHeight = max(previewPane.viewportBounds.height, previewPane.viewportBounds.height * zoomProperty.value)
-
-		imageHolder.minWidth = newWidth
-		imageHolder.minHeight = newHeight
-		imageHolder.prefWidth = newWidth
-		imageHolder.prefHeight = newHeight
-
-		if (oldW > 0 && oldH > 0) {
-			val scaleFactorX = newWidth / oldW
-			val scaleFactorY = newHeight / oldH
-
-			previewPane.hvalue = (currentRelativeX * scaleFactorX).coerceIn(0.0, 1.0)
-			previewPane.vvalue = (currentRelativeY * scaleFactorY).coerceIn(0.0, 1.0)
-		}
-	}
-
 	private fun initializeSelectedFilesList() {
 		selectedFilesList.apply {
 			isEditable = false
@@ -196,6 +180,10 @@ class SelectedFilesContainer : BorderPane() {
 							items.removeAt(draggedIdx)
 							items.add(thisIdx, draggedItem)
 							listView.selectionModel.select(thisIdx)
+
+							elementToProcess?.moveElementToPosition(
+								draggedIdx, thisIdx
+							)
 						}
 						event.isDropCompleted = true
 						event.consume()
@@ -209,12 +197,94 @@ class SelectedFilesContainer : BorderPane() {
 			}
 		}
 
-		selectedFilesList.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
-			if (newValue != null) {
-				changeImage(Image("file:${inputPath}${if (inputPath?.isEmpty() ?: true) "" else "\\"}${newValue}"))
-			} else {
-				changeImage(null)
+		selectedFilesList.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+			refreshImage()
+		}
+	}
+
+	fun bindToElementToProcess(elementToProcess: ElementToProcess) {
+		this.elementToProcess = elementToProcess
+		scope.launch {
+			elementToProcess.inputFolder.collect { folder ->
+				if (inputPath != folder) {
+					with(Dispatchers.JavaFx) {
+						inputPath = folder
+					}
+				}
 			}
+		}
+		scope.launch {
+			elementToProcess.outputFolder.collect { folder ->
+				if (outputPath != folder) {
+					with(Dispatchers.JavaFx) {
+						outputPath = folder
+					}
+				}
+			}
+		}
+		scope.launch {
+			elementToProcess.progress.collect { progress ->
+				if (progressBar.progress != progress) {
+					with(Dispatchers.JavaFx) {
+						progressBar.progress = progress
+					}
+				}
+			}
+		}
+		scope.launch {
+			elementToProcess.elements.collect { element ->
+				if (fileList != element) {
+					with(Dispatchers.JavaFx) {
+						fileList = element
+						updateImageListInfo()
+						if (fileList.isNotEmpty()) {
+							selectedFilesList.selectionModel.apply {
+								clearSelection()
+								select(0)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	fun getBoundElementToProcess(): ElementToProcess? {
+		return elementToProcess
+	}
+
+	private fun updateImageHolderSizeAnsPosition(mousePosition: Pair<Double, Double>? = null) {
+		val img = previewImage.image
+		if (img == null) return
+		val currentRelativeX = previewPane.hvalue
+		val currentRelativeY = previewPane.vvalue
+
+		val oldW = imageHolder.width
+		val oldH = imageHolder.height
+
+		val newWidth = max(previewPane.viewportBounds.width, previewPane.viewportBounds.width * zoomProperty.value)
+		val newHeight = max(previewPane.viewportBounds.height, previewPane.viewportBounds.height * zoomProperty.value)
+
+		imageHolder.minWidth = newWidth
+		imageHolder.minHeight = newHeight
+		imageHolder.prefWidth = newWidth
+		imageHolder.prefHeight = newHeight
+
+		if (oldW > 0 && oldH > 0) {
+			val scaleFactorX = newWidth / oldW
+			val scaleFactorY = newHeight / oldH
+
+			previewPane.hvalue = (currentRelativeX * scaleFactorX).coerceIn(0.0, 1.0)
+			previewPane.vvalue = (currentRelativeY * scaleFactorY).coerceIn(0.0, 1.0)
+		}
+	}
+
+	fun refreshImage() {
+		val selectedItem = selectedFilesList.selectionModel.selectedItem
+		if (selectedItem != null) {
+			changeImage(Image("file:${inputPath?: ""}${if (inputPath?.isEmpty() ?: true) "" else "\\"}${selectedItem}"))
+		} else {
+			changeImage(null)
 		}
 	}
 

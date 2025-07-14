@@ -74,11 +74,15 @@ open class WindowsMainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 					updateStyles()
 				}
 			}
+		}
+		scope.launch {
 			ApplicationSettings.userSettings.accent.collectLatest { newAccent ->
 				withContext(Dispatchers.JavaFx) {
 					updateStyles()
 				}
 			}
+		}
+		scope.launch {
 			ApplicationSettings.userSettings.localization.collectLatest { newLocale ->
 				withContext(Dispatchers.JavaFx) {
 					updateLocale()
@@ -121,7 +125,7 @@ open class WindowsMainWindow : AbstractNfxUndecoratedWindow(), Initializable {
 					customTitleBar.page_indicator.bind(LocalizationService.lsb(new.localizationKey))
 
 					contentPane.center = when (n.id) {
-						"slicer" -> Slicer()
+						"slicer" -> SlicerPage()
 						"converter" -> Converter()
 						"settings" -> Settings(customTitleBar.pageIndicator)
 						else -> null
