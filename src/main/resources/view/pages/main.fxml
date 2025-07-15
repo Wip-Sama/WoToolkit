@@ -5,8 +5,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableSidebarMenu?>
+<?import org.wip.womtoolkit.view.components.notifications.NotificationController?>
 
-<AnchorPane fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="mainPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane fx:id="basePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: -womt-background-dark;" styleClass="base" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
@@ -23,5 +24,6 @@
             <Insets />
          </opaqueInsets>
       </BorderPane>
+      <NotificationController AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="8.0" />
    </children>
 </AnchorPane>

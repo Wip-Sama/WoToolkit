@@ -28,8 +28,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.10.2")
-    implementation("org.openjfx:javafx-controls:23.0.1")
-    implementation("org.openjfx:javafx-fxml:23.0.1")
+    implementation("org.openjfx:javafx-controls:24.0.1")
+    implementation("org.openjfx:javafx-fxml:24.0.1")
 
     implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
 
@@ -46,7 +46,7 @@ tasks.test {
 }
 
 javafx {
-    version = "23.0.1"
+    version = "24.0.1"
     modules = listOf(
         "javafx.controls",
         "javafx.fxml",

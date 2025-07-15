@@ -3,12 +3,10 @@ package org.wip.womtoolkit.view.pages
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
-import javafx.application.Platform
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
-import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.input.ClipboardContent
@@ -21,9 +19,10 @@ import javafx.scene.layout.VBox
 import javafx.util.Duration
 import org.wip.womtoolkit.TAB_DRAG_KEY
 import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.enums.NotificationTypes
+import org.wip.womtoolkit.model.services.notifications.NotificationService
+import org.wip.womtoolkit.model.services.notifications.NotificationData
 import java.util.Collections
-import java.util.Timer
-import java.util.TimerTask
 import kotlin.collections.set
 
 class Converter : BorderPane() {
@@ -141,5 +140,9 @@ class Converter : BorderPane() {
 		for (i in 0 until buttonContainer.children.size) {
 			println("Button $i: ${buttonContainer.children[i]}")
 		}
+		NotificationService.addNotification(NotificationData(
+			"enabled",
+			NotificationTypes.INFO
+		))
 	}
 }
