@@ -6,10 +6,6 @@ import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 
 @Serializable
 class ColorPickerSettings {
-	@Serializable(with = MutableStateFlowSerializer::class)
-	val hueSelector = MutableStateFlow(false)
-	@Serializable(with = MutableStateFlowSerializer::class)
-	var showAlpha = MutableStateFlow(false)
-	@Serializable(with = MutableStateFlowSerializer::class)
-	var advancedMode = MutableStateFlow(false)
+	@Serializable(with = MutableStateFlowSerializer::class)	val selectorMode: MutableStateFlow<Boolean> = MutableStateFlow(false) // true = image, false = hue
+	@Serializable(with = MutableStateFlowSerializer::class)	val alphaAvailable: MutableStateFlow<Boolean> = MutableStateFlow(false)
 }

@@ -14,38 +14,17 @@ import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 
 @Serializable
 class UserSettings {
-	@Serializable(MutableStateFlowSerializer::class)
-	val theme = MutableStateFlow("dark")
-
-	@Serializable(MutableStateFlowColorSerializer::class)
-	val accent: MutableStateFlow<Color> = MutableStateFlow(Color.web("#ff0000ff")!!)
-
-	@Serializable(MutableStateFlowListColorSerializer::class)
-	val accentHistory: MutableStateFlow<List<Color>> = MutableStateFlow(emptyList())
-
-	@Serializable(MutableStateFlowSerializer::class)
-	val localization = MutableStateFlow("enEN")
-
-	@Serializable(MutableStateFlowSerializer::class)
-	val startingPage = MutableStateFlow("None")
-
-	@Serializable(MutableStateFlowSerializer::class)
-	val colorPickerSettings = MutableStateFlow(ColorPickerSettings())
-
-	@Serializable(MutableStateFlowSerializer::class)
-	val disableAnimations = MutableStateFlow(false)
+	@Serializable(MutableStateFlowSerializer::class) val theme = MutableStateFlow("dark")
+	@Serializable(MutableStateFlowColorSerializer::class) val accent: MutableStateFlow<Color> = MutableStateFlow(Color.web("#ff0000ff")!!)
+	@Serializable(MutableStateFlowListColorSerializer::class) val accentHistory: MutableStateFlow<List<Color>> = MutableStateFlow(emptyList())
+	@Serializable(MutableStateFlowSerializer::class)	val localization = MutableStateFlow("enEN")
+	@Serializable(MutableStateFlowSerializer::class)	val startingPage = MutableStateFlow("None")
+	@Serializable(MutableStateFlowSerializer::class)	val disableAnimations = MutableStateFlow(false)
+	@Serializable val colorPickerSettings = ColorPickerSettings()
+	@Serializable val notificationSettings = NotificationSettings()
 
 	init {
 		val scope = MainScope()
-
-		scope.launch {
-			colorPickerSettings.onEach { newValue ->
-				if (colorPickerSettings.value !== newValue) {
-					colorPickerSettings.value = newValue
-				}
-			}.collect()
-		}
-
 		scope.launch {
 			accent.collectLatest {
 				accentHistory.value = accentHistory.value.toMutableList().apply {

@@ -39,7 +39,7 @@ class SlicerSettings : VBox() {
 	@FXML
 	fun initialize() {
 		heightSetting.apply {
-			expandableContent = FXMLLoader(javaClass.getResource("/view/pages/settings/slicerExpansablePanes/height.fxml")).load()
+			expandableContent = FXMLLoader(javaClass.getResource("/view/pages/settings/slicerExpandablePanes/height.fxml")).load()
 			expandableContent.apply {
 				val minimumHeightField = lookup("#minimumHeightField") as NumberTextField
 				val desiredHeightField = lookup("#desiredHeightField") as NumberTextField

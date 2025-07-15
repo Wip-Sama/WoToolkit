@@ -22,6 +22,7 @@ object DataManager {
 
 	val customJsonSerializer = Json {
 		serializersModule = module
+//		ignoreUnknownKeys = true
 		prettyPrint = true
 		encodeDefaults = true
 		isLenient = true // Allows for lenient parsing of JSON

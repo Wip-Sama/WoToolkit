@@ -12,7 +12,6 @@ import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
-import javafx.scene.shape.SVGPath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.collectLatest
@@ -26,6 +25,7 @@ import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.model.services.localization.Lsp
+import org.wip.womtoolkit.view.components.NumberTextField
 
 /**
  * @author Wip
@@ -76,6 +76,9 @@ class GeneralSettings : VBox() {
 	@FXML lateinit var themeSetting: SettingElement
 	@FXML lateinit var localizationSetting: SettingElement
 	@FXML lateinit var startingPageSetting: SettingElement
+	@FXML lateinit var colorPickerSetting: SettingElement
+	@FXML lateinit var disableAnimationSettings: SettingElement
+	@FXML lateinit var notificationSetting: SettingElement
 
 	private val scope = MainScope()
 
@@ -90,11 +93,6 @@ class GeneralSettings : VBox() {
 	@FXML
 	fun initialize() {
 		accentSetting.apply {
-			title.textProperty().bind(Lsp.lsb("settingsPage.general.accent.title"))
-			description.textProperty().bind(Lsp.lsb("settingsPage.general.accent.description"))
-			imageContainer.center = SVGPath().apply {
-				content = ACCENT
-			}
 			quickSetting = ColorPickerButton().apply {
 				isColorPickerAvailable = true
 				colorProperty.value = ApplicationSettings.userSettings.accent.value
@@ -203,13 +201,7 @@ class GeneralSettings : VBox() {
 				)
 			}
 		}
-
 		themeSetting.apply {
-			title.textProperty().bind(Lsp.lsb("settingsPage.general.theme.title"))
-			description.textProperty().bind(Lsp.lsb("settingsPage.general.theme.description"))
-			imageContainer.center = SVGPath().apply {
-				content = THEME
-			}
 			quickSetting = Switch(ApplicationSettings.userSettings.theme.value == "dark").apply {
 				trueLocalization = "settingsPage.general.theme.dark"
 				falseLocalization = "settingsPage.general.theme.light"
@@ -233,13 +225,7 @@ class GeneralSettings : VBox() {
 				}
 			}
 		}
-
 		localizationSetting.apply {
-			title.textProperty().bind(Lsp.lsb("settingsPage.general.language.title"))
-			description.textProperty().bind(Lsp.lsb("settingsPage.general.language.description"))
-			imageContainer.center = SVGPath().apply {
-				content = LOCALIZATION
-			}
 			quickSetting = ChoiceBox<String>().apply {
 				items.addAll(LocalizationService.locales)
 				value = LocalizationService.currentLocale
@@ -254,14 +240,7 @@ class GeneralSettings : VBox() {
 				}
 			}
 		}
-
-		//TODO: complete
 		startingPageSetting.apply {
-			title.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.title"))
-			description.textProperty().bind(Lsp.lsb("settingsPage.general.startingPage.description"))
-			imageContainer.center = SVGPath().apply {
-				content = STARTING_PAGE
-			}
 			quickSetting = ChoiceBox<String>().apply {
 				items.addAll("None", "Slicer", "Converter")
 				value = "None"
@@ -276,22 +255,37 @@ class GeneralSettings : VBox() {
 				}
 			}
 		}
+		colorPickerSetting.apply {
+			expandableContent = FXMLLoader(javaClass.getResource("/view/pages/settings/generalExpandablePanes/colorPicker.fxml")).load()
+			expandableContent.apply {
+				val selectionMode = lookup("#selectionMode") as Switch
+				val alphaAvailable = lookup("#alphaAvailable") as Switch
 
-		//isColorPickerHueSelector
-		children.add(SettingElement().apply {
-			title.textProperty().bind(Lsp.lsb("settingsPage.general.colorPickerMode.title"))
-			description.textProperty().bind(Lsp.lsb("settingsPage.general.colorPickerMode.description"))
-			imageContainer.center = SVGPath().apply {
-				content = COLOR_PICKER_MODE
-			}
-		})
+				selectionMode.state = ApplicationSettings.userSettings.colorPickerSettings.selectorMode.value
+				alphaAvailable.state = ApplicationSettings.userSettings.colorPickerSettings.alphaAvailable.value
 
-		children.add(SettingElement().apply {
-			title.textProperty().bind(Lsp.lsb("settingsPage.general.disableAnimations.title"))
-			description.textProperty().bind(Lsp.lsb("settingsPage.general.disableAnimations.description"))
-			imageContainer.center = SVGPath().apply {
-				content = ANIMATIONS
+				selectionMode.stateProperty.addListener { _, oldValue, newValue ->
+					if (newValue == oldValue) return@addListener
+					ApplicationSettings.userSettings.colorPickerSettings.selectorMode.value = newValue
+				}
+				alphaAvailable.stateProperty.addListener { _, oldValue, newValue ->
+					if (newValue == oldValue) return@addListener
+					ApplicationSettings.userSettings.colorPickerSettings.alphaAvailable.value = newValue
+				}
+
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.colorPickerSettings.selectorMode.collectLatest {
+						selectionMode.state = it
+					}
+				}
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.colorPickerSettings.alphaAvailable.collectLatest {
+						alphaAvailable.state = it
+					}
+				}
 			}
+		}
+		disableAnimationSettings.apply {
 			quickSetting = Switch(ApplicationSettings.userSettings.disableAnimations.value).apply {
 				trueLocalization = "settingsPage.general.disableAnimations.enabled"
 				falseLocalization = "settingsPage.general.disableAnimations.disabled"
@@ -310,7 +304,81 @@ class GeneralSettings : VBox() {
 					}
 				}
 			}
+		}
+		notificationSetting.apply {
+			quickSetting = Switch(ApplicationSettings.userSettings.notificationSettings.enabled.value).apply {
+				trueLocalization = "enabled"
+				falseLocalization = "disabled"
 
-		})
+				stateProperty.addListener { observable, oldValue, newValue ->
+					if (newValue != oldValue) {
+						ApplicationSettings.userSettings.notificationSettings.enabled.value = newValue
+					}
+				}
+
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.notificationSettings.enabled.collectLatest { newValue ->
+						state = newValue
+					}
+				}
+			}
+			expandableContent = FXMLLoader(javaClass.getResource("/view/pages/settings/generalExpandablePanes/notification.fxml")).load()
+			expandableContent.apply {
+				val enableInfo = lookup("#enableInfo") as Switch
+				val enableWarning = lookup("#enableWarning") as Switch
+				val enableError = lookup("#enableError") as Switch
+				val enableSuccess = lookup("#enableSuccess") as Switch
+				val autoDismiss = lookup("#autoDismiss") as Switch
+				val autoDismissTime = lookup("#autoDismissTime") as NumberTextField
+
+				enableInfo.state = ApplicationSettings.userSettings.notificationSettings.showInfo.value
+				enableWarning.state = ApplicationSettings.userSettings.notificationSettings.showWarning.value
+				enableError.state = ApplicationSettings.userSettings.notificationSettings.showError.value
+				enableSuccess.state = ApplicationSettings.userSettings.notificationSettings.showSuccess.value
+				autoDismiss.state = ApplicationSettings.userSettings.notificationSettings.autoDismiss.value
+				autoDismissTime.text = ApplicationSettings.userSettings.notificationSettings.autoDismissTime.value.toString()
+
+				enableInfo.stateProperty.addListener { _, oldValue, newValue ->
+					if (newValue == oldValue) return@addListener
+					ApplicationSettings.userSettings.notificationSettings.showInfo.value = newValue
+				}
+				enableWarning.stateProperty.addListener { _, oldValue, newValue ->
+					if (newValue == oldValue) return@addListener
+					ApplicationSettings.userSettings.notificationSettings.showWarning.value = newValue
+				}
+				enableError.stateProperty.addListener { _, oldValue, newValue ->
+					if (newValue == oldValue) return@addListener
+					ApplicationSettings.userSettings.notificationSettings.showError.value = newValue
+				}
+				enableSuccess.stateProperty.addListener { _, oldValue, newValue ->
+					if (newValue == oldValue) return@addListener
+					ApplicationSettings.userSettings.notificationSettings.showSuccess.value = newValue
+				}
+				autoDismissTime.textProperty().addListener { _, oldValue, newValue ->
+					if (newValue == oldValue) return@addListener
+					ApplicationSettings.userSettings.notificationSettings.autoDismissTime.value = autoDismissTime.value.toInt()
+				}
+
+
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.notificationSettings.showInfo.collectLatest { enableInfo.state = it }
+				}
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.notificationSettings.showWarning.collectLatest { enableWarning.state = it }
+				}
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.notificationSettings.showError.collectLatest { enableError.state = it }
+				}
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.notificationSettings.showSuccess.collectLatest { enableSuccess.state = it }
+				}
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.notificationSettings.autoDismiss.collectLatest { autoDismiss.state = it }
+				}
+				scope.launch(Dispatchers.JavaFx) {
+					ApplicationSettings.userSettings.notificationSettings.autoDismissTime.collectLatest { autoDismissTime.text = autoDismissTime.value.toString() }
+				}
+			}
+		}
 	}
 }

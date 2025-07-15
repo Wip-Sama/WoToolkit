@@ -9,7 +9,7 @@
 <?import org.wip.womtoolkit.view.components.LocalizedLabel?>
 <?import org.wip.womtoolkit.view.components.NumberTextField?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="8.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" spacing="8.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <children>
         <GridPane layoutX="10.0" layoutY="68.0">
             <columnConstraints>
@@ -41,7 +41,7 @@
                 <Insets left="55.0" right="8.0" />
             </VBox.margin>
             <children>
-                <LocalizedLabel fx:id="desiredHeightLabel" localizationKey="enabled" GridPane.rowIndex="1" />
+                <LocalizedLabel fx:id="desiredHeightLabel" localizationKey="settingsPage.slicer.height.desiredHeight" GridPane.rowIndex="1" />
                 <NumberTextField fx:id="desiredHeightField" defaultValue="1.0" minimum="1.0" text="10000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </children>
         </GridPane>
@@ -59,7 +59,7 @@
                 <Insets left="55.0" right="8.0" />
             </VBox.margin>
             <children>
-                <LocalizedLabel fx:id="maximumHeightLabel" localizationKey="enabled" GridPane.rowIndex="1" />
+                <LocalizedLabel fx:id="maximumHeightLabel" localizationKey="settingsPage.slicer.height.maximumHeight" GridPane.rowIndex="1" />
                 <NumberTextField fx:id="maximumHeightField" defaultValue="1.0" minimum="1.0" text="10000" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             </children>
         </GridPane>

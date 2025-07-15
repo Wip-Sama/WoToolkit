@@ -4,21 +4,16 @@ import javafx.animation.FadeTransition
 import javafx.animation.TranslateTransition
 import javafx.collections.ListChangeListener
 import javafx.event.EventHandler
-import javafx.event.EventTarget
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.Node
-import javafx.scene.control.Button
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.util.Duration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.coroutines.javafx.asFlow
 import kotlinx.coroutines.launch
-import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.localization.Lsp
 import org.wip.womtoolkit.model.services.notifications.NotificationService
 import org.wip.womtoolkit.model.services.notifications.NotificationData
@@ -107,15 +102,10 @@ class NotificationController: BorderPane() {
 
 	fun addWithAnimation(node: Node) {
 		node.opacity = 0.0
-		node.translateY = 20.0
 		notificationContainer.children.add(node)
 
 		FadeTransition(Duration.millis(200.0), node).apply {
 			toValue = 1.0
-		}.play()
-
-		TranslateTransition(Duration.millis(200.0), node).apply {
-			toY = 0.0
 		}.play()
 	}
 
@@ -125,10 +115,6 @@ class NotificationController: BorderPane() {
 			setOnFinished {
 				notificationContainer.children.remove(node)
 			}
-		}.play()
-
-		TranslateTransition(Duration.millis(200.0), node).apply {
-			toY = 20.0
 		}.play()
 	}
 
@@ -161,7 +147,7 @@ class NotificationController: BorderPane() {
 		}
 
 		TranslateTransition(Duration.millis(200.0), notificationContainer).apply {
-			toY = 0.0 // Riallinea il container in alto
+			toY = 0.0
 			play()
 		}
 	}

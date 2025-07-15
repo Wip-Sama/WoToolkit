@@ -49,19 +49,28 @@ object ApplicationSettingsSerializer : KSerializer<ApplicationSettings> {
 	}
 }
 
-inline fun <reified T : Any> T.copyStateFlowsFrom(other: T) {
-	val thisClass = T::class
+fun <T : Any> T.copyStateFlowsFrom(other: T) {
+	val thisClass = this::class
 
 	thisClass.memberProperties.forEach { prop ->
 		val thisValue = prop.getter.call(this)
 		val otherValue = prop.getter.call(other)
 
-		if (thisValue is MutableStateFlow<*> && otherValue is MutableStateFlow<*>) {
-			try {
-				@Suppress("UNCHECKED_CAST")
-				(thisValue as MutableStateFlow<Any?>).value = otherValue.value
-			} catch (e: Exception) {
-				Globals.logger?.warning("Error in copyStateFlowsFrom: ${thisClass.qualifiedName}, proprietà: ${prop.name}, errore: ${e.message}")
+		when {
+			thisValue is MutableStateFlow<*> && otherValue is MutableStateFlow<*> -> {
+				try {
+					@Suppress("UNCHECKED_CAST")
+					(thisValue as MutableStateFlow<Any?>).value = otherValue.value
+				} catch (e: Exception) {
+					Globals.logger.warning("Error in copyStateFlowsFrom: ${thisClass.qualifiedName}, proprietà: ${prop.name}, errore: ${e.message}")
+				}
+			}
+			// Se la proprietà è una classe serializzabile custom, copia ricorsivamente
+			thisValue != null && otherValue != null &&
+					thisValue::class.annotations.any { it.annotationClass.simpleName == "Serializable" } -> {
+				try {
+					thisValue.copyStateFlowsFrom(otherValue)
+				} catch (_: Exception) {}
 			}
 		}
 	}
