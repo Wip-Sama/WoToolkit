@@ -92,7 +92,7 @@ class ColorPickerWindow() : BorderPane() {
 	val selectingColor: Color
 		get() = selectingColorProperty.value ?: Color.BLACK
 
-	private val lastMousePositionProperty = SimpleObjectProperty<Point2D?>()
+	private val lastMousePositionProperty = SimpleObjectProperty<Point2D?>(null)
 
 	var isHueSelectorProperty: BooleanProperty = SimpleBooleanProperty(ApplicationSettings.userSettings.colorPickerSettings.selectorMode.value)
 	var isAlphaAvailableProperty: BooleanProperty = SimpleBooleanProperty(ApplicationSettings.userSettings.colorPickerSettings.alphaAvailable.value)
@@ -162,7 +162,7 @@ class ColorPickerWindow() : BorderPane() {
 
 		/* Auto update */
 		brightnessSlider.valueProperty().addListener { _, _, _ ->
-			val newColor = getColorFromPngOrHue()
+			val newColor = getColorFromPngOrHue(customBrightness = brightnessSlider.value)
 			if (newColor != null && newColor != selectingColorProperty.value) {
 				selectingColorProperty.value = newColor
 			}
@@ -214,8 +214,8 @@ class ColorPickerWindow() : BorderPane() {
 		}
 		interactableCanvas.onMouseClicked = storePoint
 		interactableCanvas.onMouseDragged = storePoint
-		lastMousePositionProperty.addListener { _, _, newValue ->
-			if (newValue != null) {
+		lastMousePositionProperty.addListener { _, oldValue, newValue ->
+			if (newValue != null && oldValue != newValue) {
 				val color = getColorFromPngOrHue()
 				if (color != null && color != selectingColorProperty.value) {
 					selectingColorProperty.value = color
@@ -256,7 +256,6 @@ class ColorPickerWindow() : BorderPane() {
 			}
 			null
 		}
-
 		val limit0_255 = UnaryOperator { change: TextFormatter.Change? ->
 			var newText = change!!.controlNewText
 			if (newText.isEmpty()) {
@@ -463,10 +462,12 @@ class ColorPickerWindow() : BorderPane() {
 		}
 	}
 
-	private fun getColorFromPng(): Color? {
+	private fun getColorFromPng(customBrightness: Double? = null): Color? {
 		if (lastMousePositionProperty.value == null) return null
 		var x = lastMousePositionProperty.value!!.x
 		var y = lastMousePositionProperty.value!!.y
+		if (x.isNaN()) return null
+		if (y.isNaN()) return null
 		val middleX = interactableCanvas.width / 2
 		val middleY = interactableCanvas.height / 2
 
@@ -479,21 +480,33 @@ class ColorPickerWindow() : BorderPane() {
 		while (color.opacity == 0.0) {
 			x += cos(angle)
 			y += sin(angle)
+
 			color = pngDisplay.image.pixelReader.getColor(
 				(x / interactableCanvas.width * pngDisplay.image.width).coerceIn(0.0, pngDisplay.image.width-1).toInt(),
 				(y / interactableCanvas.width * pngDisplay.image.height).coerceIn(0.0, pngDisplay.image.height-1).toInt(),
 			)
 		}
 
+		lastMousePositionProperty.value = Point2D(x, y)
 		val hsb = RGBtoHSB((color.red*255).toInt(), (color.green*255).toInt(), (color.blue*255).toInt(), null)
-		val awtColor = java.awt.Color(HSBtoRGB(hsb[0], hsb[1], (brightnessSlider.value/100).toFloat()))
+
+		if (customBrightness != null) {
+			hsb[2] = (customBrightness/100).toFloat()
+		} else {
+			brightnessSlider.value = hsb[2] * 100.0
+		}
+
+
+		val awtColor = java.awt.Color(HSBtoRGB(hsb[0], hsb[1], hsb[2]))
 		return Color(awtColor.red / 255.0, awtColor.green / 255.0, awtColor.blue / 255.0, alphaSlider.value/100)
 	}
 
 	private fun getColorFromHue(): Color? {
 		if (lastMousePositionProperty.value == null) return null
-		val x = lastMousePositionProperty.value!!.x.coerceIn(0.0 , canvasDisplay.width)
-		val y = lastMousePositionProperty.value!!.y.coerceIn(0.0 , canvasDisplay.height)
+		var x = lastMousePositionProperty.value!!.x.coerceIn(0.0 , canvasDisplay.width)
+		var y = lastMousePositionProperty.value!!.y.coerceIn(0.0 , canvasDisplay.height)
+		x = if (x.isNaN()) 0.0 else x
+		y = if (y.isNaN()) 0.0 else y
 
 		val baseColor = intToColor(hueColorSlider.value.toInt())
 		val saturation = 1 - (x / canvasDisplay.width)
@@ -538,11 +551,11 @@ class ColorPickerWindow() : BorderPane() {
 		return null
 	}
 
-	private fun getColorFromPngOrHue(): Color? {
+	private fun getColorFromPngOrHue(customBrightness: Double? = null): Color? {
 		return if (isHueSelectorProperty.value) {
 			getColorFromHue()
 		} else {
-			getColorFromPng()
+			getColorFromPng(customBrightness)
 		}
 	}
 
@@ -583,8 +596,8 @@ class ColorPickerWindow() : BorderPane() {
 	}
 
 	private fun drawSelectedColor(x: Double, y: Double, color: Color, size: Double = 5.0) {
-		var x = x.coerceIn(0.0, interactableCanvas.width - 1)
-		var y = y.coerceIn(0.0, interactableCanvas.height - 1)
+		val x = x.coerceIn(0.0, interactableCanvas.width - 1)
+		val y = y.coerceIn(0.0, interactableCanvas.height - 1)
 		val gc = interactableCanvas.graphicsContext2D
 		gc.clearRect(0.0, 0.0, interactableCanvas.width, interactableCanvas.height)
 		gc.fill = Color.BLACK
