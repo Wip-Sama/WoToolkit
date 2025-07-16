@@ -16,7 +16,7 @@ import javafx.scene.shape.SVGPath
 import javafx.util.Duration
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.enums.NotificationTypes
-import org.wip.womtoolkit.model.services.notifications.NotificationData
+import org.wip.womtoolkit.model.services.notification.NotificationData
 import org.wip.womtoolkit.view.components.LocalizedLabel
 import kotlin.String
 import kotlin.properties.Delegates

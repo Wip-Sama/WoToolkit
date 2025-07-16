@@ -23,7 +23,7 @@ data class SlicerSettings(
 
 	@Serializable(with = MutableStateFlowSerializer::class)	val outputFormat: MutableStateFlow<String> = MutableStateFlow("png"),
 
-	@Serializable(with = MutableStateFlowSerializer::class)	val cutTolerance: MutableStateFlow<Int> = MutableStateFlow(10),
+	@Serializable(with = MutableStateFlowSerializer::class)	val cutTolerance: MutableStateFlow<Int> = MutableStateFlow(15),
 
 	@Serializable(with = MutableStateFlowSerializer::class) val searchDirection: MutableStateFlow<Boolean> = MutableStateFlow(false), // false = to the minimum, true = to the maximum
 )

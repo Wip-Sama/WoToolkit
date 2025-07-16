@@ -21,10 +21,7 @@ import javafx.scene.shape.SVGPath
 import javafx.util.Duration
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
-import org.wip.womtoolkit.model.database.entities.NotificationSettings
 import org.wip.womtoolkit.model.services.localization.Lsp
-import org.wip.womtoolkit.model.services.notifications.NotificationService
-import kotlin.properties.Delegates
 
 /**
  * @author Wip
@@ -70,13 +67,11 @@ class SettingElement() : AnchorPane() {
             field = value
             expandableContent?.let {
                 expandablePane.top = it
-                expandedIndicator.managedProperty().set(true)
-                expandedIndicator.visibleProperty().set(true)
             } ?: run {
                 expandablePane.top = null
-                expandedIndicator.managedProperty().set(false)
-                expandedIndicator.visibleProperty().set(false)
             }
+            displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), value != null)
+            updateExpandedIndicator()
         }
 
     var quickSetting: Node? = null
@@ -90,13 +85,8 @@ class SettingElement() : AnchorPane() {
             if (value != null) {
                 rightContainer.children.add(0, value)
                 value.hoverProperty().addListener { _, _, hover ->
-                    if (expandableContent == null)
-                        return@addListener
-                    if (hover) {
-                        displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), false)
-                    } else {
-                        displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), true)
-                    }
+                    if (expandableContent == null) return@addListener
+                    displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), !hover)
                 }
             }
         }
@@ -106,16 +96,10 @@ class SettingElement() : AnchorPane() {
         set(value) {
             field = value
             displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), value)
-            if (value) {
-                expandedIndicator.content = REDIRECTABLE
-            } else {
-                expandedIndicator.content = COLLAPSED
-            }
-            expandedIndicator.managedProperty().set(redirectable)
-            expandedIndicator.visibleProperty().set(redirectable)
+            updateExpandedIndicator()
         }
         get() = field
-    var onRedirect: EventHandler<Event>? = null
+    var onRedirect: EventHandler<Event> = EventHandler {}
 
     val rectClip = Rectangle().apply {
         arcHeight = 13.0
@@ -132,17 +116,13 @@ class SettingElement() : AnchorPane() {
         expandablePane.managedProperty().set(expandedProperty.get())
         expandablePane.visibleProperty().set(expandedProperty.get())
         expandedProperty.addListener { _, _, newValue ->
-            animateExpand()
             if (expandableContent == null) {
                 Globals.logger.warning("Expandable content is null, cannot expand setting element")
                 expandedProperty.set(false)
                 return@addListener
             }
-            if (newValue) {
-                expandedIndicator.content = EXPANDED
-            } else {
-                expandedIndicator.content = COLLAPSED
-            }
+            animateExpand()
+            updateExpandedIndicator()
         }
     }
 
@@ -159,12 +139,12 @@ class SettingElement() : AnchorPane() {
             if (quickSetting != null && isDescendantOf(evt.target as? Node, quickSetting!!)) {
                 return@EventHandler
             }
-            if (expandableContent != null) {
+            if (redirectable) {
+                onRedirect.handle(evt)
+            } else if (expandableContent != null) {
                 expandedProperty.set(!expandedProperty.get())
             }
         }
-        expandedIndicator.isManaged = false
-        expandedIndicator.isVisible = false
 
         /* Initialize general */
         _titleLocalizationProperty.addListener {
@@ -178,6 +158,8 @@ class SettingElement() : AnchorPane() {
                 content = newValue
             }
         }
+
+        updateExpandedIndicator()
     }
 
     fun animateExpand() {
@@ -219,6 +201,26 @@ class SettingElement() : AnchorPane() {
                 }
             )
         ).play()
+    }
+
+    private fun updateExpandedIndicator() {
+        if (redirectable) {
+            expandedIndicator.content = REDIRECTABLE
+            expandedIndicator.isManaged = true
+            expandedIndicator.isVisible = true
+        } else if (expandedProperty.get()) {
+            expandedIndicator.content = EXPANDED
+            expandedIndicator.isManaged = true
+            expandedIndicator.isVisible = true
+        } else if (expandableContent != null) {
+            expandedIndicator.content = COLLAPSED
+            expandedIndicator.isManaged = true
+            expandedIndicator.isVisible = true
+        } else {
+            expandedIndicator.content = ""
+            expandedIndicator.isManaged = false
+            expandedIndicator.isVisible = false
+        }
     }
 
     private fun isDescendantOf(node: Node?, ancestor: Node): Boolean {

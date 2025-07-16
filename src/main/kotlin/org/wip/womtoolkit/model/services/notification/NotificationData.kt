@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.model.services.notifications
+package org.wip.womtoolkit.model.services.notification
 
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.enums.NotificationTypes

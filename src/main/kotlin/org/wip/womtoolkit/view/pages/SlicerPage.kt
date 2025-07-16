@@ -24,8 +24,8 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
-import org.wip.womtoolkit.model.processing.Slicer
-import org.wip.womtoolkit.model.processing.SlicerSingleUseSettings
+import org.wip.womtoolkit.model.processing.slicer.Slicer
+import org.wip.womtoolkit.model.processing.slicer.SlicerSingleUseSettings
 import org.wip.womtoolkit.view.components.NumberTextField
 import org.wip.womtoolkit.view.components.SelectedFilesContainer
 import org.wip.womtoolkit.view.components.Switch

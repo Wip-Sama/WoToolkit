@@ -1,4 +1,4 @@
-package org.wip.womtoolkit.model.processing
+package org.wip.womtoolkit.model.processing.slicer
 
 import org.wip.womtoolkit.model.ApplicationSettings
 

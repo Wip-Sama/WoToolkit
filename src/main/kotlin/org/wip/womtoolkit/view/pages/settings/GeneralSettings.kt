@@ -27,8 +27,8 @@ import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.model.services.localization.Lsp
-import org.wip.womtoolkit.model.services.notifications.NotificationData
-import org.wip.womtoolkit.model.services.notifications.NotificationService
+import org.wip.womtoolkit.model.services.notification.NotificationData
+import org.wip.womtoolkit.model.services.notification.NotificationService
 import org.wip.womtoolkit.view.components.NumberTextField
 
 /**

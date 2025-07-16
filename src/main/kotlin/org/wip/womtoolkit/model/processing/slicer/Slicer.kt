@@ -1,11 +1,13 @@
-package org.wip.womtoolkit.model.processing
+package org.wip.womtoolkit.model.processing.slicer
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.wip.womtoolkit.model.Globals
+import org.wip.womtoolkit.model.processing.ElementToProcess
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import kotlin.concurrent.withLock
@@ -30,7 +32,7 @@ object Slicer {
 				val locks = mutableListOf<FileLock>()
 
 				elements.value.forEach { file ->
-					var fullPath: java.nio.file.Path
+					var fullPath: Path
 
 					if (inputFolder.value.isNotEmpty()) {
 						fullPath = Paths.get(inputFolder.value, file)
@@ -155,11 +157,13 @@ object Slicer {
 			elements.add(file.name) // add only name and extension if inputFolder is present
 		}
 
-		addElement(ElementToProcess(
-			inputFolder = inputFolder,
-			elements = elements,
-			outputFolder = outputFolder,
-		))
+		addElement(
+			ElementToProcess(
+				inputFolder = inputFolder,
+				elements = elements,
+				outputFolder = outputFolder,
+			)
+		)
 	}
 
 	/**
@@ -185,10 +189,12 @@ object Slicer {
 				throw IllegalArgumentException("No valid files provided")
 			}
 
-			addElement(ElementToProcess(
-				elements = _files.toMutableList(),
-				outputFolder = outputFolder
-			))
+			addElement(
+				ElementToProcess(
+					elements = _files.toMutableList(),
+					outputFolder = outputFolder
+				)
+			)
 		}
 	}
 

@@ -1,6 +1,5 @@
-package org.wip.womtoolkit.model.services.notifications
+package org.wip.womtoolkit.model.services.notification
 
-import javafx.beans.binding.When
 import javafx.beans.property.IntegerProperty
 import javafx.beans.property.SimpleIntegerProperty
 import kotlinx.coroutines.flow.MutableStateFlow
