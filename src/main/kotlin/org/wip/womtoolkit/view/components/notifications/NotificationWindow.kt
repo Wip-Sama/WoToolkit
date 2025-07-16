@@ -14,6 +14,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.Duration
+import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.notifications.NotificationData
 import org.wip.womtoolkit.view.components.LocalizedLabel
@@ -42,7 +43,7 @@ class NotificationWindow() : BorderPane() {
 		if (oldValue != newValue) {
 			label.localizationKey = newValue.localizedContent
 			updateTheme()
-			if (newValue.autoStart) {
+			if (newValue.autoDismiss) {
 				animateProgressBar(newValue)
 			}
 		}
@@ -106,8 +107,12 @@ class NotificationWindow() : BorderPane() {
 	}
 
 	fun destroy() {
+		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+			true -> 1.0
+			false -> 50.0
+		}
 		Timeline(
-			KeyFrame(Duration.millis(50.0), KeyValue(basePane.opacityProperty(), 0.0))
+			KeyFrame(Duration.millis(time), KeyValue(basePane.opacityProperty(), 0.0))
 		).apply {
 			onFinished = EventHandler {
 				onHide?.handle(Event(this@NotificationWindow, this@NotificationWindow, Event.ANY))

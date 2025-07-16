@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 <?import org.wip.womtoolkit.view.components.LocalizedLabel?>
 <?import org.wip.womtoolkit.view.components.NumberTextField?>
 <?import org.wip.womtoolkit.view.components.Switch?>
 
+<?import org.wip.womtoolkit.view.components.LocalizedTooltip?>
 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="8.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
     <GridPane alignment="CENTER" maxWidth="1.7976931348623157E308">
         <columnConstraints>
@@ -108,6 +113,58 @@
       <children>
          <LocalizedLabel localizationKey="settingsPage.general.notification.autoDismissTime" />
          <NumberTextField fx:id="autoDismissTime" defaultValue="5.0" maxWidth="-Infinity" maximum="10.0" minWidth="-Infinity" minimum="1.0" prefWidth="100.0" text="5" GridPane.columnIndex="1" />
+      </children>
+   </GridPane>
+   <Separator prefWidth="200.0" />
+   <GridPane alignment="CENTER" maxWidth="1.7976931348623157E308">
+      <columnConstraints>
+         <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" />
+         <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="100.0" minWidth="62.0" prefWidth="64.66668701171875" />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints vgrow="SOMETIMES" />
+      </rowConstraints>
+      <padding>
+         <Insets left="55.0" right="8.0" />
+      </padding>
+      <children>
+         <LocalizedLabel localizationKey="settingsPage.general.notification.test" />
+         <HBox alignment="CENTER_RIGHT" GridPane.columnIndex="1" spacing="8">
+            <children>
+               <Button fx:id="testInfo" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0">
+                  <graphic>
+                     <SVGPath content="M12.0016 1.99902C17.5253 1.99902 22.0031 6.47687 22.0031 12.0006C22.0031 17.5243 17.5253 22.0021 12.0016 22.0021C6.47785 22.0021 2 17.5243 2 12.0006C2 6.47687 6.47785 1.99902 12.0016 1.99902ZM12 10.5C11.5858 10.5 11.25 10.8358 11.25 11.25V16.25C11.25 16.6642 11.5858 17 12 17C12.4142 17 12.75 16.6642 12.75 16.25V11.25C12.75 10.8358 12.4142 10.5 12 10.5ZM12 9C12.5523 9 13 8.55228 13 8C13 7.44772 12.5523 7 12 7C11.4477 7 11 7.44772 11 8C11 8.55228 11.4477 9 12 9Z" />
+                  </graphic>
+                  <tooltip>
+                     <LocalizedTooltip localizationKey="settingsPage.general.notification.testInfo" />
+                  </tooltip>
+               </Button>
+               <Button fx:id="testWarning" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0">
+                  <graphic>
+                     <SVGPath content="M12 2C17.523 2 22 6.478 22 12C22 17.522 17.523 22 12 22C6.477 22 2 17.522 2 12C2 6.478 6.477 2 12 2ZM12.0018 15.0037C11.4503 15.0037 11.0031 15.4508 11.0031 16.0024C11.0031 16.5539 11.4503 17.001 12.0018 17.001C12.5533 17.001 13.0005 16.5539 13.0005 16.0024C13.0005 15.4508 12.5533 15.0037 12.0018 15.0037ZM11.9996 7C11.4868 7.00018 11.0643 7.38638 11.0067 7.88374L11 8.00036L11.0018 13.0012L11.0086 13.1179C11.0665 13.6152 11.4893 14.0011 12.0022 14.0009C12.515 14.0007 12.9375 13.6145 12.9951 13.1171L13.0018 13.0005L13 7.99964L12.9932 7.88302C12.9353 7.3857 12.5125 6.99982 11.9996 7Z" />
+                  </graphic>
+                  <tooltip>
+                     <LocalizedTooltip localizationKey="settingsPage.general.notification.testWarning" />
+                  </tooltip>
+               </Button>
+               <Button fx:id="testError" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0">
+                  <graphic>
+                     <SVGPath content="M10.0297 3.65893C10.8859 2.1111 13.1111 2.11108 13.9673 3.65888L21.7131 17.6603C22.5427 19.16 21.4581 20.9995 19.7443 20.9995H4.25323C2.53945 20.9995 1.45483 19.16 2.28438 17.6604L10.0297 3.65893ZM12.9973 17.0009C12.9973 16.4494 12.5502 16.0022 11.9987 16.0022C11.4471 16.0022 11 16.4494 11 17.0009C11 17.5524 11.4471 17.9996 11.9987 17.9996C12.5502 17.9996 12.9973 17.5524 12.9973 17.0009ZM12.7381 9.14764C12.6882 8.7816 12.3742 8.4997 11.9945 8.5C11.5802 8.50033 11.2447 8.83639 11.2451 9.2506L11.2487 13.7522L11.2556 13.854C11.3055 14.22 11.6196 14.5019 11.9993 14.5016C12.4135 14.5013 12.749 14.1652 12.7487 13.751L12.7451 9.2494L12.7381 9.14764Z" />
+                  </graphic>
+                  <tooltip>
+                     <LocalizedTooltip localizationKey="settingsPage.general.notification.testError" />
+                  </tooltip>
+               </Button>
+               <Button fx:id="testSuccess" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0">
+                  <graphic>
+                     <SVGPath content="M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2ZM15.2197 8.96967L10.75 13.4393L8.78033 11.4697C8.48744 11.1768 8.01256 11.1768 7.71967 11.4697C7.42678 11.7626 7.42678 12.2374 7.71967 12.5303L10.2197 15.0303C10.5126 15.3232 10.9874 15.3232 11.2803 15.0303L16.2803 10.0303C16.5732 9.73744 16.5732 9.26256 16.2803 8.96967C15.9874 8.67678 15.5126 8.67678 15.2197 8.96967Z" />
+                  </graphic>
+                  <tooltip>
+                     <LocalizedTooltip localizationKey="settingsPage.general.notification.testSuccess" />
+                  </tooltip>
+               </Button>
+            </children>
+         </HBox>
       </children>
    </GridPane>
 </VBox>

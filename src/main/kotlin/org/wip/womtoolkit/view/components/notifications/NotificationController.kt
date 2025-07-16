@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
+import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.services.localization.Lsp
 import org.wip.womtoolkit.model.services.notifications.NotificationService
 import org.wip.womtoolkit.model.services.notifications.NotificationData
@@ -49,16 +50,16 @@ class NotificationController: BorderPane() {
 			Lsp.lsb("notificationDispenser.remainingNotifications", NotificationService.sizeProperty.asString())
 		)
 		notificationDispenser.dismissAll.setOnAction {
+			NotificationService.sizeProperty.value = 0
 			NotificationService.queue.value.clear()
 			notificationContainer.children.clear()
-			NotificationService.sizeProperty.value = 0
 		}
 
 		NotificationService.sizeProperty.addListener { _, oldValue, newValue ->
-			val old: Boolean = oldValue != 0
-			val new: Boolean = newValue != 0
+			val old: Boolean = oldValue.toInt() > 0
+			val new: Boolean = newValue.toInt() > 0
 
-			if (new && !old) {
+			if (new && !old && notificationContainer.children.size >= availableNotificationSlots) {
 				showDispenserWithAnimation()
 			} else if (!new) {
 				hideDispenserWithAnimation()
@@ -94,7 +95,8 @@ class NotificationController: BorderPane() {
 						removeWithAnimation(this)
 					}
 					NotificationService.removeNotification(notification)
-					animateProgressBar(notification)
+					if (notification.autoDismiss)
+						animateProgressBar(notification)
 				})
 			}
 		}
@@ -104,13 +106,23 @@ class NotificationController: BorderPane() {
 		node.opacity = 0.0
 		notificationContainer.children.add(node)
 
-		FadeTransition(Duration.millis(200.0), node).apply {
+		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+			true -> 1.0
+			false -> 200.0
+		}
+
+		FadeTransition(Duration.millis(time), node).apply {
 			toValue = 1.0
 		}.play()
 	}
 
 	fun removeWithAnimation(node: Node) {
-		FadeTransition(Duration.millis(200.0), node).apply {
+		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+			true -> 1.0
+			false -> 200.0
+		}
+
+		FadeTransition(Duration.millis(time), node).apply {
 			toValue = 0.0
 			setOnFinished {
 				notificationContainer.children.remove(node)
@@ -119,7 +131,12 @@ class NotificationController: BorderPane() {
 	}
 
 	fun showDispenserWithAnimation() {
-		FadeTransition(Duration.millis(200.0), notificationDispenser).apply {
+		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+			true -> 1.0
+			false -> 200.0
+		}
+
+		FadeTransition(Duration.millis(time), notificationDispenser).apply {
 			toValue = 1.0
 			onFinished = EventHandler { event ->
 				notificationDispenser.isVisible = true
@@ -128,7 +145,7 @@ class NotificationController: BorderPane() {
 			play()
 		}
 
-		TranslateTransition(Duration.millis(200.0), notificationContainer).apply {
+		TranslateTransition(Duration.millis(time), notificationContainer).apply {
 			toY = 0.0
 			play()
 		}
@@ -137,7 +154,12 @@ class NotificationController: BorderPane() {
 	}
 
 	fun hideDispenserWithAnimation() {
-		FadeTransition(Duration.millis(200.0), notificationDispenser).apply {
+		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+			true -> 1.0
+			false -> 200.0
+		}
+
+		FadeTransition(Duration.millis(time), notificationDispenser).apply {
 			toValue = 0.0
 			onFinished = EventHandler { event ->
 				notificationDispenser.isVisible = false
@@ -146,7 +168,7 @@ class NotificationController: BorderPane() {
 			play()
 		}
 
-		TranslateTransition(Duration.millis(200.0), notificationContainer).apply {
+		TranslateTransition(Duration.millis(time), notificationContainer).apply {
 			toY = 0.0
 			play()
 		}

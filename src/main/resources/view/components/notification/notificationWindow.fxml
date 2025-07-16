@@ -9,11 +9,11 @@
 <?import org.wip.womtoolkit.view.components.LocalizedLabel?>
 <?import org.wip.womtoolkit.view.components.LocalizedTooltip?>
 
-<fx:root fx:id="basePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="280.0" styleClass="notification-window" stylesheets="@../../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="basePane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="280.0" styleClass="notification-window" stylesheets="@../../styles/dark.css" type="BorderPane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
       <BorderPane fx:id="progressBarContainer" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="28.0" BorderPane.alignment="CENTER">
          <bottom>
-            <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="0.4" BorderPane.alignment="CENTER" />
+            <ProgressBar fx:id="progressBar" maxWidth="1.7976931348623157E308" progress="1.0" BorderPane.alignment="CENTER" />
          </bottom>
       </BorderPane>
    </bottom>

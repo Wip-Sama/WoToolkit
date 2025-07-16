@@ -5,6 +5,7 @@ import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.geometry.Insets
+import javafx.scene.control.Button
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Label
 import javafx.scene.control.Separator
@@ -23,8 +24,11 @@ import org.wip.womtoolkit.view.components.Switch
 import org.wip.womtoolkit.view.components.colorpicker.ColorPickerButton
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.Globals
+import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.model.services.localization.Lsp
+import org.wip.womtoolkit.model.services.notifications.NotificationData
+import org.wip.womtoolkit.model.services.notifications.NotificationService
 import org.wip.womtoolkit.view.components.NumberTextField
 
 /**
@@ -330,6 +334,10 @@ class GeneralSettings : VBox() {
 				val enableSuccess = lookup("#enableSuccess") as Switch
 				val autoDismiss = lookup("#autoDismiss") as Switch
 				val autoDismissTime = lookup("#autoDismissTime") as NumberTextField
+				val testInfo = lookup("#testInfo") as Button
+				val testWarning = lookup("#testWarning") as Button
+				val testError = lookup("#testError") as Button
+				val testSuccess = lookup("#testSuccess") as Button
 
 				enableInfo.state = ApplicationSettings.userSettings.notificationSettings.showInfo.value
 				enableWarning.state = ApplicationSettings.userSettings.notificationSettings.showWarning.value
@@ -354,11 +362,14 @@ class GeneralSettings : VBox() {
 					if (newValue == oldValue) return@addListener
 					ApplicationSettings.userSettings.notificationSettings.showSuccess.value = newValue
 				}
+				autoDismiss.stateProperty.addListener { _, oldValue, newValue ->
+					if (newValue == oldValue) return@addListener
+					ApplicationSettings.userSettings.notificationSettings.autoDismiss.value = newValue
+				}
 				autoDismissTime.textProperty().addListener { _, oldValue, newValue ->
 					if (newValue == oldValue) return@addListener
 					ApplicationSettings.userSettings.notificationSettings.autoDismissTime.value = autoDismissTime.value.toInt()
 				}
-
 
 				scope.launch(Dispatchers.JavaFx) {
 					ApplicationSettings.userSettings.notificationSettings.showInfo.collectLatest { enableInfo.state = it }
@@ -377,6 +388,31 @@ class GeneralSettings : VBox() {
 				}
 				scope.launch(Dispatchers.JavaFx) {
 					ApplicationSettings.userSettings.notificationSettings.autoDismissTime.collectLatest { autoDismissTime.text = autoDismissTime.value.toString() }
+				}
+
+				testInfo.onAction = EventHandler {
+					NotificationService.addNotification(NotificationData(
+						localizedContent = "settingsPage.general.notification.exampleInfo",
+						type = NotificationTypes.INFO,
+					))
+				}
+				testWarning.onAction = EventHandler {
+					NotificationService.addNotification(NotificationData(
+						localizedContent = "settingsPage.general.notification.exampleWarning",
+						type = NotificationTypes.WARNING,
+					))
+				}
+				testError.onAction = EventHandler {
+					NotificationService.addNotification(NotificationData(
+						localizedContent = "settingsPage.general.notification.exampleError",
+						type = NotificationTypes.ERROR,
+					))
+				}
+				testSuccess.onAction = EventHandler {
+					NotificationService.addNotification(NotificationData(
+						localizedContent = "settingsPage.general.notification.exampleSuccess",
+						type = NotificationTypes.SUCCESS,
+					))
 				}
 			}
 		}

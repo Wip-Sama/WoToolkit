@@ -17,13 +17,14 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.util.Duration
-import org.wip.womtoolkit.TAB_DRAG_KEY
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.notifications.NotificationService
 import org.wip.womtoolkit.model.services.notifications.NotificationData
 import java.util.Collections
 import kotlin.collections.set
+
+const val TAB_DRAG_KEY = "titledpane"
 
 class Converter : BorderPane() {
 	@FXML lateinit var buttonContainer: VBox
