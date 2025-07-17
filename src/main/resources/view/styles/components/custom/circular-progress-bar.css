@@ -1,0 +1,18 @@
+.circular-progress-bar .track {
+    -fx-stroke-width: 10;
+    -fx-stroke-type: centered;
+    -fx-fill: transparent;
+    -fx-stroke: -womt-background-lightest;
+    -fx-opacity: 0.4;
+    /*-fx-stroke: linear-gradient(from 0.0% 0.0% to 100.0% 100.0%, black 0.0%, -womt-accent 85.0%);*/
+}
+
+.circular-progress-bar .bar {
+    -fx-stroke-width: 10;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-line-join: round;
+    -fx-stroke-type: centered;
+    -fx-fill: transparent;
+    -fx-stroke: -womt-accent;
+    /*-fx-stroke: linear-gradient(from 0.0% 0.0% to 100.0% 100.0%, black 0.0%, -womt-accent 85.0%);*/
+}

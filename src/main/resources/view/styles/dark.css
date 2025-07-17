@@ -47,7 +47,11 @@
     -womt-error: hsb(0, 100%, 40%);
     -womt-info: hsb(240, 100%, 40%);
 
+
+    -fx-font-size: 11;
+
+    -fx-cell-size: 15.915;
+
     /*Component specifics colors*/
     -womt-slider: hsba(0, 0%, 100%, .6);  /*-womt-slider: hsb(0, 0%, 62%);*/ /*TODO: vedere se questo va bene*/
 }
-

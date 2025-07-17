@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+
+<fx:root focusTraversable="true" mouseTransparent="true" styleClass="circular-progress-bar" stylesheets="@../styles/dark.css" type="StackPane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Circle fx:id="track" fill="#1f93ff00" radius="63.66" stroke="BLACK" styleClass="track" />
+      <Circle fx:id="bar" fill="#1f93ff00" radius="63.66" rotate="-90.0" stroke="BLACK" styleClass="bar" />
+      <Label fx:id="label" />
+   </children>
+</fx:root>

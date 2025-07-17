@@ -23,6 +23,7 @@
 @import "components/transparent-button.css";
 @import "components/custom/notification/notification-window.css";
 @import "components/custom/notification/notification-dispenser.css";
+@import "components/custom/circular-progress-bar.css";
 
 .label {
     -fx-text-fill: -womt-text;
