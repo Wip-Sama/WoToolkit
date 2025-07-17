@@ -28,6 +28,10 @@
         </VBox>
    </left>
     <right>
-        <CircularProgressBar progress="-0.9"/>
+        <VBox spacing="10">
+            <CircularProgressBar progress="0.1" indeterminate="true" animateSize="false"/>
+            <CircularProgressBar progress="0.0" indeterminate="true"/>
+            <CircularProgressBar progress="0.0" animateContinuous="true"/>
+        </VBox>
     </right>
 </fx:root>

@@ -4,7 +4,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.wip.womtoolkit.model.Globals
+import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.processing.ElementToProcess
+import org.wip.womtoolkit.model.services.activityMonitor.ActivityMonitorService
+import org.wip.womtoolkit.model.services.notification.NotificationData
+import org.wip.womtoolkit.model.services.notification.NotificationService
+import org.wip.womtoolkit.utils.NotifyingThread
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.file.Path
@@ -21,11 +26,7 @@ object Slicer {
 	val queue: StateFlow<List<ElementToProcess>>
 		get() = _queue.asStateFlow()
 
-	private fun processElementParallel(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
-		Thread { processElement(element, settings) }.start()
-	}
-
-	private fun processElement(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
+	private fun processElementImplementation(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
 		with(element) {
 			lock.withLock {
 				val channels = mutableListOf<FileChannel>()
@@ -56,6 +57,42 @@ object Slicer {
 		}
 	}
 
+	private fun processElement(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
+		ActivityMonitorService["slicer"].apply {
+			queueCount.value--
+			runningCount.value++
+		}
+		var errored = false
+		NotifyingThread(
+			onFinish = {
+				ActivityMonitorService["slicer"].apply {
+					runningCount.value--
+					completedCount.value++
+				}
+				if (!errored) {
+					Globals.logger.info("A slice has been terminated successfully")
+					NotificationService.addNotification(NotificationData(
+						localizedContent = "", //TODO: localize
+						type = NotificationTypes.SUCCESS
+					))
+				}
+			},
+			onError = {
+				Globals.logger.warning("Error processing element: ${element.elements.value} in folder: ${element.inputFolder.value}")
+				NotificationService.addNotification(NotificationData(
+					localizedContent = "", //TODO: localize
+					type = NotificationTypes.ERROR,
+				))
+				errored = true
+			}
+		) { processElementImplementation(element, settings) }.apply {
+			start()
+			if (!settings.parallelExecution) {
+				join()
+			}
+		}
+	}
+
 	fun canProcessElement(element: ElementToProcess): Boolean {
 		if (element.elements.value.isEmpty()) return false
 		if (element.outputFolder.value.isEmpty()) return false
@@ -71,13 +108,14 @@ object Slicer {
 		_queue.value.getOrNull(index)?.let {
 			if (!canProcessElement(it)) {
 				Globals.logger.info("Element at index $index is not ready for processing: ${it.elements.value}, output folder: ${it.outputFolder.value}")
-				throw IllegalStateException("Element at index $index is not ready for processing")
-			}
-
-			if (s.parallelExecution)
-				processElementParallel(it, s)
-			else
+				NotificationService.addNotification(NotificationData(
+					localizedContent = "info.elementNotReadyForProcessing",
+					type = NotificationTypes.INFO,
+				))
+			} else {
+				ActivityMonitorService["slicer"].queueCount.value++
 				processElement(it, s)
+			}
 		}
 	}
 
@@ -85,15 +123,16 @@ object Slicer {
 		val s = settings.copy()
 
 		if (!canProcessElement(element)) {
-			Globals.logger.info("Element is not ready for processing: ${element.elements.value}, output folder: ${element.outputFolder.value}")
-			//TODO: Notify user
+			Globals.logger.info("This element is not ready for processing!")
+			NotificationService.addNotification(NotificationData(
+				localizedContent = "info.elementNotReadyForProcessing",
+				type = NotificationTypes.INFO,
+			))
 			return
 		}
 
-		if (s.parallelExecution)
-			processElementParallel(element, s)
-		else
-			processElement(element, s)
+		ActivityMonitorService["slicer"].queueCount.value++
+		processElement(element, s)
 	}
 
 	fun processSome(indexes: List<Int>, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
@@ -117,7 +156,7 @@ object Slicer {
 	/**
 	 * This function will add an element taking all the supported image formats from the input folder.
 	 * @param inputFolder the folder containing the images to process
-	 * @param outputFolder the folder where the processed images will be saved, defaults to inputFolder/${subFolderName} if saveInSubFolder is true WARNING: this will also default to inputFolder if saveInSubFolder is false and that could cause problems
+	 * @param outputFolder the folder where the processed images will be saved, defaults to inputFolder/${subFolderName} if saveInSubfolder is true WARNING: this will also default to inputFolder if saveInSubfolder is false and that could cause problems
 	 * @param supportedFormats in the list of supported formats, defaults to Globals.IMAGE_INPUT_FORMATS
 	 * @throws IllegalArgumentException if the element with the same inputFolder and elements already exists in the queue //could change this to a more specific throw
 	 * @throws IllegalArgumentException if the inputFolder does not exist or is not a directory

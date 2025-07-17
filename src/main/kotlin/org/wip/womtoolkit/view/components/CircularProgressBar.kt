@@ -1,5 +1,6 @@
 package org.wip.womtoolkit.view.components
 
+import javafx.animation.Interpolator
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
@@ -23,13 +24,85 @@ class CircularProgressBar: StackPane() {
 	val perimeter: Double
 		get() = if (::bar.isInitialized) 2 * Math.PI * bar.radius else 0.0
 
+	var sizeAnimationSpeed: Double = 4.0
+	var offsetAnimationSpeed: Double = 2.0
+	var continuousAnimationSpeed: Double = 4.0
 	var animateSize: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
 		if (newValue != oldValue) {
 			if (indeterminate) {
-				if (newValue) sizeTimeline.play() else sizeTimeline.stop()
+				if (newValue)
+					sizeTimeline.play()
+				else {
+					sizeTimeline.stop()
+					(progress*perimeter).let {
+						bar.strokeDashArray.setAll(it, perimeter - it)
+					}
+				}
 			}
 		}
 	}
+	var animateOffset: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
+		if (newValue != oldValue) {
+			if (indeterminate) {
+				if (newValue)
+					offsetTimeline.play()
+				else {
+					offsetTimeline.stop()
+					barOffset = 0.0
+				}
+				updateBarSize(_animatedBarSize.value)
+			}
+		}
+	}
+	var animateContinuous: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+		if (newValue != oldValue) {
+			if (newValue)
+				continuousTimeline.play()
+			else {
+				continuousTimeline.stop()
+				barOffset = 0.0
+				(progress*perimeter).let {
+					bar.strokeDashArray.setAll(it, perimeter - it)
+				}
+			}
+		}
+	} //DO not only use only for fun
+
+	val offsetTimeline by lazy {
+		Timeline(
+			KeyFrame(
+				Duration.ZERO,
+				KeyValue(bar.strokeDashOffsetProperty(), barOffsetProperty.value - 0.0)
+			),
+			KeyFrame(
+				Duration.seconds(offsetAnimationSpeed),
+				KeyValue(bar.strokeDashOffsetProperty(), barOffsetProperty.value - perimeter)
+			),
+		).apply {
+			cycleCount = Timeline.INDEFINITE
+		}
+	}
+	val sizeTimeline by lazy {
+		Timeline(
+			KeyFrame(Duration.ZERO, KeyValue(_animatedBarSize, perimeter/10)),
+			KeyFrame(Duration.seconds(sizeAnimationSpeed), KeyValue(_animatedBarSize, perimeter/2)),
+			KeyFrame(Duration.seconds(sizeAnimationSpeed*2), KeyValue(_animatedBarSize, perimeter/10))
+		).apply {
+			cycleCount = Timeline.INDEFINITE
+		}
+	}
+	val continuousTimeline by lazy {
+		Timeline(
+			KeyFrame(Duration.ZERO, KeyValue(progressProperty, 0.0)),
+			KeyFrame(Duration.seconds(continuousAnimationSpeed), KeyValue(progressProperty, 1.0)),
+			KeyFrame(Duration.ZERO, KeyValue(progressProperty, -1.0)),
+			KeyFrame(Duration.seconds(continuousAnimationSpeed), KeyValue(progressProperty, 0.0))
+
+		).apply {
+			cycleCount = Timeline.INDEFINITE
+		}
+	}
+
 
 	val indeterminateProperty: SimpleBooleanProperty = SimpleBooleanProperty(false).apply {
 		addListener { _, oldValue, newValue ->
@@ -100,33 +173,6 @@ class CircularProgressBar: StackPane() {
 				}
 			}
 			bar.strokeDashArray.setAll(newValue.toDouble(), perimeter - newValue.toDouble())
-		}
-	}
-
-	val offsetTimeline by lazy {
-		Timeline(
-			KeyFrame(
-				Duration.ZERO,
-				KeyValue(bar.strokeDashOffsetProperty(), barOffsetProperty.value - 0.0)
-			),
-			KeyFrame(
-				Duration.millis(1000.0),
-				KeyValue(bar.strokeDashOffsetProperty(), barOffsetProperty.value - perimeter)
-			),
-		).apply {
-			cycleCount = Timeline.INDEFINITE
-		}
-	}
-	val sizeTimeline by lazy {
-		Timeline(
-			KeyFrame(Duration.ZERO, KeyValue(_animatedBarSize, perimeter/10)),
-			KeyFrame(Duration.seconds(1.0), KeyValue(_animatedBarSize, perimeter/2)),
-			KeyFrame(Duration.seconds(2.0), KeyValue(_animatedBarSize, perimeter/10))
-		).apply {
-			cycleCount = Timeline.INDEFINITE
-			onFinished = EventHandler {
-
-			}
 		}
 	}
 
