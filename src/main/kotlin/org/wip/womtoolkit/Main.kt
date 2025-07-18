@@ -6,6 +6,7 @@ import org.wip.womtoolkit.model.DataManager
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.view.pages.LinuxMainWindow
 import org.wip.womtoolkit.view.pages.WindowsMainWindow
+import kotlin.system.exitProcess
 
 class WomToolkit : Application() {
 	override fun start(primaryStage: Stage) {
@@ -24,7 +25,7 @@ class WomToolkit : Application() {
 			}
 			else -> {
 				Globals.logger.warning("Unsupported OS. Exiting.")
-				System.exit(1)
+				exitProcess(1)
 			}
 		}
 	}

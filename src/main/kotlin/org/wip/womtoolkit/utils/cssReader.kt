@@ -1,6 +1,10 @@
 package org.wip.womtoolkit.utils
 
 import java.awt.Color
+import java.awt.Color.HSBtoRGB
+import kotlin.and
+import kotlin.shr
+import kotlin.text.get
 
 //TODO: Document this class
 object cssReader {
@@ -162,22 +166,42 @@ object cssReader {
 	}
 
 	fun getColorFromCssFile(cssPath: String, property: String): Color? {
-		//TODO: add support for file scraping (if -color: -variable; follow variable to it's root)
-		//TODO: add support for hsb
 		val value = getValueFromCssFile(cssPath, property) ?: return null
-		return if (value.startsWith("rgb")) {
-			val rgb = value.replaceFirst(Regex("^\\s*rgba?\\("), "").removeSuffix(")").split(",")
-			//TODO: add support for % based rgb values
-			Color(
-				rgb[0].trim().toInt(),
-				rgb[1].trim().toInt(),
-				rgb[2].trim().toInt(),
-				if (rgb.size > 3) (rgb[3].trim().toDouble()*255).toInt() else 255
-			)
-		} else if (value in knownColors) {
-			knownColors[value]
-		} else {
-			null
+		return when {
+			value.startsWith("rgb") -> {
+				val rgb = value.replaceFirst(Regex("^\\s*rgba?\\("), "").removeSuffix(")").split(",")
+				fun parseComponent(comp: String): Int {
+					val c = comp.trim()
+					return if (c.endsWith("%")) (c.removeSuffix("%").toFloat() * 2.55f).toInt() else c.toInt()
+				}
+				Color(
+					parseComponent(rgb[0]),
+					parseComponent(rgb[1]),
+					parseComponent(rgb[2]),
+					if (rgb.size > 3) (rgb[3].trim().toFloat() * 255).toInt() else 255
+				)
+			}
+			value in knownColors -> knownColors[value]
+			value.startsWith("hsb") -> {
+				val hsb = value.replaceFirst(Regex("^\\s*hsba?\\("), "").removeSuffix(")").split(",")
+				val h = hsb[0].trim().toFloat() / 360f
+				val s = hsb[1].trim().removeSuffix("%").toFloat() / 100f
+				val b = hsb[2].trim().removeSuffix("%").toFloat() / 100f
+				val a = if (hsb.size > 3) (hsb[3].trim().toFloat() * 255).toInt() else 255
+				val rgb = HSBtoRGB(h, s, b)
+				Color(
+					rgb shr 16 and 0xFF,
+					rgb shr 8 and 0xFF,
+					rgb and 0xFF,
+					a
+				)
+			}
+			else -> null
 		}
+	}
+
+	fun getHexFromCssFile(cssPath: String, property: String): String? {
+		val awtColor = getColorFromCssFile(cssPath, property) ?: return null
+		return "#%02x%02x%02x%02x".format(awtColor.red, awtColor.green, awtColor.blue, awtColor.alpha)
 	}
 }

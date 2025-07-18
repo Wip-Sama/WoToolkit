@@ -2,33 +2,22 @@ package org.wip.womtoolkit.view.pages
 
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
-import javafx.beans.value.ChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
+import javafx.fxml.Initializable
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.Label
-import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
-import javafx.scene.layout.StackPane
 import javafx.stage.Stage
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.wip.womtoolkit.model.ApplicationSettings
-import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.view.components.PageIndicator
-import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableComponent
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableSidebarMenu
+import java.net.URL
+import java.util.ResourceBundle
 
-class LinuxMainWindow(
-	val stage: Stage
-) {
+class LinuxMainWindow(val stage: Stage): MainWindowInterface, Initializable {
 	companion object {
 		const val MINIMIZE: String = // chrome minimize (hardest to find)
 			"M0.554306 1.1109C0.554306 0.932457 0.698965 0.787798 0.877407 0.787798H5.40082C5.57926 0.787798 5.72392 0.932457 5.72392 1.1109C5.72392 1.28934 5.57926 1.434 5.40082 1.434H0.877407C0.698965 1.434 0.554306 1.28934 0.554306 1.1109Z"
@@ -64,99 +53,25 @@ class LinuxMainWindow(
 		set(value) { stage.scene = value }
 
 	init {
-		/* Stage configuration */
-		stage.apply {
-			title = "WomToolkit"
-			icons.add(Image(workingJavaClass.getResource("/icons/icon.png")?.toExternalForm()))
-			isResizable = true
-			minWidth = 620.0
-			minHeight = 420.0
-			width = 620.0
-			height = 420.0
-		}
-
+		MainWindow.setStage(stage)
 		scene = Scene(FXMLLoader(workingJavaClass.getResource("/view/pages/main.fxml")).apply {
 			setController(this@LinuxMainWindow)
 		}.load())
-
-		/* */
-		scope.launch {
-			ApplicationSettings.userSettings.theme.collectLatest { newTheme ->
-				withContext(Dispatchers.JavaFx) { //withContext can be substituted with Platform.runLater before scope
-					updateStyles()
-				}
-			}
-		}
-		scope.launch {
-			ApplicationSettings.userSettings.accent.collectLatest { newAccent ->
-				withContext(Dispatchers.JavaFx) {
-					updateStyles()
-				}
-			}
-		}
-		scope.launch {
-			ApplicationSettings.userSettings.localization.collectLatest { newLocale ->
-				withContext(Dispatchers.JavaFx) {
-					updateLocale()
-				}
-			}
-		}
-
+		MainWindow.loadSettings(scene, this)
 		updateLocale()
 		updateStyles()
-
 		stage.show()
 	}
 
-	fun initialize() {
-		sidebarMenu.apply {
-			addComponent(CollapsableComponent().apply {
-				id = "slicer"
-				localizationKey = "menu.slicer"
-				icon.content = WindowsMainWindow.Companion.SLICER
-			}, CollapsableSidebarMenu.Positions.TOP)
-
-			addComponent(CollapsableComponent().apply {
-				id = "converter"
-				localizationKey = "menu.converter"
-				icon.content = WindowsMainWindow.Companion.CONVERTER
-			}, CollapsableSidebarMenu.Positions.TOP)
-
-			addComponent(CollapsableComponent().apply {
-				id = "settings"
-				localizationKey = "menu.settings"
-				icon.content = WindowsMainWindow.Companion.SETTINGS
-			}, CollapsableSidebarMenu.Positions.BOTTOM)
-
-			selectedItemProperty.addListener(ChangeListener { _, _, new ->
-				if (new != null) {
-					val n: Pane = new as Pane
-
-					contentPane.center = when (n.id) {
-						"slicer" -> SlicerPage()
-						"converter" -> Converter()
-						"settings" -> Settings()
-						else -> null
-					}
-				}
-			})
-		}
+	override fun initialize(url: URL?, resourceBundle: ResourceBundle?) {
+		MainWindow.initialize(sidebarMenu, contentPane)
 	}
 
-	private fun updateStyles() {
-		scene.apply {
-			stylesheets.clear()
-			val cssUrl = workingJavaClass.getResource("/view/styles/${ApplicationSettings.userSettings.theme.value}.css")
-			stylesheets.add(cssUrl?.toExternalForm())
-
-			val accentColor = ApplicationSettings.userSettings.accent.value.toString().replace("0x", "#")
-			root.style = "-womt-accent: $accentColor;"
-		}
-
-		ProcessBuilder()
+	override fun updateStyles() {
+		MainWindow._updateStyles(scene)
 	}
 
 	private fun updateLocale() {
-		LocalizationService.currentLocale = ApplicationSettings.userSettings.localization.value
+		MainWindow.updateLocale()
 	}
 }
