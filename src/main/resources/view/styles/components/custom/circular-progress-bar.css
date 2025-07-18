@@ -1,5 +1,5 @@
 .circular-progress-bar .track {
-    -fx-stroke-width: 10;
+    -fx-stroke-width: 5;
     -fx-stroke-type: centered;
     -fx-fill: transparent;
     -fx-stroke: -womt-background-lightest;
@@ -8,7 +8,7 @@
 }
 
 .circular-progress-bar .bar {
-    -fx-stroke-width: 10;
+    -fx-stroke-width: 5;
     -fx-stroke-line-cap: round;
     -fx-stroke-line-join: round;
     -fx-stroke-type: centered;

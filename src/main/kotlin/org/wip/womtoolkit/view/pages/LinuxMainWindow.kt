@@ -72,6 +72,6 @@ class LinuxMainWindow(val stage: Stage): MainWindowInterface, Initializable {
 	}
 
 	private fun updateLocale() {
-		MainWindow.updateLocale()
+		MainWindow._updateLocale()
 	}
 }

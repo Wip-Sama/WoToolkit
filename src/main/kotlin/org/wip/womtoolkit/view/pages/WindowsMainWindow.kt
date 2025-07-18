@@ -80,7 +80,7 @@ open class WindowsMainWindow : AbstractNfxUndecoratedWindow(), Initializable, Ma
 	}
 
 	private fun updateLocale() {
-		MainWindow.updateLocale()
+		MainWindow._updateLocale()
 	}
 
 	/* Specific of this class */

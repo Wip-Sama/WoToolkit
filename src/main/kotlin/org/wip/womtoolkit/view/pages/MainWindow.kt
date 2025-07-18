@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import org.wip.womtoolkit.model.ApplicationSettings
 import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.view.components.CustomTitleBar
+import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableActivityIndicator
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableComponent
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableSidebarMenu
 
@@ -31,6 +32,7 @@ object MainWindow {
 
 	fun initialize(sidebarMenu: CollapsableSidebarMenu, contentPane: BorderPane, customTitleBar: CustomTitleBar? = null) {
 		sidebarMenu.apply {
+			//top
 			addComponent(CollapsableComponent().apply {
 				id = "slicer"
 				localizationKey = "menu.slicer"
@@ -41,6 +43,13 @@ object MainWindow {
 				localizationKey = "menu.converter"
 				icon.content = CONVERTER
 			}, CollapsableSidebarMenu.Positions.TOP)
+			//center
+
+			//bottom
+			addComponent(CollapsableActivityIndicator.apply {
+				id = ""
+				localizationKey = "menu.settings"
+			}, CollapsableSidebarMenu.Positions.BOTTOM)
 			addComponent(CollapsableComponent().apply {
 				id = "settings"
 				localizationKey = "menu.settings"
@@ -70,7 +79,7 @@ object MainWindow {
 		}
 	}
 
-	fun updateLocale() {
+	fun _updateLocale() {
 		LocalizationService.currentLocale = ApplicationSettings.userSettings.localization.value
 	}
 
@@ -92,7 +101,7 @@ object MainWindow {
 		scope.launch {
 			ApplicationSettings.userSettings.localization.collectLatest { newLocale ->
 				withContext(Dispatchers.JavaFx) {
-					updateLocale()
+					_updateLocale()
 				}
 			}
 		}

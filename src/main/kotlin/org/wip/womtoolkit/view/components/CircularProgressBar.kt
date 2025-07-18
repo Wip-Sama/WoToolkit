@@ -1,12 +1,11 @@
 package org.wip.womtoolkit.view.components
 
-import javafx.animation.Interpolator
+import javafx.animation.Animation
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.Label
@@ -22,11 +21,24 @@ class CircularProgressBar: StackPane() {
 	@FXML lateinit var label: Label
 
 	val perimeter: Double
-		get() = if (::bar.isInitialized) 2 * Math.PI * bar.radius else 0.0
+		get() = 2 * Math.PI * radius
 
-	var sizeAnimationSpeed: Double = 4.0
-	var offsetAnimationSpeed: Double = 2.0
-	var continuousAnimationSpeed: Double = 4.0
+	val sizeAnimationSpeedProperty: SimpleDoubleProperty = SimpleDoubleProperty(4.0)
+	var sizeAnimationSpeed: Double
+		get() = sizeAnimationSpeedProperty.value
+		set(value) { sizeAnimationSpeedProperty.value = value }
+
+	val offsetAnimationSpeedProperty: SimpleDoubleProperty = SimpleDoubleProperty(2.0)
+	var offsetAnimationSpeed: Double
+		get() = offsetAnimationSpeedProperty.value
+		set(value) { offsetAnimationSpeedProperty.value = value }
+
+	val continuousAnimationSpeedProperty: SimpleDoubleProperty = SimpleDoubleProperty(4.0)
+	var continuousAnimationSpeed: Double
+		get() = continuousAnimationSpeedProperty.value
+		set(value) { continuousAnimationSpeedProperty.value = value }
+
+
 	var animateSize: Boolean by Delegates.observable(true) { _, oldValue, newValue ->
 		if (newValue != oldValue) {
 			if (indeterminate) {
@@ -34,9 +46,7 @@ class CircularProgressBar: StackPane() {
 					sizeTimeline.play()
 				else {
 					sizeTimeline.stop()
-					(progress*perimeter).let {
-						bar.strokeDashArray.setAll(it, perimeter - it)
-					}
+					updateBarSize(progress*perimeter)
 				}
 			}
 		}
@@ -61,18 +71,16 @@ class CircularProgressBar: StackPane() {
 			else {
 				continuousTimeline.stop()
 				barOffset = 0.0
-				(progress*perimeter).let {
-					bar.strokeDashArray.setAll(it, perimeter - it)
-				}
+				updateBarSize(progress*perimeter)
 			}
 		}
-	} //DO not only use only for fun
+	}
 
 	val offsetTimeline by lazy {
 		Timeline(
 			KeyFrame(
 				Duration.ZERO,
-				KeyValue(bar.strokeDashOffsetProperty(), barOffsetProperty.value - 0.0)
+				KeyValue(bar.strokeDashOffsetProperty(), barOffsetProperty.value)
 			),
 			KeyFrame(
 				Duration.seconds(offsetAnimationSpeed),
@@ -80,6 +88,42 @@ class CircularProgressBar: StackPane() {
 			),
 		).apply {
 			cycleCount = Timeline.INDEFINITE
+			radiusProperty.addListener { _, _, newValue ->
+				keyFrames[1] = KeyFrame(
+					Duration.seconds(offsetAnimationSpeed),
+					KeyValue(bar.strokeDashOffsetProperty(), barOffsetProperty.value - perimeter)
+				)
+				(status == Animation.Status.RUNNING).let {
+					if (it) {
+						stop()
+						play()
+					}
+				}
+			}
+			offsetAnimationSpeedProperty.addListener { _, _, newValue ->
+				keyFrames[1] = KeyFrame(
+					Duration.seconds(newValue.toDouble()),
+					KeyValue(bar.strokeDashOffsetProperty(), barOffsetProperty.value - perimeter)
+				)
+				(status == Animation.Status.RUNNING).let {
+					if (it) {
+						stop()
+						play()
+					}
+				}
+			}
+			barOffsetProperty.addListener { _, _, newValue ->
+				keyFrames[0] = KeyFrame(
+					Duration.ZERO,
+					KeyValue(bar.strokeDashOffsetProperty(), newValue.toDouble())
+				)
+				(status == Animation.Status.RUNNING).let {
+					if (it) {
+						stop()
+						play()
+					}
+				}
+			}
 		}
 	}
 	val sizeTimeline by lazy {
@@ -89,6 +133,42 @@ class CircularProgressBar: StackPane() {
 			KeyFrame(Duration.seconds(sizeAnimationSpeed*2), KeyValue(_animatedBarSize, perimeter/10))
 		).apply {
 			cycleCount = Timeline.INDEFINITE
+			radiusProperty.addListener { _, _, newValue ->
+				keyFrames[0] = KeyFrame(
+					Duration.ZERO,
+					KeyValue(_animatedBarSize, perimeter / 10)
+				)
+				keyFrames[1] = KeyFrame(
+					Duration.seconds(sizeAnimationSpeed),
+					KeyValue(_animatedBarSize, perimeter / 2)
+				)
+				keyFrames[2] = KeyFrame(
+					Duration.seconds(sizeAnimationSpeed * 2),
+					KeyValue(_animatedBarSize, perimeter / 10)
+				)
+				(status == Animation.Status.RUNNING).let {
+					if (it) {
+						stop()
+						play()
+					}
+				}
+			}
+			sizeAnimationSpeedProperty.addListener { _, _, newValue ->
+				keyFrames[1] = KeyFrame(
+					Duration.seconds(newValue.toDouble()),
+					KeyValue(_animatedBarSize, perimeter / 2)
+				)
+				keyFrames[2] = KeyFrame(
+					Duration.seconds(newValue.toDouble() * 2),
+					KeyValue(_animatedBarSize, perimeter / 10)
+				)
+				(status == Animation.Status.RUNNING).let {
+					if (it) {
+						stop()
+						play()
+					}
+				}
+			}
 		}
 	}
 	val continuousTimeline by lazy {
@@ -97,19 +177,47 @@ class CircularProgressBar: StackPane() {
 			KeyFrame(Duration.seconds(continuousAnimationSpeed), KeyValue(progressProperty, 1.0)),
 			KeyFrame(Duration.ZERO, KeyValue(progressProperty, -1.0)),
 			KeyFrame(Duration.seconds(continuousAnimationSpeed), KeyValue(progressProperty, 0.0))
-
 		).apply {
 			cycleCount = Timeline.INDEFINITE
+			continuousAnimationSpeedProperty.addListener { _, _, newValue ->
+				keyFrames[1] = KeyFrame(
+					Duration.seconds(newValue.toDouble()),
+					KeyValue(progressProperty, 1.0)
+				)
+				keyFrames[3] = KeyFrame(
+					Duration.seconds(newValue.toDouble() * 2),
+					KeyValue(progressProperty, 0.0)
+				)
+				(status == Animation.Status.RUNNING).let {
+					if (it) {
+						stop()
+						play()
+					}
+				}
+			}
 		}
 	}
 
+	var radiusProperty: SimpleDoubleProperty = SimpleDoubleProperty(10.0).apply {
+		addListener { _, _, newValue ->
+			if (newValue.toDouble() <= 0) {
+				set(1.0)
+				return@addListener
+			}
+			println("$perimeter\t$newValue\t$width\t$height")
+		}
+	}
+	var radius: Double
+		get() = radiusProperty.value
+		private set(value) { radiusProperty.value = value }
 
 	val indeterminateProperty: SimpleBooleanProperty = SimpleBooleanProperty(false).apply {
 		addListener { _, oldValue, newValue ->
 			if (newValue) {
 				if (!oldValue) {
 					offsetTimeline.play()
-					if (animateSize) sizeTimeline.play()
+					if (animateSize)
+						sizeTimeline.play()
 				}
 			} else {
 				if (oldValue) {
@@ -126,7 +234,7 @@ class CircularProgressBar: StackPane() {
 		get() = indeterminateProperty.value
 		set(value) { indeterminateProperty.value = value }
 
-	val progressProperty: SimpleDoubleProperty = SimpleDoubleProperty(0.0).apply {
+	val progressProperty: SimpleDoubleProperty = SimpleDoubleProperty(0.5).apply {
 		addListener { _, _, newValue ->
 			symmetricMod(newValue.toDouble(), 1.0).let {
 				if (it != newValue.toDouble()) {
@@ -136,11 +244,11 @@ class CircularProgressBar: StackPane() {
 			}
 			(newValue.toDouble()*perimeter).let { size ->
 				if (size > 0) {
-					bar.strokeDashArray.setAll(size, perimeter - size)
 					barOffset = 0.0
+					updateBarSize(size.absoluteValue)
 				} else {
 					barOffset = size.absoluteValue
-					bar.strokeDashArray.setAll(size.absoluteValue, perimeter - size.absoluteValue)
+					updateBarSize(size.absoluteValue)
 				}
 			}
 		}
@@ -172,7 +280,7 @@ class CircularProgressBar: StackPane() {
 					return@addListener
 				}
 			}
-			bar.strokeDashArray.setAll(newValue.toDouble(), perimeter - newValue.toDouble())
+			updateBarSize(newValue.toDouble())
 		}
 	}
 
@@ -193,6 +301,30 @@ class CircularProgressBar: StackPane() {
 			else
 				perimeter * progress
 		)
+		bar.radiusProperty().bind(radiusProperty)
+		track.radiusProperty().bind(radiusProperty)
+		radiusProperty.addListener { _, _, newValue ->
+			updateBarSize(
+				if (indeterminate)
+					_animatedBarSize.value
+				else
+					perimeter * progress
+			)
+		}
+		widthProperty().addListener { _, _, newValue ->
+			updateRadius()
+		}
+		heightProperty().addListener { _, _, newValue ->
+			updateRadius()
+		}
+	}
+
+	private fun updateRadius() {
+		if (width <= 0 || height <= 0) {
+			radius = 1.0
+			return
+		}
+		radius = ((width-bar.strokeWidth)/2).coerceIn(1.0, (height-bar.strokeWidth)/2)
 	}
 
 	private fun updateBarSize(size: Double) {
@@ -203,4 +335,7 @@ class CircularProgressBar: StackPane() {
 		val r = x % m
 		return if (r < 0) r else r
 	}
+
+	override fun computePrefWidth(height: Double): Double = (radius+(bar.strokeWidth/2)) * 2 //5 = half stroke
+	override fun computePrefHeight(width: Double): Double = (radius+(bar.strokeWidth/2)) * 2
 }
