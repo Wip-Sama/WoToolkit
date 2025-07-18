@@ -21,7 +21,8 @@ object NotificationService {
 	val queue: StateFlow<PriorityQueue<NotificationData>>
 		get() = _queue.asStateFlow()
 
-	val sizeProperty: IntegerProperty = SimpleIntegerProperty(0)
+	private val _size = MutableStateFlow(0)
+	val size = _size.asStateFlow()
 
 	fun addNotification(notification: NotificationData) {
 		if (!ApplicationSettings.userSettings.notificationSettings.enabled.value) return
@@ -37,14 +38,19 @@ object NotificationService {
 			add(notification)
 		}
 		_queue.value = newQueue
-		sizeProperty.value = newQueue.size
+		_size.value = newQueue.size
 	}
 
 	fun removeNotification(notification: NotificationData) {
-		sizeProperty.value = (_queue.value.size-1).coerceAtLeast(0)
+		_size.value = (_queue.value.size-1).coerceAtLeast(0)
 		val newQueue = PriorityQueue(_queue.value.comparator()).apply {
 			addAll(_queue.value.filter { it !== notification })
 		}
 		_queue.value = newQueue
+	}
+
+	fun clearNotifications() {
+		_size.value = 0
+		_queue.value.clear()
 	}
 }

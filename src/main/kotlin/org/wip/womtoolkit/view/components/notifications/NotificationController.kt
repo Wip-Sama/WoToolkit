@@ -2,6 +2,8 @@ package org.wip.womtoolkit.view.components.notifications
 
 import javafx.animation.FadeTransition
 import javafx.animation.TranslateTransition
+import javafx.beans.property.SimpleIntegerProperty
+import javafx.beans.property.SimpleStringProperty
 import javafx.collections.ListChangeListener
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -47,24 +49,35 @@ class NotificationController: BorderPane() {
 		})
 
 		notificationDispenser.label.textProperty().bind(
-			Lsp.lsb("notificationDispenser.remainingNotifications", NotificationService.sizeProperty.asString())
+			Lsp.lsb("notificationDispenser.remainingNotifications", SimpleStringProperty("0"))
 		)
 		notificationDispenser.dismissAll.setOnAction {
-			NotificationService.sizeProperty.value = 0
-			NotificationService.queue.value.clear()
+			NotificationService.clearNotifications()
 			notificationContainer.children.clear()
 		}
 
-		NotificationService.sizeProperty.addListener { _, oldValue, newValue ->
-			val old: Boolean = oldValue.toInt() > 0
-			val new: Boolean = newValue.toInt() > 0
+		var oldValue: Int = 0
+		scope.launch {
+			NotificationService.size.collect { newValue ->
+				with(Dispatchers.JavaFx) {
+					val old: Boolean = oldValue > 0
+					val new: Boolean = newValue > 0
 
-			if (new && !old && notificationContainer.children.size >= availableNotificationSlots) {
-				showDispenserWithAnimation()
-			} else if (!new) {
-				hideDispenserWithAnimation()
+					if (new && !old && notificationContainer.children.size >= availableNotificationSlots) {
+						showDispenserWithAnimation()
+					} else if (!new) {
+						hideDispenserWithAnimation()
+					}
+					notificationDispenser.label.textProperty().apply {
+						unbind()
+						bind(Lsp.lsb("notificationDispenser.remainingNotifications", SimpleIntegerProperty(newValue).asString()))
+					}
+
+					oldValue = newValue
+				}
 			}
 		}
+
 
 		hideDispenserWithAnimation()
 

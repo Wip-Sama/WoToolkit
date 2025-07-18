@@ -5,16 +5,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.enums.NotificationTypes
+import org.wip.womtoolkit.model.enums.ThreadMode
 import org.wip.womtoolkit.model.processing.ElementToProcess
 import org.wip.womtoolkit.model.services.activityMonitor.ActivityMonitorService
 import org.wip.womtoolkit.model.services.notification.NotificationData
 import org.wip.womtoolkit.model.services.notification.NotificationService
-import org.wip.womtoolkit.utils.NotifyingThread
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
-import java.nio.file.Path
+import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
+import java.util.EnumSet
 import kotlin.concurrent.withLock
 
 
@@ -29,81 +30,62 @@ object Slicer {
 	private fun processElementImplementation(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
 		with(element) {
 			lock.withLock {
-				val channels = mutableListOf<FileChannel>()
-				val locks = mutableListOf<FileLock>()
-
-				elements.value.forEach { file ->
-					var fullPath: Path
-
-					if (inputFolder.value.isNotEmpty()) {
-						fullPath = Paths.get(inputFolder.value, file)
-					} else {
-						fullPath = Paths.get(file)
+				element.setProcessing(true)
+				val lockedChannels = mutableListOf<FileLock>()
+				val fileChannels = mutableListOf<FileChannel>()
+				try {
+					val paths = elements.value.map { file ->
+						if (inputFolder.value.isNotEmpty())
+							Paths.get(inputFolder.value, file)
+						else
+							Paths.get(file)
+					}
+					for (path in paths) {
+						val absPath = path.toAbsolutePath()
+						val channel = Files.newByteChannel(absPath, EnumSet.of(StandardOpenOption.READ)) as FileChannel
+						val fileLock = channel.lock(0L, Long.MAX_VALUE, true) // true = lock condiviso (lettura)
+						lockedChannels.add(fileLock)
+						fileChannels.add(channel)
 					}
 
-					val channel = FileChannel.open(fullPath, StandardOpenOption.WRITE, StandardOpenOption.READ)
-					val lock = channel.lock()
-					channels.add(channel)
-					locks.add(lock)
+					println("Tutti i file selezionati sono lockati a livello OS")
+
+					for (i in 1..10) {
+						Thread.sleep(1000)
+						setProgress(progress.value + 0.1)
+					}
+
+					println("Processing done for element: ${elements.value}")
+
+
+				} catch (e: Exception) {
+					e.printStackTrace()
+					throw e
+				} finally {
+					lockedChannels.forEach { it.release() }
+					fileChannels.forEach { it.close() }
+					element.setProcessing(false)
 				}
-
-				// ora che siamo protetti da stronzi che vogliono cancellarci i file possiamo processarli
-				// qui la call alle funzioni di slicing o al modulo python
-				println("Something tried to happen")
-
-				locks.forEach { it.release() }
-				channels.forEach { it.close() }
 			}
 		}
 	}
 
 	private fun processElement(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
 		ActivityMonitorService["slicer"].apply {
-			queueCount.value--
-			runningCount.value++
-		}
-		var errored = false
-		NotifyingThread(
-			onFinish = {
-				ActivityMonitorService["slicer"].apply {
-					runningCount.value--
-					completedCount.value++
+			(if (settings.parallelExecution) ThreadMode.MULTI_THREAD else ThreadMode.SINGLE_THREAD).let {
+				if (threadMode != it) {
+					threadMode = it
 				}
-				if (!errored) {
-					Globals.logger.info("A slice has been terminated successfully")
-					NotificationService.addNotification(NotificationData(
-						localizedContent = "", //TODO: localize
-						type = NotificationTypes.SUCCESS
-					))
-				}
-			},
-			onError = {
-				Globals.logger.warning("Error processing element: ${element.elements.value} in folder: ${element.inputFolder.value}")
-				NotificationService.addNotification(NotificationData(
-					localizedContent = "", //TODO: localize
-					type = NotificationTypes.ERROR,
-				))
-				errored = true
 			}
-		) { processElementImplementation(element, settings) }.apply {
-			start()
-			if (!settings.parallelExecution) {
-				join()
-			}
+			submit { processElementImplementation(element, settings) }
 		}
 	}
 
-	fun canProcessElement(element: ElementToProcess): Boolean {
-		if (element.elements.value.isEmpty()) return false
-		if (element.outputFolder.value.isEmpty()) return false
-		return true
+	private fun addElement(element: ElementToProcess) {
+		_queue.value = _queue.value.toMutableList().apply { add(element) }
 	}
 
-	// May not need to be public
-	/**
-	 * @throws IllegalStateException if the element at index is not ready for processing (missing output folder or elements)
-	 * */
-	fun processOne(index: Int = 0, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
+	private fun processOne(index: Int = 0, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
 		val s = settings.copy()
 		_queue.value.getOrNull(index)?.let {
 			if (!canProcessElement(it)) {
@@ -113,7 +95,6 @@ object Slicer {
 					type = NotificationTypes.INFO,
 				))
 			} else {
-				ActivityMonitorService["slicer"].queueCount.value++
 				processElement(it, s)
 			}
 		}
@@ -131,8 +112,22 @@ object Slicer {
 			return
 		}
 
-		ActivityMonitorService["slicer"].queueCount.value++
+		if (!_queue.value.contains(element)) {
+			Globals.logger.severe { "Element ${element.elements.value} not found in the queue, skipping processing" }
+			NotificationService.addNotification(NotificationData(
+				localizedContent = "error.elementNotFoundInQueue",
+			 type = NotificationTypes.ERROR,
+			))
+			return
+		}
+
 		processElement(element, s)
+	}
+
+	fun canProcessElement(element: ElementToProcess): Boolean {
+		if (element.elements.value.isEmpty()) return false
+		if (element.outputFolder.value.isEmpty()) return false
+		return true
 	}
 
 	fun processSome(indexes: List<Int>, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
@@ -149,18 +144,11 @@ object Slicer {
 		}
 	}
 
-	private fun addElement(element: ElementToProcess) {
-		_queue.value = _queue.value.toMutableList().apply { add(element) }
-	}
-
 	/**
 	 * This function will add an element taking all the supported image formats from the input folder.
 	 * @param inputFolder the folder containing the images to process
 	 * @param outputFolder the folder where the processed images will be saved, defaults to inputFolder/${subFolderName} if saveInSubfolder is true WARNING: this will also default to inputFolder if saveInSubfolder is false and that could cause problems
 	 * @param supportedFormats in the list of supported formats, defaults to Globals.IMAGE_INPUT_FORMATS
-	 * @throws IllegalArgumentException if the element with the same inputFolder and elements already exists in the queue //could change this to a more specific throw
-	 * @throws IllegalArgumentException if the inputFolder does not exist or is not a directory
-	 * @throws IllegalArgumentException if the inputFolder was already added to the queue
 	 * */
 	fun addElementFromFolder(
 		inputFolder: String,
@@ -175,18 +163,33 @@ object Slicer {
 		val elements = mutableListOf<String>()
 		val folderPath = Paths.get(inputFolder)
 
-		if (!folderPath.toFile().exists())
-			throw IllegalArgumentException("Folder $inputFolder does not exist")
+		if (!folderPath.toFile().exists()) {
+			NotificationService.addNotification(NotificationData(
+				localizedContent = "info.folderDoesNotExist",
+				type = NotificationTypes.INFO,
+			))
+			Globals.logger.info { "Folder $inputFolder does not exist" }
+			return
+		}
 
-		if (!folderPath.toFile().isDirectory)
-			throw IllegalArgumentException("Path $inputFolder is not a directory")
+		if (!folderPath.toFile().isDirectory) {
+			NotificationService.addNotification(NotificationData(
+				localizedContent = "info.pathIsNotADirectory",
+				type = NotificationTypes.INFO,
+			))
+			Globals.logger.info { "Path $inputFolder is not a directory" }
+			return
+		}
 
 		queue.value.any { element ->
 			element.inputFolder.value == inputFolder
 		}.let { exists ->
 			if (exists) {
-				//TODO: Should notify the user that the folder was discarded because it was already present
-				return // we do not want to add the same folder again
+				NotificationService.addNotification(NotificationData(
+					localizedContent = "info.folderAlreadyAdded",
+				 type = NotificationTypes.INFO,
+				))
+				return
 			}
 		}
 
@@ -209,7 +212,6 @@ object Slicer {
 	 * This function will add an element taking all the files from the list and will ensure the files exist and are supported.
 	 * @param files the list of files to add to the queue
 	 * @param outputFolder the folder where the processed images will be saved, defaults to empty string (no output folder) Warning: if not provided, you won't be able to process the element
-	 * @throws IllegalArgumentException if the file list is empty or if no valid files are provided
 	 * */
 	fun addElementFromFiles(
 		files: List<String>,
@@ -225,7 +227,12 @@ object Slicer {
 			}
 
 			if (_files.isEmpty()) {
-				throw IllegalArgumentException("No valid files provided")
+				NotificationService.addNotification(NotificationData(
+					localizedContent = "warning.noValidFilesProvided",
+					type = NotificationTypes.WARNING,
+				))
+				Globals.logger.warning("No valid files provided in the list: $files")
+				return
 			}
 
 			addElement(

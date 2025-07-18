@@ -87,6 +87,14 @@ class SelectedFilesContainer : BorderPane() {
 
 	@FXML
 	private fun initialize() {
+		scope.launch {
+			elementToProcess?.processing?.collect {
+				execute.isDisable = it
+				remove.isDisable = it
+				outputFolderField.isDisable = it
+			}
+		}
+
 		initializeDefaults()
 		initializeImageControls()
 		initializeSelectedFilesList()
@@ -103,7 +111,11 @@ class SelectedFilesContainer : BorderPane() {
 		}
 
 		outputFolderField.textProperty().addListener { _, _, newValue ->
-			elementToProcess?.setOutputFolder(outputFolderField.text)
+			if (elementToProcess?.processing?.value != true) {
+				elementToProcess?.setOutputFolder(outputFolderField.text)
+			} else {
+				outputFolderField.text = elementToProcess?.outputFolder?.value ?: ""
+			}
 		}
 	}
 
@@ -170,6 +182,7 @@ class SelectedFilesContainer : BorderPane() {
 				init {
 					setOnDragDetected { event ->
 						if (item == null) return@setOnDragDetected
+						if (elementToProcess?.processing?.value == true) return@setOnDragDetected
 						val db = startDragAndDrop(TransferMode.MOVE)
 						val content = ClipboardContent()
 						content.putString(item)
@@ -197,18 +210,21 @@ class SelectedFilesContainer : BorderPane() {
 						val thisIdx = index
 						//check if the element is not null and indices are valid
 						if (draggedIdx >= 0 && thisIdx >= 0 && draggedIdx != thisIdx && thisIdx < items.size) {
-							items.removeAt(draggedIdx)
-							items.add(thisIdx, draggedItem)
-							listView.selectionModel.select(thisIdx)
-
-							elementToProcess?.moveElementToPosition(
-								draggedIdx, thisIdx
-							)
+							elementToProcess?.apply {
+								if (processing.value) return@apply
+								items.removeAt(draggedIdx)
+								items.add(thisIdx, draggedItem)
+								listView.selectionModel.select(thisIdx)
+								moveElementToPosition(
+									draggedIdx, thisIdx
+								)
+							}
 						}
 						event.isDropCompleted = true
 						event.consume()
 					}
 				}
+
 				override fun updateItem(item: String?, empty: Boolean) {
 					super.updateItem(item, empty)
 					text = if (empty || item == null) null else item
@@ -302,7 +318,7 @@ class SelectedFilesContainer : BorderPane() {
 	fun refreshImage() {
 		val selectedItem = selectedFilesList.selectionModel.selectedItem
 		if (selectedItem != null) {
-			changeImage(Image("file:${inputPath?: ""}${if (inputPath?.isEmpty() ?: true) "" else "\\"}${selectedItem}"))
+			changeImage(Image("file:${inputPath ?: ""}${if (inputPath?.isEmpty() ?: true) "" else "\\"}${selectedItem}"))
 		} else {
 			changeImage(null)
 		}
@@ -325,22 +341,23 @@ class SelectedFilesContainer : BorderPane() {
 		Thread {
 			var mH = 0.0
 			var mW = 0.0
-
+			var count = 0
 			fileList.forEach { item ->
 				val img = Image("file:${inputPath}${if (inputPath?.isEmpty() ?: true) "" else "\\"}${item}")
 				if (img.isError) return@forEach
-				if (img.height > mH) mH = img.height
-				if (img.width > mW) mW = img.width
+				mH += img.height
+				mW += img.width
+				count++
 			}
-
-			mH.div(fileList.size.toDouble())
-			mW.div(fileList.size.toDouble())
-
+			mH /= count.toDouble()
+			mW /= count.toDouble()
 			Platform.runLater {
 				mediumWidth.textProperty().unbind()
 				mediumHeight.textProperty().unbind()
-				mediumWidth.textProperty().bind(Lsp.lsb("selectedFilesContainer.mediumWidth", SimpleStringProperty(mW.toString())))
-				mediumHeight.textProperty().bind(Lsp.lsb("selectedFilesContainer.mediumHeight", SimpleStringProperty(mH.toString())))
+				mediumWidth.textProperty()
+					.bind(Lsp.lsb("selectedFilesContainer.mediumWidth", SimpleStringProperty(mW.toString())))
+				mediumHeight.textProperty()
+					.bind(Lsp.lsb("selectedFilesContainer.mediumHeight", SimpleStringProperty(mH.toString())))
 			}
 		}.start()
 	}

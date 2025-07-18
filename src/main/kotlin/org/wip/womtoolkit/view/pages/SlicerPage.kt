@@ -171,9 +171,9 @@ class SlicerPage : BorderPane() {
         }
 
         queuePane.widthProperty().addListener { _, _, value ->
-            queueFlow.prefWidth = value.toDouble()
-            queueFlow.minWidth = value.toDouble()
-            queueFlow.maxWidth = value.toDouble()
+            queueFlow.prefWidth = value.toDouble().minus(40)
+            queueFlow.minWidth = value.toDouble().minus(40)
+            queueFlow.maxWidth = value.toDouble().minus(40)
         }
     }
 

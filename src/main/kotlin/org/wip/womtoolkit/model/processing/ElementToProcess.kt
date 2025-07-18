@@ -16,6 +16,7 @@ open class ElementToProcess{
 	private val _outputFolder: MutableStateFlow<String>
 	private val _progress: MutableStateFlow<Double>
 	private val _inputFolder: MutableStateFlow<String>
+	private val _processing : MutableStateFlow<Boolean> = MutableStateFlow(false)
 
 	val elements: StateFlow<List<String>>
 		get() = _elements.asStateFlow()
@@ -25,6 +26,8 @@ open class ElementToProcess{
 		get() = _progress.asStateFlow()
 	val inputFolder: StateFlow<String>
 		get() = _inputFolder.asStateFlow()
+	val processing: StateFlow<Boolean>
+		get() = _processing.asStateFlow()
 
 	constructor(
 		elements: List<String>,
@@ -90,6 +93,12 @@ open class ElementToProcess{
 	fun setInputFolder(inputFolder: String) {
 		lock.withLock {
 			_inputFolder.value = inputFolder
+		}
+	}
+
+	fun setProcessing(processing: Boolean) {
+		lock.withLock {
+			_processing.value = processing
 		}
 	}
 }

@@ -6,6 +6,9 @@ import javafx.beans.binding.StringBinding
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ObservableValue
 import org.wip.womtoolkit.model.Globals
+import org.wip.womtoolkit.model.enums.NotificationTypes
+import org.wip.womtoolkit.model.services.notification.NotificationData
+import org.wip.womtoolkit.model.services.notification.NotificationService
 import java.io.File
 import java.net.JarURLConnection
 import java.util.concurrent.Callable
@@ -60,11 +63,15 @@ object LocalizationService {
 						}
 				}
 				else -> {
-					Globals.logger?.warning("Resource protocol '${resourceUrl.protocol}' not supported")
+					Globals.logger.warning("Resource protocol '${resourceUrl.protocol}' not supported")
 				}
 			}
 		} else {
-			Globals.logger?.severe("Locale folder '${Globals.LOCALES_PATH}' not found")
+			Globals.logger.severe("Locale folder '${Globals.LOCALES_PATH}' not found")
+			NotificationService.addNotification(NotificationData(
+				localizedContent = "warning.localesNotFound", //TODO: how the fuck do you expect a localization without the locale folder???
+				type = NotificationTypes.WARNING
+			))
 		}
 
 		val our = File(javaClass.getResource(Globals.LOCALES_PATH)!!.file)
