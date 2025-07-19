@@ -1,14 +1,227 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import org.wip.womtoolkit.view.components.CircularProgressBar?>
 
-<fx:root maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onAction" prefHeight="32.0" prefWidth="32.0" style="-fx-background-color: green;" type="BorderPane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <BorderPane BorderPane.alignment="CENTER">
-         <bottom>
-            <CircularProgressBar animateContinuous="true" animateSize="false" maxHeight="32.0" maxWidth="32.0" minHeight="32.0" minWidth="32.0" prefHeight="32.0" prefWidth="32.0" progress="0.1" BorderPane.alignment="CENTER" />
-         </bottom>
-      </BorderPane>
-   </left>
+<fx:root maxHeight="114.0" maxWidth="1.7976931348623157E308" minHeight="32.0" minWidth="32.0" prefHeight="110.0" styleClass="collapsable-activity-indicator" stylesheets="@../../styles/dark.css" type="AnchorPane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ScrollPane fx:id="scrollContainer" hbarPolicy="NEVER" maxHeight="72.0" minHeight="36.0" pannable="true" prefHeight="72.0" styleClass="scrollPaneWithoutInsets" vbarPolicy="NEVER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <VBox fx:id="containersVbox">
+               <children>
+                  <GridPane fx:id="generalDisplay1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onAction" prefHeight="32.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="32.0" minWidth="32.0" prefWidth="32.0" />
+                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="0.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" valignment="CENTER" vgrow="NEVER" />
+                     </rowConstraints>
+                     <children>
+                        <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                           <children>
+                              <Label fx:id="text1" ellipsisString="" mouseTransparent="true" text="Processes" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="text21" ellipsisString="" mouseTransparent="true" text="0 - 4 - 2" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip text="Empty Tooltip" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <CircularProgressBar maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" prefHeight="28.0" prefWidth="28.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </GridPane>
+                  <GridPane fx:id="generalDisplay2" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onAction" prefHeight="32.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="32.0" minWidth="32.0" prefWidth="32.0" />
+                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="0.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" valignment="CENTER" vgrow="NEVER" />
+                     </rowConstraints>
+                     <children>
+                        <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                           <children>
+                              <Label fx:id="text2" ellipsisString="" mouseTransparent="true" text="Processes" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="text22" ellipsisString="" mouseTransparent="true" text="0 - 4 - 2" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip text="Empty Tooltip" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <CircularProgressBar maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" prefHeight="28.0" prefWidth="28.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </GridPane>
+                  <GridPane fx:id="generalDisplay11" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onAction" prefHeight="32.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="32.0" minWidth="32.0" prefWidth="32.0" />
+                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="0.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" valignment="CENTER" vgrow="NEVER" />
+                     </rowConstraints>
+                     <children>
+                        <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                           <children>
+                              <Label fx:id="text11" ellipsisString="" mouseTransparent="true" text="Processes" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="text211" ellipsisString="" mouseTransparent="true" text="0 - 4 - 2" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip text="Empty Tooltip" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <CircularProgressBar maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" prefHeight="28.0" prefWidth="28.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </GridPane>
+                  <GridPane fx:id="generalDisplay12" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onAction" prefHeight="32.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="32.0" minWidth="32.0" prefWidth="32.0" />
+                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="0.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" valignment="CENTER" vgrow="NEVER" />
+                     </rowConstraints>
+                     <children>
+                        <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                           <children>
+                              <Label fx:id="text12" ellipsisString="" mouseTransparent="true" text="Processes" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="text212" ellipsisString="" mouseTransparent="true" text="0 - 4 - 2" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip text="Empty Tooltip" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <CircularProgressBar maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" prefHeight="28.0" prefWidth="28.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </GridPane>
+                  <GridPane fx:id="generalDisplay13" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onAction" prefHeight="32.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="32.0" minWidth="32.0" prefWidth="32.0" />
+                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="0.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" valignment="CENTER" vgrow="NEVER" />
+                     </rowConstraints>
+                     <children>
+                        <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+                           <children>
+                              <Label fx:id="text13" ellipsisString="" mouseTransparent="true" text="Processes" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="text213" ellipsisString="" mouseTransparent="true" text="0 - 4 - 2" textOverrun="CLIP">
+                                 <font>
+                                    <Font size="8.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip text="Empty Tooltip" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </VBox>
+                        <CircularProgressBar maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" prefHeight="28.0" prefWidth="28.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+                     </padding>
+                  </GridPane>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+      <GridPane fx:id="generalDisplay" layoutX="37.0" layoutY="311.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMouseClicked="#onAction" prefHeight="32.0" styleClass="collapsablecomponent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <columnConstraints>
+            <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="32.0" minWidth="32.0" prefWidth="32.0" />
+            <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="0.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" valignment="CENTER" vgrow="NEVER" />
+         </rowConstraints>
+         <children>
+            <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+               <children>
+                  <Label fx:id="generalTitle" ellipsisString="" mouseTransparent="true" text="Processes" textOverrun="CLIP">
+                     <font>
+                        <Font size="8.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="generalStats" ellipsisString="" mouseTransparent="true" text="0 - 4 - 2" textOverrun="CLIP">
+                     <font>
+                        <Font size="8.0" />
+                     </font>
+                     <tooltip>
+                        <Tooltip text="Empty Tooltip" />
+                     </tooltip>
+                  </Label>
+               </children>
+            </VBox>
+            <CircularProgressBar fx:id="workingIndicator" maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" prefHeight="28.0" prefWidth="28.0" progress="0.0" />
+         </children>
+         <padding>
+            <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+         </padding>
+      </GridPane>
+   </children>
 </fx:root>

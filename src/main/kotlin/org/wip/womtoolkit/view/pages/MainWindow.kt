@@ -46,7 +46,7 @@ object MainWindow {
 			//center
 
 			//bottom
-			addComponent(CollapsableActivityIndicator.apply {
+			addComponent(CollapsableActivityIndicator().apply {
 				id = ""
 				localizationKey = "menu.settings"
 			}, CollapsableSidebarMenu.Positions.BOTTOM)

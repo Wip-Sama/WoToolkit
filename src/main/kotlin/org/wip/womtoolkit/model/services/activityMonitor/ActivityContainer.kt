@@ -38,6 +38,7 @@ class ActivityContainer {
 					localizedContent = "success.elementProcessed",
 					type = NotificationTypes.SUCCESS
 				))
+				runningCount.value = runningCount.value-1
 				completedCount.value++
 			} else {
 				Globals.logger.warning("Something went wrong: ${t.message}")
@@ -45,6 +46,7 @@ class ActivityContainer {
 					localizedContent = "error.generic", //TODO: better error message
 					type = NotificationTypes.ERROR,
 				))
+				runningCount.value = runningCount.value-1
 				erroredCount.value++
 			}
 		}

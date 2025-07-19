@@ -55,3 +55,32 @@
     /*Component specifics colors*/
     -womt-slider: hsba(0, 0%, 100%, .6);  /*-womt-slider: hsb(0, 0%, 62%);*/ /*TODO: vedere se questo va bene*/
 }
+
+.collapsable-activity-indicator {
+    -fx-background-color: -womt-button-rest;
+    -fx-pref-height: 32;
+    -fx-background-radius: 8;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+    -fx-alignment: center-left;
+    /*-fx-font-weight: bold;*/
+}
+
+.collapsable-activity-indicator .scroll-pane {
+    -fx-padding: 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: -womt-border-light;
+}
+
+.collapsable-activity-indicator .separator .line {
+    -fx-border-color: -womt-border-light;
+    -fx-border-width: 1 0 0 0;
+}
+
+.collapsable-activity-indicator:selected {
+    -fx-background-color: -womt-button-selected;
+}
+
+.collapsable-activity-indicator:selected .scroll-pane {
+    -fx-pref-height: 72;
+}

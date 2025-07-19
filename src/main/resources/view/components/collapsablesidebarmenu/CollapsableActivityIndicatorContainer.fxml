@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.wip.womtoolkit.view.components.CircularProgressBar?>
+
+<?import org.wip.womtoolkit.view.components.LocalizedTooltip?>
+<fx:root type="GridPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="32.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <columnConstraints>
+      <ColumnConstraints halignment="CENTER" hgrow="NEVER" maxWidth="32.0" minWidth="32.0" prefWidth="32.0" />
+      <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="0.0" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="0.0" />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints maxHeight="32.0" minHeight="32.0" prefHeight="32.0" valignment="CENTER" vgrow="NEVER" />
+   </rowConstraints>
+   <children>
+      <VBox alignment="CENTER_LEFT" GridPane.columnIndex="1">
+         <children>
+            <Label fx:id="title" ellipsisString="" mouseTransparent="true" text="Processes" textOverrun="CLIP">
+               <font>
+                  <Font size="8.0" />
+               </font>
+            </Label>
+            <Label fx:id="stats" ellipsisString="" mouseTransparent="true" text="0 - 4 - 2" textOverrun="CLIP">
+               <font>
+                  <Font size="8.0" />
+               </font>
+               <tooltip>
+                  <LocalizedTooltip localizationKey="activityIndicator.stats.tooltip" />
+               </tooltip>
+            </Label>
+         </children>
+      </VBox>
+      <CircularProgressBar fx:id="workingIndicator" maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" prefHeight="28.0" prefWidth="28.0" progress="0.0" />
+   </children>
+   <padding>
+      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+   </padding>
+</fx:root>

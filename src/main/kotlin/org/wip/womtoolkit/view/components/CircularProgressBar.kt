@@ -204,7 +204,6 @@ class CircularProgressBar: StackPane() {
 				set(1.0)
 				return@addListener
 			}
-			println("$perimeter\t$newValue\t$width\t$height")
 		}
 	}
 	var radius: Double
@@ -302,6 +301,8 @@ class CircularProgressBar: StackPane() {
 				perimeter * progress
 		)
 		bar.radiusProperty().bind(radiusProperty)
+		bar.visibleProperty().bind(progressProperty.isNotEqualTo(0.0.toLong()).or(indeterminateProperty))
+//		bar.opacityProperty().bind(progressProperty.map { if (it == 0.0) 0.0 else 1.0 })
 		track.radiusProperty().bind(radiusProperty)
 		radiusProperty.addListener { _, _, newValue ->
 			updateBarSize(
