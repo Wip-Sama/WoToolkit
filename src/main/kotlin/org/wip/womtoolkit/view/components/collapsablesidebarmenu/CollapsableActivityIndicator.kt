@@ -50,10 +50,11 @@ class CollapsableActivityIndicator : AnchorPane(), CollapsableItem {
 
 	@FXML
 	fun initialize() {
-		onActionProperty.addListener { _, _, newValue ->
+		onActionProperty.addListener {
 			if (containersVbox.children.isEmpty()) return@addListener
-			val nH = if (newValue) 36.0* (containersVbox.children.size.coerceAtMost(2)+1)+1 else 36.0
-			pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), newValue)
+			val state = prefHeight == 36.0 //collapsed
+			val nH = if (state) 36.0* (containersVbox.children.size.coerceAtMost(2)+1)+1 else 36.0
+			pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), state)
 			Timeline(
 				KeyFrame(Duration.millis(100.0), KeyValue(prefHeightProperty(), nH))
 			).apply {

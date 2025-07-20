@@ -22,15 +22,20 @@ class ActivityContainer {
 		}
 	) {
 		override fun submit(task: Runnable): Future<*> {
-			with(lock) { queueCount.value++ }
 			val future = super.submit(task)
+			with(lock) {
+				queueCount.value++
+			}
 			return future
 		}
-		override fun execute(r: Runnable) {
-			super.execute(r)
+
+		override fun beforeExecute(t: Thread?, r: Runnable?) {
+			super.beforeExecute(t, r)
 			with(lock) {
-				queueCount.value--
+//				runningCount.value = activeCount+1
+//				queueCount.value = queue.size-1
 				runningCount.value = activeCount
+				queueCount.value = queue.size
 			}
 		}
 		override fun afterExecute(r: Runnable, t: Throwable?) {
@@ -42,6 +47,7 @@ class ActivityContainer {
 					type = NotificationTypes.SUCCESS
 				))
 				with(lock) {
+					queueCount.value = queue.size
 					runningCount.value = if (activeCount == 1 && queueCount.value == 0) 0 else runningCount.value-1
 					completedCount.value++
 				}
@@ -52,6 +58,7 @@ class ActivityContainer {
 					type = NotificationTypes.ERROR,
 				))
 				with(lock) {
+					queueCount.value = queue.size
 					runningCount.value = if (activeCount == 1 && queueCount.value == 0) 0 else runningCount.value-1
 					erroredCount.value++
 				}
