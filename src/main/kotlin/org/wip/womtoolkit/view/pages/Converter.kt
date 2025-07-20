@@ -18,6 +18,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.util.Duration
 import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.notification.NotificationService
 import org.wip.womtoolkit.model.services.notification.NotificationData
@@ -139,7 +140,7 @@ class Converter : BorderPane() {
 
 	fun printButtonOrder() {
 		for (i in 0 until buttonContainer.children.size) {
-			println("Button $i: ${buttonContainer.children[i]}")
+			Globals.logger.info("Button $i: ${buttonContainer.children[i]}")
 		}
 		NotificationService.addNotification(NotificationData(
 			"enabled",

@@ -35,13 +35,10 @@ class CollapsableActivityIndicator : AnchorPane(), CollapsableItem {
 	override var localizationKey: String? = null
 	override var selectable: Boolean = false
 	override val onActionProperty: BooleanProperty = SimpleBooleanProperty(false)
+//	var onActionProperty: EventHandler<Event>? = null
 
+	val rectClip = Rectangle()
 	val scope = MainScope()
-
-	val rectClip = Rectangle().apply {
-//		arcHeight = 13.0
-//		arcWidth = 13.0
-	}
 
 	init {
 		FXMLLoader(javaClass.getResource("/view/components/collapsablesidebarmenu/CollapsableActivityIndicator.fxml")).apply {
@@ -54,7 +51,9 @@ class CollapsableActivityIndicator : AnchorPane(), CollapsableItem {
 	@FXML
 	fun initialize() {
 		onActionProperty.addListener { _, _, newValue ->
-			val nH = if (newValue) 36.0*3*1 else 36.0
+			if (containersVbox.children.isEmpty()) return@addListener
+			val nH = if (newValue) 36.0* (containersVbox.children.size.coerceAtMost(2)+1)+1 else 36.0
+			pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), newValue)
 			Timeline(
 				KeyFrame(Duration.millis(100.0), KeyValue(prefHeightProperty(), nH))
 			).apply {
@@ -86,6 +85,11 @@ class CollapsableActivityIndicator : AnchorPane(), CollapsableItem {
 			}
 		}
 		scrollContainer.clip = rectClip
+		scrollContainer.widthProperty().addListener { _, _, newValue ->
+			containersVbox.minWidth = newValue.toDouble()
+			containersVbox.prefWidth = newValue.toDouble()
+			containersVbox.maxWidth = newValue.toDouble()
+		}
 		rectClip.apply {
 			widthProperty().bind(scrollContainer.widthProperty())
 			minHeight(0.0)
@@ -116,7 +120,5 @@ class CollapsableActivityIndicator : AnchorPane(), CollapsableItem {
 	@FXML
 	fun onAction() {
 		onActionProperty.value = !onActionProperty.value
-
-		pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), onActionProperty.value)
 	}
 }

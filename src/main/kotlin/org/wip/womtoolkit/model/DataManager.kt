@@ -112,7 +112,7 @@ object DataManager {
 	private fun writeJson() {
 		try {
 			val jsonString = customJsonSerializer.encodeToString(ApplicationSettings)
-			println(jsonString)
+			Globals.logger.info(jsonString)
 			Files.writeString(applicationSettings, jsonString)
 		} catch (e: Exception) {
 			throw IllegalStateException("Failed to write JSON database", e)

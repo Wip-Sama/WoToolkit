@@ -16,19 +16,22 @@ import java.util.concurrent.locks.ReentrantLock
 class ActivityContainer {
 	private val threadPool = object : ThreadPoolExecutor(
 		1, 4, 60L, TimeUnit.SECONDS,
-		LinkedBlockingQueue<Runnable>(),
-		Executors.defaultThreadFactory()
+		LinkedBlockingQueue(),
+		ThreadFactory { r ->
+			Thread(r).apply { isDaemon = true }
+		}
 	) {
 		override fun submit(task: Runnable): Future<*> {
+			with(lock) { queueCount.value++ }
 			val future = super.submit(task)
-			queueCount.value = queue.size
-			runningCount.value = activeCount
 			return future
 		}
 		override fun execute(r: Runnable) {
 			super.execute(r)
-			queueCount.value = queue.size
-			runningCount.value = activeCount
+			with(lock) {
+				queueCount.value--
+				runningCount.value = activeCount
+			}
 		}
 		override fun afterExecute(r: Runnable, t: Throwable?) {
 			super.afterExecute(r, t)
@@ -38,16 +41,20 @@ class ActivityContainer {
 					localizedContent = "success.elementProcessed",
 					type = NotificationTypes.SUCCESS
 				))
-				runningCount.value = runningCount.value-1
-				completedCount.value++
+				with(lock) {
+					runningCount.value = if (activeCount == 1 && queueCount.value == 0) 0 else runningCount.value-1
+					completedCount.value++
+				}
 			} else {
 				Globals.logger.warning("Something went wrong: ${t.message}")
 				NotificationService.addNotification(NotificationData(
-					localizedContent = "error.generic", //TODO: better error message
+					localizedContent = "error.generic",
 					type = NotificationTypes.ERROR,
 				))
-				runningCount.value = runningCount.value-1
-				erroredCount.value++
+				with(lock) {
+					runningCount.value = if (activeCount == 1 && queueCount.value == 0) 0 else runningCount.value-1
+					erroredCount.value++
+				}
 			}
 		}
 	}
@@ -71,36 +78,34 @@ class ActivityContainer {
 	init {
 		scope.launch {
 			queueCount.collect {
-				println("Queue count: $it")
+				Globals.logger.info("Queue count: $it")
 			}
 		}
 		scope.launch {
 			runningCount.collect {
-				println("Running count: $it")
+				Globals.logger.info("Running count: $it")
 			}
 		}
 		scope.launch {
 			erroredCount.collect {
-				println("Errored count: $it")
+				Globals.logger.info("Errored count: $it")
 			}
 		}
 		scope.launch {
 			completedCount.collect {
-				println("Completed count: $it")
+				Globals.logger.info("Completed count: $it")
 			}
 		}
 	}
 
 	private fun setSingleThreadMode() {
 		with(lock) {
-			threadPool.corePoolSize = 1
 			threadPool.maximumPoolSize = 1
 		}
 	}
 
 	private fun setMultiThreadMode() {
 		with(lock) {
-			threadPool.corePoolSize = 1
 			threadPool.maximumPoolSize = 4
 		}
 	}

@@ -28,11 +28,9 @@ class CollapsableActivityIndicatorContainer(val container: String) : GridPane() 
 		}
 	}
 
-
-
 	@FXML
 	fun initialize() {
-//		title.textProperty().bind(Lsp.lsb("activityIndicator.general.title"))
+		title.textProperty().bind(Lsp.lsb("menu.$container"))
 		scope.launch { ActivityMonitorService[container].queueCount.collect { updateStats() } }
 		scope.launch { ActivityMonitorService[container].runningCount.collect { updateStats() } }
 		scope.launch { ActivityMonitorService[container].completedCount.collect { updateStats() } }

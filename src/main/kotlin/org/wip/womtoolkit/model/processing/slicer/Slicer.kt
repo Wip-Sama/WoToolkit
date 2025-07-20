@@ -30,7 +30,6 @@ object Slicer {
 	private fun processElementImplementation(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
 		with(element) {
 			lock.withLock {
-				element.setProcessing(true)
 				val lockedChannels = mutableListOf<FileLock>()
 				val fileChannels = mutableListOf<FileChannel>()
 				try {
@@ -48,14 +47,14 @@ object Slicer {
 						fileChannels.add(channel)
 					}
 
-					println("Tutti i file selezionati sono lockati a livello OS")
+					Globals.logger.info("Tutti i file selezionati sono lockati a livello OS")
 
 					for (i in 1..10) {
 						Thread.sleep(1000)
 						setProgress(progress.value + 0.1)
 					}
 
-					println("Processing done for element: ${elements.value}")
+					Globals.logger.info("Processing done for element: ${elements.value}")
 
 
 				} catch (e: Exception) {
@@ -77,12 +76,15 @@ object Slicer {
 					threadMode = it
 				}
 			}
+			element.setProcessing(true)
 			submit { processElementImplementation(element, settings) }
 		}
 	}
 
 	private fun addElement(element: ElementToProcess) {
-		_queue.value = _queue.value.toMutableList().apply { add(element) }
+		_queue.value = _queue.value.toMutableList().apply {
+			add(element)
+		}
 	}
 
 	private fun processOne(index: Int = 0, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {

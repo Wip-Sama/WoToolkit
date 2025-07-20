@@ -66,6 +66,11 @@
     /*-fx-font-weight: bold;*/
 }
 
+.collapsable-activity-indicator .label {
+    -fx-text-fill: -womt-text;
+    -fx-text-overrun: clip;
+}
+
 .collapsable-activity-indicator .scroll-pane {
     -fx-padding: 0;
     -fx-border-width: 0 0 1 0;
