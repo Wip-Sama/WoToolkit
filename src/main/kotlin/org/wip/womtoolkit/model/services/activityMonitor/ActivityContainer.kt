@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock
  * */
 class ActivityContainer {
 	private val threadPool = object : ThreadPoolExecutor(
-		1, 4, 60L, TimeUnit.SECONDS,
+		4, 4, 0L, TimeUnit.SECONDS,
 		LinkedBlockingQueue(),
 		ThreadFactory { r ->
 			Thread(r).apply { isDaemon = true }
@@ -32,8 +32,6 @@ class ActivityContainer {
 		override fun beforeExecute(t: Thread?, r: Runnable?) {
 			super.beforeExecute(t, r)
 			with(lock) {
-//				runningCount.value = activeCount+1
-//				queueCount.value = queue.size-1
 				runningCount.value = activeCount
 				queueCount.value = queue.size
 			}
@@ -107,6 +105,7 @@ class ActivityContainer {
 
 	private fun setSingleThreadMode() {
 		with(lock) {
+			threadPool.corePoolSize = 1
 			threadPool.maximumPoolSize = 1
 		}
 	}
@@ -114,6 +113,7 @@ class ActivityContainer {
 	private fun setMultiThreadMode() {
 		with(lock) {
 			threadPool.maximumPoolSize = 4
+			threadPool.corePoolSize = 4
 		}
 	}
 
