@@ -2,10 +2,10 @@ package org.wip.womtoolkit.view.components
 
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
+import javafx.scene.control.Label
 import javafx.scene.layout.GridPane
 import javafx.scene.shape.SVGPath
 import kotlinx.coroutines.MainScope
-import java.lang.classfile.Label
 
 class VersionDisplay : GridPane() {
 	companion object {

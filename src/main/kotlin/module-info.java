@@ -17,13 +17,15 @@ module org.wip.womtoolkit {
 
     requires nfx.core;
 
+    opens org.wip.womtoolkit to javafx.graphics, javafx.fxml;
     opens org.wip.womtoolkit.model to kotlin.reflect;
     opens org.wip.womtoolkit.model.database.entities to kotlin.reflect;
-    opens org.wip.womtoolkit to javafx.graphics, javafx.fxml;
+
     opens org.wip.womtoolkit.view.components to javafx.fxml;
     opens org.wip.womtoolkit.view.components.collapsablesidebarmenu to javafx.fxml;
     opens org.wip.womtoolkit.view.components.colorpicker to javafx.fxml;
+    opens org.wip.womtoolkit.view.components.notifications to javafx.fxml;
+
     opens org.wip.womtoolkit.view.pages to javafx.fxml;
     opens org.wip.womtoolkit.view.pages.settings to javafx.fxml;
-    opens org.wip.womtoolkit.view.components.notifications to javafx.fxml;
 }
