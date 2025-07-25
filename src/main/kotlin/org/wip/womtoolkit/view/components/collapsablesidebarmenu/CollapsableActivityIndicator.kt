@@ -7,6 +7,8 @@ import javafx.beans.property.BooleanProperty
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleIntegerProperty
 import javafx.css.PseudoClass
+import javafx.event.Event
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.scene.control.Label
@@ -34,8 +36,7 @@ class CollapsableActivityIndicator : AnchorPane(), CollapsableItem {
 
 	override var localizationKey: String? = null
 	override var selectable: Boolean = false
-	override val onActionProperty: BooleanProperty = SimpleBooleanProperty(false)
-//	var onActionProperty: EventHandler<Event>? = null
+	override val onActionProperty: BooleanProperty = SimpleBooleanProperty(true)
 
 	val rectClip = Rectangle()
 	val scope = MainScope()
@@ -50,17 +51,7 @@ class CollapsableActivityIndicator : AnchorPane(), CollapsableItem {
 
 	@FXML
 	fun initialize() {
-		onActionProperty.addListener {
-			if (containersVbox.children.isEmpty()) return@addListener
-			val state = prefHeight == 36.0 //collapsed
-			val nH = if (state) 36.0* (containersVbox.children.size.coerceAtMost(2)+1)+1 else 36.0
-			pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), state)
-			Timeline(
-				KeyFrame(Duration.millis(100.0), KeyValue(prefHeightProperty(), nH))
-			).apply {
-				play()
-			}
-		}
+		onActionProperty.addListener { expandOrCollapse() }
 		generalTitle.textProperty().bind(Lsp.lsb("activityIndicator.general.title"))
 		scope.launch { ActivityMonitorService.queueCount.collect { updateGeneralStats() } }
 		scope.launch { ActivityMonitorService.runningCount.collect { updateGeneralStats() } }
@@ -115,6 +106,18 @@ class CollapsableActivityIndicator : AnchorPane(), CollapsableItem {
 					)
 				)
 			}
+		}
+	}
+
+	private fun expandOrCollapse() {
+		if (containersVbox.children.isEmpty()) return
+		val state = prefHeight <= 36.0 //collapsed
+		val nH = if (state) 36.0* (containersVbox.children.size.coerceAtMost(2)+1)+1 else 36.0
+		pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), state)
+		Timeline(
+			KeyFrame(Duration.millis(100.0), KeyValue(prefHeightProperty(), nH))
+		).apply {
+			play()
 		}
 	}
 

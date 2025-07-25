@@ -102,6 +102,7 @@ class Settings(val pageIndicator: PageIndicator? = null) : BorderPane() {
 				"settingsPage.slicer" -> elementContainer.content = SlicerSettings()
 				"settingsPage.converter" -> elementContainer.content = ConverterSettings()
 				"settingsPage.history" -> elementContainer.content = HistorySettings()
+				"settingsPage.modules" -> elementContainer.content = null // Placeholder for future modules settings
 				"settingsPage.about" -> elementContainer.content = AboutSettings()
 				else -> elementContainer.content = null
 			}
