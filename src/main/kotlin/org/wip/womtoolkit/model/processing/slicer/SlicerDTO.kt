@@ -4,10 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SlicerDTO(
-	@Serializable val images: MutableList<String>,
+	@Serializable val images: List<String>,
 	@Serializable var minimumHeight: Int,
 	@Serializable var desiredHeight: Int,
 	@Serializable var maximumHeight: Int,
 	@Serializable var cutTolerance: Int,
 	@Serializable var searchDirection: Boolean, // false = to the minimum, true = to the maximum
+	@Serializable var outputFolder: String,
 )

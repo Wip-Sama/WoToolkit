@@ -1,8 +1,10 @@
 package org.wip.womtoolkit.model.processing.slicer
 
+import com.pty4j.PtyProcessBuilder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.serialization.json.Json
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.enums.ThreadMode
@@ -10,6 +12,8 @@ import org.wip.womtoolkit.model.processing.ElementToProcess
 import org.wip.womtoolkit.model.services.activityMonitor.ActivityMonitorService
 import org.wip.womtoolkit.model.services.notification.NotificationData
 import org.wip.womtoolkit.model.services.notification.NotificationService
+import org.wip.womtoolkit.utils.CommandRunner
+import java.io.File
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.file.Files
@@ -49,9 +53,59 @@ object Slicer {
 
 					Globals.logger.info("Tutti i file selezionati sono lockati a livello OS")
 
-					for (i in 1..10) {
-						Thread.sleep(1000)
-						setProgress(progress.value + 0.1)
+					val pythonPath: String = "Modules\\python_portable\\WPy64-31350\\python\\python.exe"
+					val scriptPath: String = "Modules\\Slicer\\slicer_handler.py"
+
+					val jsonString = Json {
+						encodeDefaults = true
+					}.encodeToString(
+						SlicerDTO(
+							images = paths.map { it.toAbsolutePath().toString() },
+							minimumHeight = settings.minimumHeight,
+							desiredHeight = settings.desiredHeight,
+							maximumHeight = settings.maximumHeight,
+							cutTolerance = settings.cutTolerance,
+							searchDirection = settings.searchDirection,
+							outputFolder = outputFolder.value,
+						)
+					)
+
+					// if outputFolder does not exist, create it
+					val outputPath = Paths.get(outputFolder.value)
+					if (!Files.exists(outputPath)) {
+						Files.createDirectories(outputPath)
+					}
+
+					val slicerSettings = "${outputFolder.value}\\slicer_settings.json"
+					Files.writeString(Paths.get(slicerSettings), jsonString)
+
+					val commands = CommandRunner.runInPowershell()
+
+//					commands.add("ls")
+
+					commands.add(pythonPath)
+					commands.add("'$scriptPath'")
+					commands.add("'$slicerSettings'") // path al file json dei settings
+
+					val process = ProcessBuilder(commands)
+						.directory(File(System.getProperty("user.dir")))
+						.start()
+//
+//					val process = PtyProcessBuilder()
+//						.setCommand(commands.toTypedArray())
+//						.setDirectory(System.getProperty("user.dir"))
+//						.start()
+
+					process.inputStream.bufferedReader().use { reader ->
+						reader.lines().forEach { line ->
+							println(CommandRunner.cleanAnsiCodes(line))
+						}
+					}
+
+					process.errorStream.bufferedReader().use { reader ->
+						reader.lines().forEach { line ->
+							println(CommandRunner.cleanAnsiCodes(line))
+						}
 					}
 
 					Globals.logger.info("Processing done for element: ${elements.value}")
