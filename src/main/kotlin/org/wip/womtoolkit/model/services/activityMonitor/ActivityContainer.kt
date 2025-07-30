@@ -38,6 +38,8 @@ class ActivityContainer {
 		}
 		override fun afterExecute(r: Runnable, t: Throwable?) {
 			super.afterExecute(r, t)
+			println("Task completed: $r")
+			println("Throwable: $t")
 			if (t == null) {
 				Globals.logger.info("A slice has been terminated successfully")
 				NotificationService.addNotification(NotificationData(
@@ -123,5 +125,9 @@ class ActivityContainer {
 
 	fun submit(task: Runnable): Future<*> {
 		return threadPool.submit(task)
+	}
+
+	fun execute(task: Runnable) {
+		threadPool.execute(task)
 	}
 }

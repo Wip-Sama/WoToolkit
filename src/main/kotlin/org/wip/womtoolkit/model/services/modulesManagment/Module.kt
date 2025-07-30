@@ -26,8 +26,6 @@ class Module() {
 	// get latest version (from source)
 	// get latest compatible version (from source) (optional)
 
-
-
 	val compatibleWithPlatform
 		get() = supportedPlatforms.value.containsKey(Globals.PLATFORM.name)
 

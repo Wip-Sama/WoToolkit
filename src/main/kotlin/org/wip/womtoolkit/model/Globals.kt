@@ -3,8 +3,10 @@ package org.wip.womtoolkit.model
 import org.wip.womtoolkit.model.enums.Platforms
 import org.wip.womtoolkit.utils.Version
 import java.lang.management.ManagementFactory
+import java.util.logging.FileHandler
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.util.logging.SimpleFormatter
 
 object Globals {
 	const val LOCALES_PATH: String = "/locales/"
@@ -35,6 +37,21 @@ object Globals {
 	val logger: Logger = Logger.getLogger(javaClass.getName())
 
 	init {
-		logger.level = Level.WARNING
+		logger.level = Level.ALL
+		try {
+			val logDir = java.io.File("Log")
+			if (!logDir.exists()) logDir.mkdirs()
+			// Trova il numero di apertura (file già presenti oggi)
+			val date = java.time.LocalDate.now().toString()
+			val existing = logDir.listFiles { f -> f.name.startsWith(date) && f.name.endsWith(".log") } ?: emptyArray()
+			val nApertura = existing.size + 1
+			val logFileName = "Log/${date}-$nApertura.log"
+			val fileHandler = FileHandler(logFileName, true)
+			fileHandler.level = Level.ALL
+			fileHandler.formatter = SimpleFormatter()
+			logger.addHandler(fileHandler)
+		} catch (e: Exception) {
+			e.printStackTrace()
+		}
 	}
 }

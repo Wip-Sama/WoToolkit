@@ -1,10 +1,9 @@
 package org.wip.womtoolkit.model.processing.slicer
 
-import com.pty4j.PtyProcessBuilder
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.serialization.json.Json
+import org.wip.womtoolkit.model.DataManager
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.enums.ThreadMode
@@ -13,7 +12,6 @@ import org.wip.womtoolkit.model.services.activityMonitor.ActivityMonitorService
 import org.wip.womtoolkit.model.services.notification.NotificationData
 import org.wip.womtoolkit.model.services.notification.NotificationService
 import org.wip.womtoolkit.utils.CommandRunner
-import java.io.File
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.file.Files
@@ -51,65 +49,50 @@ object Slicer {
 						fileChannels.add(channel)
 					}
 
-					Globals.logger.info("Tutti i file selezionati sono lockati a livello OS")
-
-					val pythonPath: String = "Modules\\python_portable\\WPy64-31350\\python\\python.exe"
-					val scriptPath: String = "Modules\\Slicer\\slicer_handler.py"
-
-					val jsonString = Json {
-						encodeDefaults = true
-					}.encodeToString(
-						SlicerDTO(
-							images = paths.map { it.toAbsolutePath().toString() },
-							minimumHeight = settings.minimumHeight,
-							desiredHeight = settings.desiredHeight,
-							maximumHeight = settings.maximumHeight,
-							cutTolerance = settings.cutTolerance,
-							searchDirection = settings.searchDirection,
-							outputFolder = outputFolder.value,
-						)
-					)
-
-					// if outputFolder does not exist, create it
 					val outputPath = Paths.get(outputFolder.value)
-					if (!Files.exists(outputPath)) {
-						Files.createDirectories(outputPath)
-					}
+					if (!Files.exists(outputPath)) { Files.createDirectories(outputPath) }
+
+					val pythonDir = "Modules\\python_portable\\WPy64-31350\\python"
+					val scriptPath = "Modules\\Slicer\\slicer_handler.py"
 
 					val slicerSettings = "${outputFolder.value}\\slicer_settings.json"
-					Files.writeString(Paths.get(slicerSettings), jsonString)
+					Files.writeString(Paths.get(slicerSettings), DataManager.customJsonSerializer.encodeToString(SlicerDTO(
+						images = paths.map { it.toAbsolutePath().toString() },
+						minimumHeight = settings.minimumHeight,
+						desiredHeight = settings.desiredHeight,
+						maximumHeight = settings.maximumHeight,
+						cutTolerance = settings.cutTolerance,
+						searchDirection = settings.searchDirection,
+						outputFolder = outputFolder.value,
+					)))
 
-					val commands = CommandRunner.runInPowershell()
-
-//					commands.add("ls")
-
-					commands.add(pythonPath)
-					commands.add("'$scriptPath'")
-					commands.add("'$slicerSettings'") // path al file json dei settings
-
-					val process = ProcessBuilder(commands)
-						.directory(File(System.getProperty("user.dir")))
+					val process = CommandRunner.customProcessBuilder().apply {
+							environment()["PATH"] = "$pythonDir;${System.getenv("PATH")}"
+							command(CommandRunner.runInPowershell().apply {
+								add("python -u $scriptPath $slicerSettings")
+							})
+						}
 						.start()
-//
-//					val process = PtyProcessBuilder()
-//						.setCommand(commands.toTypedArray())
-//						.setDirectory(System.getProperty("user.dir"))
-//						.start()
 
 					process.inputStream.bufferedReader().use { reader ->
 						reader.lines().forEach { line ->
-							println(CommandRunner.cleanAnsiCodes(line))
+							setProgress(CommandRunner.cleanAnsiCodes(line).toDouble())
 						}
 					}
 
 					process.errorStream.bufferedReader().use { reader ->
 						reader.lines().forEach { line ->
-							println(CommandRunner.cleanAnsiCodes(line))
+							Globals.logger.warning(line)
+							throw RuntimeException("Error while processing element, error: ${CommandRunner.cleanAnsiCodes(line)}")
 						}
 					}
 
-					Globals.logger.info("Processing done for element: ${elements.value}")
-
+					//check exitcode
+					val exitCode = process.waitFor()
+					if (exitCode != 0) {
+						Globals.logger.warning { "Slicer process exited with code $exitCode" }
+						throw RuntimeException("Slicer process exited with code $exitCode")
+					}
 
 				} catch (e: Exception) {
 					e.printStackTrace()
@@ -123,6 +106,10 @@ object Slicer {
 		}
 	}
 
+	private fun processThatOnlyThrowError(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
+		throw RuntimeException("test")
+	}
+
 	private fun processElement(element: ElementToProcess, settings: SlicerSingleUseSettings = SlicerSingleUseSettings()) {
 		ActivityMonitorService["slicer"].apply {
 			(if (settings.parallelExecution) ThreadMode.MULTI_THREAD else ThreadMode.SINGLE_THREAD).let {
@@ -131,7 +118,10 @@ object Slicer {
 				}
 			}
 			element.setProcessing(true)
-			submit { processElementImplementation(element, settings) }
+			// Usa execute per propagare l'eccezione a afterExecute
+			execute(Runnable { processElementImplementation(element, settings) })
+//			submit(Runnable { processThatOnlyThrowError(element, settings) })
+//			submit { processElementImplementation(element, settings) }
 		}
 	}
 
@@ -231,7 +221,7 @@ object Slicer {
 		if (!folderPath.toFile().isDirectory) {
 			NotificationService.addNotification(NotificationData(
 				localizedContent = "info.pathIsNotADirectory",
-				type = NotificationTypes.INFO,
+			 type = NotificationTypes.INFO,
 			))
 			Globals.logger.info { "Path $inputFolder is not a directory" }
 			return

@@ -4,6 +4,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.wip.womtoolkit.model.Globals
 import java.io.File
+import java.io.InputStream
 
 class CommandRunner {
 
@@ -13,13 +14,52 @@ class CommandRunner {
 			return ansiRegex.replace(input, "").replace("\r", "").replace("\n", "").trim()
 		}
 
-		fun runInPowershell(): MutableList<String> {
-			return mutableListOf("powershell.exe", "-Command")
+		/**
+		 *  Return the list of commands needed to run a command inside PowerShell
+		 *  */
+		fun runInPowershell(bypassExecutionPolicy: Boolean = false): MutableList<String> {
+			return mutableListOf("powershell.exe", "-Command").apply {
+				if (bypassExecutionPolicy) add("Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force") // Allow script execution
+			}
 		}
+
+		/**
+		 *  Return the list of commands needed to run a command inside Bash
+		 *  */
+		fun runInBash(): MutableList<String> {
+			return mutableListOf("bash", "-c")
+		}
+
+		/**
+		 *  Return the list of commands needed to run a command inside CMD
+		 *  */
+		fun runInCmd(): MutableList<String> {
+			return mutableListOf("cmd.exe", "/C")
+		}
+
+
+		fun customProcessBuilder(command: List<String>? = null): ProcessBuilder {
+			return ProcessBuilder(command ?: listOf())
+				.directory(File(System.getProperty("user.dir")))
+		}
+
+		fun setBruteForceReaderForStream(stream: InputStream, onOutput: (String) -> Unit, cleanAnsiCodes: Boolean = true) {
+			stream.bufferedReader().use { reader ->
+				var line: String?
+				do {
+					line = reader.readLine()
+					if (line != null) {
+						onOutput(if (cleanAnsiCodes) cleanAnsiCodes(line) else line)
+					} else {
+						Thread.sleep(500)
+					}
+				} while (line != null)
+			}
+		}
+
 	}
 
 	val scope = MainScope()
-
 
 	fun runCommand(command: String, onOutput: (String) -> Unit, onError: (String) -> Unit) {
 		scope.launch {
@@ -27,16 +67,6 @@ class CommandRunner {
 				val process = ProcessBuilder(command.split(" "))
 					.directory(File(System.getProperty("user.dir")))
 					.start()
-
-//              Brute force reader
-//				do {
-//					line = reader.readLine()
-//					if (line != null) {
-//      				onOutput(cleanAnsiCodes(line))
-//					} else {
-//						delay(500)
-//					}
-//				} while (process.isAlive || line != null)
 
 				process.inputStream.bufferedReader().use { reader ->
 					reader.lines().forEach { line ->
