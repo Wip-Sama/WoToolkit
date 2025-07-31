@@ -52,7 +52,7 @@ object Slicer {
 					val outputPath = Paths.get(outputFolder.value)
 					if (!Files.exists(outputPath)) { Files.createDirectories(outputPath) }
 
-					val pythonDir = "Modules\\python_portable\\WPy64-31350\\python"
+					val pythonDir = "Modules\\windowsPortablePython\\WPy64-31350\\python"
 					val scriptPath = "Modules\\Slicer\\slicer_handler.py"
 
 					val slicerSettings = "${outputFolder.value}\\slicer_settings.json"

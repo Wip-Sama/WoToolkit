@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleIntegerProperty
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import java.util.PriorityQueue
 
@@ -25,12 +25,12 @@ object NotificationService {
 	val size = _size.asStateFlow()
 
 	fun addNotification(notification: NotificationData) {
-		if (!ApplicationSettings.userSettings.notificationSettings.enabled.value) return
+		if (!ApplicationData.userSettings.notificationSettings.enabled.value) return
 		when(notification.type) {
-			NotificationTypes.ERROR -> if (!ApplicationSettings.userSettings.notificationSettings.showError.value) return
-			NotificationTypes.WARNING -> if (!ApplicationSettings.userSettings.notificationSettings.showWarning.value) return
-			NotificationTypes.INFO -> if (!ApplicationSettings.userSettings.notificationSettings.showInfo.value) return
-			NotificationTypes.SUCCESS -> if (!ApplicationSettings.userSettings.notificationSettings.showSuccess.value) return
+			NotificationTypes.ERROR -> if (!ApplicationData.userSettings.notificationSettings.showError.value) return
+			NotificationTypes.WARNING -> if (!ApplicationData.userSettings.notificationSettings.showWarning.value) return
+			NotificationTypes.INFO -> if (!ApplicationData.userSettings.notificationSettings.showInfo.value) return
+			NotificationTypes.SUCCESS -> if (!ApplicationData.userSettings.notificationSettings.showSuccess.value) return
 		}
 
 		val newQueue = PriorityQueue(_queue.value.comparator()).apply {

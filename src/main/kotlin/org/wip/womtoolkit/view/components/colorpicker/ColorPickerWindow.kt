@@ -21,7 +21,7 @@ import javafx.scene.paint.Stop
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.StringConverter
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.model.services.localization.Lsp
 import java.awt.Color.HSBtoRGB
@@ -94,8 +94,8 @@ class ColorPickerWindow() : BorderPane() {
 
 	private val lastMousePositionProperty = SimpleObjectProperty<Point2D?>(null)
 
-	var isHueSelectorProperty: BooleanProperty = SimpleBooleanProperty(ApplicationSettings.userSettings.colorPickerSettings.selectorMode.value)
-	var isAlphaAvailableProperty: BooleanProperty = SimpleBooleanProperty(ApplicationSettings.userSettings.colorPickerSettings.alphaAvailable.value)
+	var isHueSelectorProperty: BooleanProperty = SimpleBooleanProperty(ApplicationData.userSettings.colorPickerSettings.selectorMode.value)
+	var isAlphaAvailableProperty: BooleanProperty = SimpleBooleanProperty(ApplicationData.userSettings.colorPickerSettings.alphaAvailable.value)
 
 	constructor(color: Color) : this() {
 		selectedColorProperty.value = color

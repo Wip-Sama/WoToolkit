@@ -9,7 +9,7 @@ import javafx.scene.control.Separator
 import javafx.scene.control.TextField
 import javafx.scene.control.TextFormatter
 import javafx.scene.layout.VBox
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.view.components.LocalizedLabel
 import org.wip.womtoolkit.view.components.NumberTextField
@@ -44,32 +44,32 @@ class SlicerSettings : VBox() {
 				val minimumHeightField = lookup("#minimumHeightField") as NumberTextField
 				val desiredHeightField = lookup("#desiredHeightField") as NumberTextField
 				val maximumHeightField = lookup("#maximumHeightField") as NumberTextField
-				minimumHeightField.text = ApplicationSettings.slicerSettings.minimumHeight.value.toString()
-				desiredHeightField.text = ApplicationSettings.slicerSettings.desiredHeight.value.toString()
-				maximumHeightField.text = ApplicationSettings.slicerSettings.maximumHeight.value.toString()
+				minimumHeightField.text = ApplicationData.slicerSettings.minimumHeight.value.toString()
+				desiredHeightField.text = ApplicationData.slicerSettings.desiredHeight.value.toString()
+				maximumHeightField.text = ApplicationData.slicerSettings.maximumHeight.value.toString()
 				minimumHeightField.focusedProperty().addListener { _, _, newValue ->
 					if (!newValue) {
-						ApplicationSettings.slicerSettings.minimumHeight.value = minimumHeightField.value.toInt()
+						ApplicationData.slicerSettings.minimumHeight.value = minimumHeightField.value.toInt()
 					}
 				}
 				desiredHeightField.focusedProperty().addListener { _, _, newValue ->
 					if (!newValue) {
-						ApplicationSettings.slicerSettings.desiredHeight.value = desiredHeightField.value.toInt()
+						ApplicationData.slicerSettings.desiredHeight.value = desiredHeightField.value.toInt()
 					}
 				}
 				maximumHeightField.focusedProperty().addListener { _, _, newValue ->
 					if (!newValue) {
-						ApplicationSettings.slicerSettings.maximumHeight.value = maximumHeightField.value.toInt()
+						ApplicationData.slicerSettings.maximumHeight.value = maximumHeightField.value.toInt()
 					}
 				}
 			}
 		}
 		subFolderSetting.apply {
-			quickSetting = Switch(ApplicationSettings.slicerSettings.saveInSubFolder.value).apply {
+			quickSetting = Switch(ApplicationData.slicerSettings.saveInSubFolder.value).apply {
 				trueLocalization = "settingsPage.slicer.subFolder.enabled"
 				falseLocalization = "settingsPage.slicer.subFolder.disabled"
 				stateProperty.addListener { _, _, newValue ->
-					ApplicationSettings.slicerSettings.saveInSubFolder.value = newValue
+					ApplicationData.slicerSettings.saveInSubFolder.value = newValue
 				}
 			}
 			expandableContent = SingleSettingGrid().apply {
@@ -77,9 +77,9 @@ class SlicerSettings : VBox() {
 					localizationKey = "settingsPage.slicer.subFolder.folderName"
 				}, 0, 0)
 				add(TextField().apply {
-					text = ApplicationSettings.slicerSettings.subFolderName.value
+					text = ApplicationData.slicerSettings.subFolderName.value
 					focusedProperty().addListener { _, _, newValue ->
-						ApplicationSettings.slicerSettings.subFolderName.value = text
+						ApplicationData.slicerSettings.subFolderName.value = text
 					}
 					textFormatter = TextFormatter<String> { change ->
 						if (change.controlNewText.isEmpty()) {
@@ -96,11 +96,11 @@ class SlicerSettings : VBox() {
 			}
 		}
 		archiveSetting.apply {
-			quickSetting = Switch(ApplicationSettings.slicerSettings.saveInArchive.value).apply {
+			quickSetting = Switch(ApplicationData.slicerSettings.saveInArchive.value).apply {
 				trueLocalization = "settingsPage.slicer.archive.enabled"
 				falseLocalization = "settingsPage.slicer.archive.disabled"
 				stateProperty.addListener { _, _, newValue ->
-					ApplicationSettings.slicerSettings.saveInArchive.value = newValue
+					ApplicationData.slicerSettings.saveInArchive.value = newValue
 				}
 			}
 			expandableContent = VBox().apply {
@@ -111,9 +111,9 @@ class SlicerSettings : VBox() {
 							localizationKey = "settingsPage.slicer.archive.archiveName"
 						}, 0, 0)
 						add(TextField().apply {
-							text = ApplicationSettings.slicerSettings.archiveName.value
+							text = ApplicationData.slicerSettings.archiveName.value
 							focusedProperty().addListener { _, _, newValue ->
-								ApplicationSettings.slicerSettings.archiveName.value = text
+								ApplicationData.slicerSettings.archiveName.value = text
 							}
 							textFormatter = TextFormatter<String> { change ->
 								if (change.controlNewText.isEmpty()) {
@@ -140,9 +140,9 @@ class SlicerSettings : VBox() {
 									show()
 								}
 							}
-							value = ApplicationSettings.slicerSettings.archiveFormat.value
+							value = ApplicationData.slicerSettings.archiveFormat.value
 							valueProperty().addListener { _, _, newValue ->
-								ApplicationSettings.slicerSettings.archiveFormat.value = newValue
+								ApplicationData.slicerSettings.archiveFormat.value = newValue
 							}
 							items.addAll(Globals.ARCHIVE_OUTPUT_FORMATS)
 						}, 1, 0)
@@ -151,11 +151,11 @@ class SlicerSettings : VBox() {
 			}
 		}
 		parallelExecutionSetting.apply {
-			quickSetting = Switch(ApplicationSettings.slicerSettings.parallelExecution.value).apply {
+			quickSetting = Switch(ApplicationData.slicerSettings.parallelExecution.value).apply {
 				trueLocalization = "settingsPage.slicer.parallelExecution.enabled"
 				falseLocalization = "settingsPage.slicer.parallelExecution.disabled"
 				stateProperty.addListener { _, _, newValue ->
-					ApplicationSettings.slicerSettings.parallelExecution.value = newValue
+					ApplicationData.slicerSettings.parallelExecution.value = newValue
 				}
 			}
 		}
@@ -167,9 +167,9 @@ class SlicerSettings : VBox() {
 						show()
 					}
 				}
-				value = ApplicationSettings.slicerSettings.outputFormat.value
+				value = ApplicationData.slicerSettings.outputFormat.value
 				valueProperty().addListener { _, _, newValue ->
-					ApplicationSettings.slicerSettings.outputFormat.value = newValue
+					ApplicationData.slicerSettings.outputFormat.value = newValue
 				}
 				items.addAll(Globals.IMAGE_OUTPUT_FORMATS)
 			}
@@ -182,10 +182,10 @@ class SlicerSettings : VBox() {
 				minimum = 0.0
 				defaultValue = 20.0
 				maximum = 255.0
-				text = ApplicationSettings.slicerSettings.cutTolerance.value.toString()
+				text = ApplicationData.slicerSettings.cutTolerance.value.toString()
 				focusedProperty().addListener { _, _, newValue ->
 					if (!newValue) {
-						ApplicationSettings.slicerSettings.cutTolerance.value = value.toInt()
+						ApplicationData.slicerSettings.cutTolerance.value = value.toInt()
 					}
 				}
 			}

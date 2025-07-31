@@ -17,7 +17,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.util.Duration
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.notification.NotificationService
@@ -104,7 +104,7 @@ class Converter : BorderPane() {
 
 						fun animateNode(node: Node, deltaY: Double, onFinished: (() -> Unit)? = null) {
 							nodeTimelines[node]?.stop()
-							val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 100.0
+							val animationDuration = if (ApplicationData.userSettings.disableAnimations.value) 1.0 else 100.0
 							val timeline = Timeline(
 								KeyFrame(Duration.ZERO, KeyValue(node.translateYProperty(), 0.0)),
 								KeyFrame(Duration.millis(animationDuration), KeyValue(node.translateYProperty(), deltaY))

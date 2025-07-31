@@ -15,8 +15,8 @@ data class ModuleExpectedResult(
 	@Serializable(with = MutableStateFlowSerializer::class) val command: MutableStateFlow<String> = MutableStateFlow(""),
 	@Serializable(with = MutableStateFlowSerializer::class) val regex: MutableStateFlow<String> = MutableStateFlow(""),
 	@Serializable(with = MutableStateFlowSerializer::class) val hash: MutableStateFlow<String> = MutableStateFlow(""),
-	@Serializable(with = MutableStateFlowListSerializer::class) val search: MutableStateFlow<List<String>> = MutableStateFlow(listOf()),
-	@Serializable(with = MutableStateFlowModuleExpectedResultSerializer::class) val expectedResult: MutableStateFlow<ModuleExpectedResult> = MutableStateFlow(ModuleExpectedResult()),
+	@Serializable(with = MutableStateFlowSerializer::class) val search: MutableStateFlow<List<String>> = MutableStateFlow(listOf()),
+	@Serializable(with = MutableStateFlowSerializer::class) val expectedResult: MutableStateFlow<ModuleExpectedResult>? = null,
 )
 
 object MutableStateFlowModuleExpectedResultSerializer : KSerializer<MutableStateFlow<ModuleExpectedResult>> {

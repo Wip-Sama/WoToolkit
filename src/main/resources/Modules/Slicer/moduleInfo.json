@@ -1,0 +1,54 @@
+{
+  "name": "Slicer",
+  "description": "A module for slicing webtoons vertically trying to avoid cutting important stuff.",
+  "version": "0.1.0.0",
+  "toolkitVersion": "0.0.0.1-",
+  "source": "",
+  "authors": [
+    "wip",
+    "ping"
+  ],
+  "supportedPlatforms": {
+    "Windows": {
+      "dependencies": {
+        "windowsPortablePython": "0.1.0.0-"
+      },
+      "installation": [
+        {
+          "type": "command",
+          "command": "{windowsPortablePython.pip} install -r requirements.txt",
+          "expectedResult": {
+            "type": "command",
+            "command": "{windowsPortablePython.pip} list",
+            "expectedResult": {
+              "type": "search",
+              "search": [
+                "Pillow",
+                "requests",
+                "beautifulsoup4"
+              ]
+            }
+          }
+        }
+      ],
+      "validation": [
+        {
+          "type": "hash",
+          "file": "requirements.txt",
+          "hash": "sha256:3f8b1c2d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p8q9r0s1"
+        },
+        {
+          "type": "hash",
+          "file": "requirements.txt",
+          "hash": "sha256:3f8b1c2d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8g9h0i1j2k3l4m5n6o7p8q9r0s1"
+        }
+      ],
+      "interfaces": {
+        "slicerHandler": {
+          "type": "command",
+          "command": "{windowsPortablePython.python} slicer_handler.py"
+        }
+      }
+    }
+  }
+}

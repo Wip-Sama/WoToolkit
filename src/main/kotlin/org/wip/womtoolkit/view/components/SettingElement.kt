@@ -19,7 +19,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.Duration
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.services.localization.Lsp
 
@@ -174,7 +174,7 @@ class SettingElement() : AnchorPane() {
         else
             displayPane.height
 
-        val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 200.0
+        val animationDuration = if (ApplicationData.userSettings.disableAnimations.value) 1.0 else 200.0
         Timeline(
             KeyFrame(Duration.ZERO,
                 {

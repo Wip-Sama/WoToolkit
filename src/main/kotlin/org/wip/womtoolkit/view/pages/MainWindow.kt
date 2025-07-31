@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.services.localization.LocalizationService
 import org.wip.womtoolkit.view.components.CustomTitleBar
 import org.wip.womtoolkit.view.components.collapsablesidebarmenu.CollapsableActivityIndicator
@@ -72,34 +72,34 @@ object MainWindow {
 	fun _updateStyles(scene: Scene) {
 		scene.apply {
 			stylesheets.clear()
-			val cssUrl = workingJavaClass.getResource("/view/styles/${ApplicationSettings.userSettings.theme.value}.css")
+			val cssUrl = workingJavaClass.getResource("/view/styles/${ApplicationData.userSettings.theme.value}.css")
 			stylesheets.add(cssUrl?.toExternalForm())
-			val accentColor = ApplicationSettings.userSettings.accent.value.toString().replace("0x", "#")
+			val accentColor = ApplicationData.userSettings.accent.value.toString().replace("0x", "#")
 			root.style = "-womt-accent: $accentColor;"
 		}
 	}
 
 	fun _updateLocale() {
-		LocalizationService.currentLocale = ApplicationSettings.userSettings.localization.value
+		LocalizationService.currentLocale = ApplicationData.userSettings.localization.value
 	}
 
 	fun loadSettings(scene: Scene, mainWindow: MainWindowInterface) {
 		scope.launch {
-			ApplicationSettings.userSettings.theme.collectLatest { newTheme ->
+			ApplicationData.userSettings.theme.collectLatest { newTheme ->
 				withContext(Dispatchers.JavaFx) {
 					mainWindow.updateStyles()
 				}
 			}
 		}
 		scope.launch {
-			ApplicationSettings.userSettings.accent.collectLatest { newAccent ->
+			ApplicationData.userSettings.accent.collectLatest { newAccent ->
 				withContext(Dispatchers.JavaFx) {
 					mainWindow.updateStyles()
 				}
 			}
 		}
 		scope.launch {
-			ApplicationSettings.userSettings.localization.collectLatest { newLocale ->
+			ApplicationData.userSettings.localization.collectLatest { newLocale ->
 				withContext(Dispatchers.JavaFx) {
 					_updateLocale()
 				}

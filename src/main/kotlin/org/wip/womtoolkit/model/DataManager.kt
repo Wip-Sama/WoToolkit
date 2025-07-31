@@ -6,13 +6,25 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.localization.LocalizationService
+import org.wip.womtoolkit.model.services.modulesManagment.ModuleManagementService
+import org.wip.womtoolkit.model.services.modulesManagment.moduleDTO.ModuleInfo
+import org.wip.womtoolkit.model.services.notification.NotificationData
+import org.wip.womtoolkit.model.services.notification.NotificationService
 import org.wip.womtoolkit.utils.serializers.ColorSerializer
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
+import java.nio.file.Paths
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
 
 object DataManager {
 	val jarDir: String = System.getProperty("user.dir")
 	val dataFolder: Path = Path.of(jarDir, "Data")
+	val modulesFolder: Path = Path.of(jarDir, "Modules")
+	val logFolder: Path = Path.of(jarDir, "Log")
 	val applicationSettings: Path = Path.of(jarDir, "Data", "applicationSettings.json")
 
 	val module = SerializersModule {
@@ -22,19 +34,29 @@ object DataManager {
 
 	val customJsonSerializer = Json {
 		serializersModule = module
-//		ignoreUnknownKeys = true
 		prettyPrint = true
 		encodeDefaults = false // Could cause circular serialization loop
 		isLenient = true // Allows for lenient parsing of JSON
+//		ignoreUnknownKeys = true
 	}
 
 	fun init() {
 		// Initialization phase
-		validateOrCreateDataFolder()
-		validateOrCreateApplicationSettingsJSON()
+		// Data
+		validateOrCreateFolder(dataFolder)
+		validateOrCreateApplicationDataJSON()
+
+		// Modules
+		validateOrCreateFolder(modulesFolder)
+		loadAndValidateExistingModules()
+		addLoadAndValidateDefaultMissingModules()
+
+
+		// Log
+		validateOrCreateFolder(logFolder)
 
 		// Loading phase
-		loadApplicationSettingsJSON()
+		loadApplicationDataJSON()
 
 		// Forced sync phase
 		LocalizationService.currentLocaleProperty.addListener { _, _, newLocale -> }
@@ -42,25 +64,61 @@ object DataManager {
 
 	fun close() {
 		writeJson()
+		updateModulesJson()
 	}
 
-	private fun validateOrCreateDataFolder() {
+	private fun validateOrCreateFolder(folder: Path) {
 		//Is invalid
-		if (!checkItsDirectoryAndICanReadWrite(dataFolder)) {
+		if (!checkItsDirectoryAndICanReadWrite(folder)) {
 			try {
-				Files.createDirectories(dataFolder)
+				Files.createDirectories(folder)
 			} catch (e: Exception) {
 				//TODO: something better than this
-				Globals.logger?.warning("Failed to create data folder: $dataFolder")
-				throw IllegalStateException("Failed to create data folder: $dataFolder", e)
+				Globals.logger.severe("Failed to create folder: $folder, error: $e")
+				NotificationService.addNotification(NotificationData(
+					localizedContent = "error.failedToCreateFolder",
+					type = NotificationTypes.ERROR,
+					urgency = 1,
+				))
+				throw IllegalStateException("Failed to create folder: $folder", e)
 			}
 		}
 	}
 
-	private fun validateOrCreateApplicationSettingsJSON() {
+	private fun loadAndValidateExistingModules() {
+		modulesFolder.listDirectoryEntries().forEach { file ->
+			if (!file.isDirectory()) return@forEach
+			if (!checkItsDirectoryAndICanReadWrite(file)) {
+				Globals.logger.warning("Module folder is not valid or not readable/writable: $file")
+				return@forEach
+			}
+			file.listDirectoryEntries().filter { it.endsWith("moduleInfo.json") }.forEach { moduleInfo ->
+				try {
+					val moduleInfo: ModuleInfo = customJsonSerializer.decodeFromString(
+						ModuleInfo.serializer(),
+						Files.readString(moduleInfo)
+					)
+					ModuleManagementService.addOrUpdateModule(moduleInfo)
+				} catch (e: Exception) {
+					Globals.logger.warning("Failed to load module info from $moduleInfo: ${e.message}")
+					NotificationService.addNotification(NotificationData(
+						localizedContent = "error.failedToLoadModule",
+						type = NotificationTypes.ERROR,
+						urgency = 1,
+					))
+				}
+			}
+		}
+	}
+
+	private fun addLoadAndValidateDefaultMissingModules() {
+		//TODO()
+	}
+
+	private fun validateOrCreateApplicationDataJSON() {
 		if (!checkItsFileAndICanReadWrite(applicationSettings)) {
 			try {
-				val out = customJsonSerializer.encodeToString(ApplicationSettings)
+				val out = customJsonSerializer.encodeToString(ApplicationData)
 				Files.createFile(applicationSettings).also {
 					Files.write(applicationSettings, out.toByteArray())
 				}
@@ -99,23 +157,35 @@ object DataManager {
 		return true
 	}
 
-	private fun loadApplicationSettingsJSON() {
+	private fun loadApplicationDataJSON() {
 		try {
 			val jsonString = Files.readString(applicationSettings)
-			customJsonSerializer.decodeFromString(ApplicationSettings.serializer(), jsonString)
-			Globals.logger.info("ApplicationSettings loaded successfully: $ApplicationSettings")
+			customJsonSerializer.decodeFromString(ApplicationData.serializer(), jsonString)
+			Globals.logger.info("ApplicationData loaded successfully: $ApplicationData")
 		} catch (e: Exception) {
-			Globals.logger.warning("Failed to load ApplicationSettings, using defaults: ${e.message}")
+			Globals.logger.warning("Failed to load ApplicationData, using defaults: ${e.message}")
 		}
 	}
 
 	private fun writeJson() {
 		try {
-			val jsonString = customJsonSerializer.encodeToString(ApplicationSettings)
+			val jsonString = customJsonSerializer.encodeToString(ApplicationData)
 			Globals.logger.info(jsonString)
 			Files.writeString(applicationSettings, jsonString)
 		} catch (e: Exception) {
 			throw IllegalStateException("Failed to write JSON database", e)
+		}
+	}
+
+	private fun updateModulesJson() {
+		for (module in ModuleManagementService.modules) {
+			try {
+				val moduleInfoPath = Paths.get(modulesFolder.absolutePathString(), module.value.name.value, "moduleInfo.json")
+				val jsonString = customJsonSerializer.encodeToString(ModuleInfo.serializer(), module.value)
+				Files.writeString(moduleInfoPath, jsonString)
+			} catch (e: Exception) {
+				Globals.logger.warning("Failed to write module info for ${module.value.name.value}: ${e.message}")
+			}
 		}
 	}
 }

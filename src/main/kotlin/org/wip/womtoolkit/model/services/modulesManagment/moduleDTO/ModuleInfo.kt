@@ -16,7 +16,7 @@ class ModuleInfo() {
 	@Serializable(with = MutableStateFlowSerializer::class) val toolkitVersion: MutableStateFlow<String> = MutableStateFlow( "")
 	// this version follows this format "epoch.major.minor.patch"
 	@Serializable(with = MutableStateFlowSerializer::class) val source: MutableStateFlow<String> = MutableStateFlow( "")
-	@Serializable(with = MutableStateFlowListSerializer::class) val authors: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+	@Serializable(with = MutableStateFlowSerializer::class) val authors: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
 	@Serializable(with = MutableStateFlowHashmapStringModulePlatformSerializer::class) val supportedPlatforms: MutableStateFlow<HashMap<String, ModulePlatform>> = MutableStateFlow(hashMapOf())
 
 	// get latest version (from source)

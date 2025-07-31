@@ -11,7 +11,7 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.util.Duration
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import kotlin.properties.Delegates
 
 //TODO: Add documentation
@@ -89,7 +89,7 @@ open class CollapsableSidebarMenu : AnchorPane() {
         addComponent(collapseToggle, Positions.TOP)
         collapseToggle.onActionProperty.addListener { _, _, _ ->
             val endWidth = if (!isCollapsed) 32.0+24 else 150.0
-            val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 100.0
+            val animationDuration = if (ApplicationData.userSettings.disableAnimations.value) 1.0 else 100.0
             Timeline(
                 KeyFrame(
                     Duration.millis(animationDuration),
@@ -162,7 +162,7 @@ open class CollapsableSidebarMenu : AnchorPane() {
 
         val y = computeSelectedIndicatorY(item)
         val midY = (y + selected_indicator.layoutY - selected_indicator.height / 2) / 2
-        val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 40.0
+        val animationDuration = if (ApplicationData.userSettings.disableAnimations.value) 1.0 else 40.0
         Timeline(
             KeyFrame(Duration.ZERO,
                 KeyValue(selected_indicator.prefHeightProperty(), selectedIndicatorOriginalSize.second),

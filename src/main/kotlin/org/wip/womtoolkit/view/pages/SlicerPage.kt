@@ -22,7 +22,7 @@ import javafx.stage.FileChooser
 import javafx.util.Duration
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.processing.slicer.Slicer
 import org.wip.womtoolkit.model.processing.slicer.SlicerSingleUseSettings
@@ -186,7 +186,7 @@ class SlicerPage : BorderPane() {
             else
                 advancedModeToggle.height
 
-            val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 200.0
+            val animationDuration = if (ApplicationData.userSettings.disableAnimations.value) 1.0 else 200.0
             Timeline(
                 KeyFrame(
                     Duration.millis(animationDuration),
@@ -228,36 +228,36 @@ class SlicerPage : BorderPane() {
     }
 
     private fun initializeDefaults() {
-        minimumHeight.text = ApplicationSettings.slicerSettings.minimumHeight.value.toString()
-        desiredHeight.text = ApplicationSettings.slicerSettings.desiredHeight.value.toString()
-        maximumHeight.text = ApplicationSettings.slicerSettings.maximumHeight.value.toString()
-        searchDirection.state = ApplicationSettings.slicerSettings.searchDirection.value
-        saveInSubfolder.state = ApplicationSettings.slicerSettings.saveInSubFolder.value
-        subfolderName.text = ApplicationSettings.slicerSettings.subFolderName.value
-        saveAsArchive.state = ApplicationSettings.slicerSettings.saveInArchive.value
-        archiveName.text = ApplicationSettings.slicerSettings.archiveName.value
+        minimumHeight.text = ApplicationData.slicerSettings.minimumHeight.value.toString()
+        desiredHeight.text = ApplicationData.slicerSettings.desiredHeight.value.toString()
+        maximumHeight.text = ApplicationData.slicerSettings.maximumHeight.value.toString()
+        searchDirection.state = ApplicationData.slicerSettings.searchDirection.value
+        saveInSubfolder.state = ApplicationData.slicerSettings.saveInSubFolder.value
+        subfolderName.text = ApplicationData.slicerSettings.subFolderName.value
+        saveAsArchive.state = ApplicationData.slicerSettings.saveInArchive.value
+        archiveName.text = ApplicationData.slicerSettings.archiveName.value
         archiveFormat.items.addAll(Globals.ARCHIVE_OUTPUT_FORMATS)
-        archiveFormat.value = ApplicationSettings.slicerSettings.archiveFormat.value
-        parallelExecution.state = ApplicationSettings.slicerSettings.parallelExecution.value
+        archiveFormat.value = ApplicationData.slicerSettings.archiveFormat.value
+        parallelExecution.state = ApplicationData.slicerSettings.parallelExecution.value
         outputFormat.items.addAll(Globals.IMAGE_OUTPUT_FORMATS)
-        outputFormat.value = ApplicationSettings.slicerSettings.outputFormat.value
-        cutTolerance.text = ApplicationSettings.slicerSettings.cutTolerance.value.toString()
+        outputFormat.value = ApplicationData.slicerSettings.outputFormat.value
+        cutTolerance.text = ApplicationData.slicerSettings.cutTolerance.value.toString()
     }
 
     private fun createSingleUseSettings(): SlicerSingleUseSettings {
         return SlicerSingleUseSettings(
-            minimumHeight = minimumHeight.text.toIntOrNull() ?: ApplicationSettings.slicerSettings.minimumHeight.value,
-            desiredHeight = desiredHeight.text.toIntOrNull() ?: ApplicationSettings.slicerSettings.desiredHeight.value,
-            maximumHeight = maximumHeight.text.toIntOrNull() ?: ApplicationSettings.slicerSettings.maximumHeight.value,
+            minimumHeight = minimumHeight.text.toIntOrNull() ?: ApplicationData.slicerSettings.minimumHeight.value,
+            desiredHeight = desiredHeight.text.toIntOrNull() ?: ApplicationData.slicerSettings.desiredHeight.value,
+            maximumHeight = maximumHeight.text.toIntOrNull() ?: ApplicationData.slicerSettings.maximumHeight.value,
             searchDirection = searchDirection.state,
             saveInSubfolder = saveInSubfolder.state,
-            subfolderName = subfolderName.text.ifBlank { ApplicationSettings.slicerSettings.subFolderName.value },
+            subfolderName = subfolderName.text.ifBlank { ApplicationData.slicerSettings.subFolderName.value },
             saveAsArchive = saveAsArchive.state,
-            archiveName = archiveName.text.ifBlank { ApplicationSettings.slicerSettings.archiveName.value },
-            archiveFormat = archiveFormat.value ?: ApplicationSettings.slicerSettings.archiveFormat.value,
+            archiveName = archiveName.text.ifBlank { ApplicationData.slicerSettings.archiveName.value },
+            archiveFormat = archiveFormat.value ?: ApplicationData.slicerSettings.archiveFormat.value,
             parallelExecution = parallelExecution.state,
-            outputFormat = outputFormat.value ?: ApplicationSettings.slicerSettings.outputFormat.value,
-            cutTolerance = cutTolerance.text.toIntOrNull() ?: ApplicationSettings.slicerSettings.cutTolerance.value
+            outputFormat = outputFormat.value ?: ApplicationData.slicerSettings.outputFormat.value,
+            cutTolerance = cutTolerance.text.toIntOrNull() ?: ApplicationData.slicerSettings.cutTolerance.value
         )
     }
 }

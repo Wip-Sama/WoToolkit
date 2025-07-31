@@ -10,14 +10,15 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowHashmapStringStringSerializer
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowListSerializer
+import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 
 @Serializable
-class ModulePlatform {
-	@Serializable(with = MutableStateFlowHashmapStringStringSerializer::class) val dependencies: MutableStateFlow<HashMap<String, String>> = MutableStateFlow(hashMapOf())
-	@Serializable(with = MutableStateFlowListSerializer::class) val installation: MutableStateFlow<List<ModuleInstallation>> = MutableStateFlow(listOf())
-	@Serializable(with = MutableStateFlowListSerializer::class) val validation: MutableStateFlow<List<ModuleValidation>> = MutableStateFlow(listOf())
-	@Serializable(with = MutableStateFlowHashmapStringModulePlatformSerializer::class) val interfaces: MutableStateFlow<HashMap<String, ModuleInterface>> = MutableStateFlow(hashMapOf())
-}
+data class ModulePlatform (
+	@Serializable(with = MutableStateFlowHashmapStringStringSerializer::class) val dependencies: MutableStateFlow<HashMap<String, String>> = MutableStateFlow(hashMapOf()),
+	@Serializable(with = MutableStateFlowSerializer::class) val installation: MutableStateFlow<List<ModuleInstallation>> = MutableStateFlow(listOf()),
+	@Serializable(with = MutableStateFlowSerializer::class) val validation: MutableStateFlow<List<ModuleValidation>> = MutableStateFlow(listOf()),
+	@Serializable(with = MutableStateFlowSerializer::class) val interfaces: MutableStateFlow<HashMap<String, ModuleInterface>> = MutableStateFlow(hashMapOf()),
+)
 
 //HashMap<String, ModulePlatform>
 object MutableStateFlowHashmapStringModulePlatformSerializer : KSerializer<MutableStateFlow<HashMap<String, ModulePlatform>>> {

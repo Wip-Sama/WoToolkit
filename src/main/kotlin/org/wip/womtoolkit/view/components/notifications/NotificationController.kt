@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.services.localization.Lsp
 import org.wip.womtoolkit.model.services.notification.NotificationService
 import org.wip.womtoolkit.model.services.notification.NotificationData
@@ -119,7 +119,7 @@ class NotificationController: BorderPane() {
 		node.opacity = 0.0
 		notificationContainer.children.add(node)
 
-		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+		val time = when(ApplicationData.userSettings.disableAnimations.value) {
 			true -> 1.0
 			false -> 200.0
 		}
@@ -130,7 +130,7 @@ class NotificationController: BorderPane() {
 	}
 
 	fun removeWithAnimation(node: Node) {
-		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+		val time = when(ApplicationData.userSettings.disableAnimations.value) {
 			true -> 1.0
 			false -> 200.0
 		}
@@ -144,7 +144,7 @@ class NotificationController: BorderPane() {
 	}
 
 	fun showDispenserWithAnimation() {
-		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+		val time = when(ApplicationData.userSettings.disableAnimations.value) {
 			true -> 1.0
 			false -> 200.0
 		}
@@ -167,7 +167,7 @@ class NotificationController: BorderPane() {
 	}
 
 	fun hideDispenserWithAnimation() {
-		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+		val time = when(ApplicationData.userSettings.disableAnimations.value) {
 			true -> 1.0
 			false -> 200.0
 		}

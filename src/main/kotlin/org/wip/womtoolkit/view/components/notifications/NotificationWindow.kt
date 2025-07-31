@@ -14,7 +14,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.util.Duration
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.notification.NotificationData
 import org.wip.womtoolkit.view.components.LocalizedLabel
@@ -107,7 +107,7 @@ class NotificationWindow() : BorderPane() {
 	}
 
 	fun destroy() {
-		val time = when(ApplicationSettings.userSettings.disableAnimations.value) {
+		val time = when(ApplicationData.userSettings.disableAnimations.value) {
 			true -> 1.0
 			false -> 50.0
 		}

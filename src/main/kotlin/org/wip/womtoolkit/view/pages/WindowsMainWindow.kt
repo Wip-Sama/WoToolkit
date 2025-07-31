@@ -22,7 +22,7 @@ import xss.it.nfx.WindowState
 import java.net.URL
 import java.util.*
 import kotlinx.coroutines.MainScope
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.view.components.CustomTitleBar
 
 open class WindowsMainWindow : AbstractNfxUndecoratedWindow(), Initializable, MainWindowInterface {
@@ -72,10 +72,10 @@ open class WindowsMainWindow : AbstractNfxUndecoratedWindow(), Initializable, Ma
 		MainWindow._updateStyles(scene)
 
 		captionColor = Color.valueOf(
-			cssReader.getHexFromCssFile("/view/styles/${ApplicationSettings.userSettings.theme.value}.css", "womt-text") ?: "#000000"
+			cssReader.getHexFromCssFile("/view/styles/${ApplicationData.userSettings.theme.value}.css", "womt-text") ?: "#000000"
 		)
 		titleBarColor = Color.valueOf(
-			cssReader.getHexFromCssFile("/view/styles/${ApplicationSettings.userSettings.theme.value}.css", "womt-background-dark") ?: "#000000"
+			cssReader.getHexFromCssFile("/view/styles/${ApplicationData.userSettings.theme.value}.css", "womt-background-dark") ?: "#000000"
 		)
 	}
 

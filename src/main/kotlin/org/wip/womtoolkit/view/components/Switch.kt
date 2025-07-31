@@ -16,7 +16,7 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.Pane
 import javafx.util.Duration
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.services.localization.Lsp
 import kotlin.properties.Delegates
 
@@ -59,7 +59,7 @@ class Switch() : BorderPane() {
 		})
 
 		pressedProperty().addListener { observable, oldValue, newValue ->
-			val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 100.0
+			val animationDuration = if (ApplicationData.userSettings.disableAnimations.value) 1.0 else 100.0
 			if (newValue == true) {
 				Timeline(
 					KeyFrame(Duration.millis(animationDuration),
@@ -83,7 +83,7 @@ class Switch() : BorderPane() {
 
 	private fun animateTransition(value: Boolean = stateProperty.value) {
 		val endPosition = if (value == true) switchStateHolder.width-switchStateIndicator.width else 0
-		val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 100.0
+		val animationDuration = if (ApplicationData.userSettings.disableAnimations.value) 1.0 else 100.0
 		Timeline(
 			KeyFrame(Duration.ZERO, { AnchorPane.clearConstraints(switchStateIndicator) } ),
 			KeyFrame(

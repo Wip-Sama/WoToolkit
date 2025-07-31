@@ -13,7 +13,7 @@ import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 data class ModuleInstallation (
 	@Serializable(with = MutableStateFlowSerializer::class) val type: MutableStateFlow<String> = MutableStateFlow(""),
 	@Serializable(with = MutableStateFlowSerializer::class) val command: MutableStateFlow<String> = MutableStateFlow(""),
-	@Serializable(with = MutableStateFlowSerializer::class) val expectedResult: MutableStateFlow<String> = MutableStateFlow(""),
+	@Serializable(with = MutableStateFlowSerializer::class) val expectedResult: MutableStateFlow<ModuleExpectedResult> = MutableStateFlow(ModuleExpectedResult()),
 )
 
 //List<ModuleInstallation>

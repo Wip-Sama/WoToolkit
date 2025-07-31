@@ -17,7 +17,7 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.util.Duration
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import java.util.ArrayList
 import java.util.Collections
 import java.util.Random
@@ -110,7 +110,7 @@ fun main(primaryStage: Stage) {
 
 					fun animateNode(node: Node, deltaY: Double, onFinished: (() -> Unit)? = null) {
 						nodeTimelines[node]?.stop()
-						val animationDuration = if (ApplicationSettings.userSettings.disableAnimations.value) 1.0 else 100.0
+						val animationDuration = if (ApplicationData.userSettings.disableAnimations.value) 1.0 else 100.0
 						val timeline = Timeline(
 							KeyFrame(Duration.ZERO, KeyValue(node.translateYProperty(), 0.0)),
 							KeyFrame(Duration.millis(animationDuration), KeyValue(node.translateYProperty(), deltaY))

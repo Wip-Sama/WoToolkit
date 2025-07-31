@@ -1,0 +1,59 @@
+{
+  "name": "windowsPortablePython",
+  "description": "A portable version of python for windows, used for running Python scripts without installing it globally.",
+  "version": "0.1.0.0",
+  "toolkitVersion": "0.0.0.1-",
+  "source": "",
+  "authors": [],
+  "supportedPlatforms": {
+    "Windows": {
+      "dependencies": {},
+      "installation": [
+        {
+          "type": "command",
+          "command": "Installer.bat",
+          "expectedResult": {
+            "type": "regex",
+            "regex": "^Python installato in: .*$"
+          }
+        }
+      ],
+      "validation": [
+        {
+          "type": "command",
+          "command": "WPy64-31350\\python\\python.exe --version",
+          "expectedResult": {
+            "type": "regex",
+            "regex": "^Python 3\\.13\\.5$"
+          }
+        },
+        {
+          "type": "command",
+          "command": "WPy64-31350\\python\\Scripts\\pip.exe --version",
+          "expectedResult": {
+            "type": "regex",
+            "regex": "^pip$"
+          }
+        }
+      ],
+      "interfaces": {
+        "python": {
+          "type": "location",
+          "location": "WPy64-31350\\python\\python.exe"
+        },
+        "pythonDir": {
+          "type": "location",
+          "location": "WPy64-31350\\python"
+        },
+        "pip": {
+          "type": "location",
+          "location": "WPy64-31350\\python\\Scripts\\pip.exe"
+        },
+        "pipDir": {
+          "type": "location",
+          "location": "WPy64-31350\\python\\Scripts"
+        }
+      }
+    }
+  }
+}

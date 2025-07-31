@@ -11,12 +11,12 @@ import kotlinx.serialization.encoding.Encoder
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 
 @Serializable
-class ModuleInterface {
-	@Serializable(with = MutableStateFlowSerializer::class) val type: MutableStateFlow<String> = MutableStateFlow("")
-	@Serializable(with = MutableStateFlowSerializer::class) val command: MutableStateFlow<String> = MutableStateFlow("")
-	@Serializable(with = MutableStateFlowSerializer::class) val location: MutableStateFlow<String> = MutableStateFlow("")
-	@Serializable(with = MutableStateFlowSerializer::class) val expectedResult: MutableStateFlow<String> = MutableStateFlow("")
-}
+data class ModuleInterface (
+	@Serializable(with = MutableStateFlowSerializer::class) val type: MutableStateFlow<String> = MutableStateFlow(""),
+	@Serializable(with = MutableStateFlowSerializer::class) val command: MutableStateFlow<String> = MutableStateFlow(""),
+	@Serializable(with = MutableStateFlowSerializer::class) val location: MutableStateFlow<String> = MutableStateFlow(""),
+	@Serializable(with = MutableStateFlowSerializer::class) val expectedResult: MutableStateFlow<String>? = null,
+)
 
 //HashMap<String, ModuleInterface>
 object MutableStateFlowHashmapStringModuleInterfaceSerializer : KSerializer<MutableStateFlow<HashMap<String, ModuleInterface>>> {

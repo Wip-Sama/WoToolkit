@@ -12,20 +12,20 @@ import org.wip.womtoolkit.model.database.entities.SlicerSettings
 import org.wip.womtoolkit.model.database.entities.UserSettings
 import kotlin.reflect.full.memberProperties
 
-object ApplicationSettingsSerializer : KSerializer<ApplicationSettings> {
-	override val descriptor: SerialDescriptor = buildClassSerialDescriptor("ApplicationSettings") {
+object ApplicationDataSerializer : KSerializer<ApplicationData> {
+	override val descriptor: SerialDescriptor = buildClassSerialDescriptor("ApplicationData") {
 		element("userSettings", UserSettings.serializer().descriptor)
 		element("slicerSettings", SlicerSettings.serializer().descriptor)
 	}
 
-	override fun serialize(encoder: Encoder, value: ApplicationSettings) {
+	override fun serialize(encoder: Encoder, value: ApplicationData) {
 		val composite = encoder.beginStructure(descriptor)
 		composite.encodeSerializableElement(descriptor, 0, UserSettings.serializer(), value.userSettings)
 		composite.encodeSerializableElement(descriptor, 1, SlicerSettings.serializer(), value.slicerSettings)
 		composite.endStructure(descriptor)
 	}
 
-	override fun deserialize(decoder: Decoder): ApplicationSettings {
+	override fun deserialize(decoder: Decoder): ApplicationData {
 		val dec = decoder.beginStructure(descriptor)
 		var userSettings: UserSettings? = null
 		var slicerSettings: SlicerSettings? = null
@@ -40,12 +40,12 @@ object ApplicationSettingsSerializer : KSerializer<ApplicationSettings> {
 		dec.endStructure(descriptor)
 
 		userSettings?.let { nonNullUserSettings ->
-			ApplicationSettings.userSettings.copyStateFlowsFrom(nonNullUserSettings)
+			ApplicationData.userSettings.copyStateFlowsFrom(nonNullUserSettings)
 		}
 		slicerSettings?.let { nonNullSlicerSettings ->
-			ApplicationSettings.slicerSettings.copyStateFlowsFrom(nonNullSlicerSettings)
+			ApplicationData.slicerSettings.copyStateFlowsFrom(nonNullSlicerSettings)
 		}
-		return ApplicationSettings
+		return ApplicationData
 	}
 }
 
@@ -76,16 +76,16 @@ fun <T : Any> T.copyStateFlowsFrom(other: T) {
 	}
 }
 
-@Serializable(with = ApplicationSettingsSerializer::class)
-object ApplicationSettings {
+@Serializable(with = ApplicationDataSerializer::class)
+object ApplicationData {
 	val userSettings = UserSettings()
 	val slicerSettings = SlicerSettings()
 }
 
 object AS {
 	val userSettings: UserSettings
-		get() = ApplicationSettings.userSettings
+		get() = ApplicationData.userSettings
 
 	val uS: UserSettings
-		get() = ApplicationSettings.userSettings
+		get() = ApplicationData.userSettings
 }

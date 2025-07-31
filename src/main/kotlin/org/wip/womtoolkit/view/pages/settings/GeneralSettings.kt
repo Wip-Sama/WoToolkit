@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
 import org.wip.womtoolkit.view.components.SettingElement
 import org.wip.womtoolkit.view.components.Switch
 import org.wip.womtoolkit.view.components.colorpicker.ColorPickerButton
-import org.wip.womtoolkit.model.ApplicationSettings
+import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.services.localization.LocalizationService
@@ -98,15 +98,15 @@ class GeneralSettings : VBox() {
 		accentSetting.apply {
 			quickSetting = ColorPickerButton().apply {
 				isColorPickerAvailable = true
-				colorProperty.value = ApplicationSettings.userSettings.accent.value
+				colorProperty.value = ApplicationData.userSettings.accent.value
 
 				colorProperty.addListener { _, _, newColor ->
-					if (newColor != ApplicationSettings.userSettings.accent)
-						ApplicationSettings.userSettings.accent.value = newColor
+					if (newColor != ApplicationData.userSettings.accent)
+						ApplicationData.userSettings.accent.value = newColor
 				}
 
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.accent.collectLatest { newColor ->
+					ApplicationData.userSettings.accent.collectLatest { newColor ->
 						withContext(Dispatchers.JavaFx) {
 							if (newColor != colorProperty.value)
 								colorProperty.value = newColor
@@ -120,20 +120,20 @@ class GeneralSettings : VBox() {
 				fun getSelectableColorPicker(): ColorPickerButton {
 					return ColorPickerButton().apply {
 						scope.launch(Dispatchers.IO) {
-							ApplicationSettings.userSettings.accent.collectLatest { newColor ->
+							ApplicationData.userSettings.accent.collectLatest { newColor ->
 								withContext(Dispatchers.JavaFx) {
 									isSelectedProperty.value = newColor == colorProperty.value
 								}
 							}
 						}
 						onAction = EventHandler {
-							ApplicationSettings.userSettings.accent.value = colorProperty.value
+							ApplicationData.userSettings.accent.value = colorProperty.value
 						}
 						colorProperty.addListener { _, _, newColor ->
-							isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent.value
+							isSelectedProperty.value = colorProperty.value == ApplicationData.userSettings.accent.value
 						}
 						Platform.runLater {
-							isSelectedProperty.value = colorProperty.value == ApplicationSettings.userSettings.accent.value
+							isSelectedProperty.value = colorProperty.value == ApplicationData.userSettings.accent.value
 						}
 					}
 				}
@@ -154,14 +154,14 @@ class GeneralSettings : VBox() {
 								fun updateColorPickerButtons() {
 									children.forEachIndexed { index, node ->
 										if (node is ColorPickerButton) {
-											if (index >= ApplicationSettings.userSettings.accentHistory.value.size) {
+											if (index >= ApplicationData.userSettings.accentHistory.value.size) {
 												node.visibleProperty().set(false)
 											} else {
 												// Controllo aggiuntivo per evitare IndexOutOfBounds
-												val historyIndex = ApplicationSettings.userSettings.accentHistory.value.size - 1 - index
-												if (historyIndex in ApplicationSettings.userSettings.accentHistory.value.indices) {
+												val historyIndex = ApplicationData.userSettings.accentHistory.value.size - 1 - index
+												if (historyIndex in ApplicationData.userSettings.accentHistory.value.indices) {
 													node.visibleProperty().set(true)
-													node.colorProperty.value = ApplicationSettings.userSettings.accentHistory.value[historyIndex]
+													node.colorProperty.value = ApplicationData.userSettings.accentHistory.value[historyIndex]
 												} else {
 													node.visibleProperty().set(false)
 												}
@@ -171,7 +171,7 @@ class GeneralSettings : VBox() {
 								}
 
 								scope.launch(Dispatchers.IO) {
-									ApplicationSettings.userSettings.accentHistory.collectLatest { newColors ->
+									ApplicationData.userSettings.accentHistory.collectLatest { newColors ->
 										withContext(Dispatchers.JavaFx) {
 											updateColorPickerButtons()
 										}
@@ -205,12 +205,12 @@ class GeneralSettings : VBox() {
 			}
 		}
 		themeSetting.apply {
-			quickSetting = Switch(ApplicationSettings.userSettings.theme.value == "dark").apply {
+			quickSetting = Switch(ApplicationData.userSettings.theme.value == "dark").apply {
 				trueLocalization = "settingsPage.general.theme.dark"
 				falseLocalization = "settingsPage.general.theme.light"
 
 				fun updateTheme() {
-					ApplicationSettings.userSettings.theme.value = if (state) "dark" else "light"
+					ApplicationData.userSettings.theme.value = if (state) "dark" else "light"
 				}
 
 				stateProperty.addListener { observable, oldValue, newValue ->
@@ -220,7 +220,7 @@ class GeneralSettings : VBox() {
 				}
 
 				scope.launch {
-					ApplicationSettings.userSettings.theme.collectLatest { newTheme ->
+					ApplicationData.userSettings.theme.collectLatest { newTheme ->
 						withContext(Dispatchers.JavaFx) {
 							state = newTheme == "dark"
 						}
@@ -239,7 +239,7 @@ class GeneralSettings : VBox() {
 					}
 				}
 				valueProperty().addListener { _, _, newValue ->
-					ApplicationSettings.userSettings.localization.value = newValue
+					ApplicationData.userSettings.localization.value = newValue
 				}
 			}
 		}
@@ -264,43 +264,43 @@ class GeneralSettings : VBox() {
 				val selectionMode = lookup("#selectionMode") as Switch
 				val alphaAvailable = lookup("#alphaAvailable") as Switch
 
-				selectionMode.state = ApplicationSettings.userSettings.colorPickerSettings.selectorMode.value
-				alphaAvailable.state = ApplicationSettings.userSettings.colorPickerSettings.alphaAvailable.value
+				selectionMode.state = ApplicationData.userSettings.colorPickerSettings.selectorMode.value
+				alphaAvailable.state = ApplicationData.userSettings.colorPickerSettings.alphaAvailable.value
 
 				selectionMode.stateProperty.addListener { _, oldValue, newValue ->
 					if (newValue == oldValue) return@addListener
-					ApplicationSettings.userSettings.colorPickerSettings.selectorMode.value = newValue
+					ApplicationData.userSettings.colorPickerSettings.selectorMode.value = newValue
 				}
 				alphaAvailable.stateProperty.addListener { _, oldValue, newValue ->
 					if (newValue == oldValue) return@addListener
-					ApplicationSettings.userSettings.colorPickerSettings.alphaAvailable.value = newValue
+					ApplicationData.userSettings.colorPickerSettings.alphaAvailable.value = newValue
 				}
 
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.colorPickerSettings.selectorMode.collectLatest {
+					ApplicationData.userSettings.colorPickerSettings.selectorMode.collectLatest {
 						selectionMode.state = it
 					}
 				}
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.colorPickerSettings.alphaAvailable.collectLatest {
+					ApplicationData.userSettings.colorPickerSettings.alphaAvailable.collectLatest {
 						alphaAvailable.state = it
 					}
 				}
 			}
 		}
 		disableAnimationSettings.apply {
-			quickSetting = Switch(ApplicationSettings.userSettings.disableAnimations.value).apply {
+			quickSetting = Switch(ApplicationData.userSettings.disableAnimations.value).apply {
 				trueLocalization = "settingsPage.general.disableAnimations.enabled"
 				falseLocalization = "settingsPage.general.disableAnimations.disabled"
 
 				stateProperty.addListener { observable, oldValue, newValue ->
 					if (newValue != oldValue) {
-						ApplicationSettings.userSettings.disableAnimations.value = newValue
+						ApplicationData.userSettings.disableAnimations.value = newValue
 					}
 				}
 
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.disableAnimations.collectLatest { newValue ->
+					ApplicationData.userSettings.disableAnimations.collectLatest { newValue ->
 						withContext(Dispatchers.JavaFx) {
 							state = newValue
 						}
@@ -309,18 +309,18 @@ class GeneralSettings : VBox() {
 			}
 		}
 		notificationSetting.apply {
-			quickSetting = Switch(ApplicationSettings.userSettings.notificationSettings.enabled.value).apply {
+			quickSetting = Switch(ApplicationData.userSettings.notificationSettings.enabled.value).apply {
 				trueLocalization = "enabled"
 				falseLocalization = "disabled"
 
 				stateProperty.addListener { observable, oldValue, newValue ->
 					if (newValue != oldValue) {
-						ApplicationSettings.userSettings.notificationSettings.enabled.value = newValue
+						ApplicationData.userSettings.notificationSettings.enabled.value = newValue
 					}
 				}
 
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.notificationSettings.enabled.collectLatest { newValue ->
+					ApplicationData.userSettings.notificationSettings.enabled.collectLatest { newValue ->
 						state = newValue
 					}
 				}
@@ -338,55 +338,55 @@ class GeneralSettings : VBox() {
 				val testError = lookup("#testError") as Button
 				val testSuccess = lookup("#testSuccess") as Button
 
-				enableInfo.state = ApplicationSettings.userSettings.notificationSettings.showInfo.value
-				enableWarning.state = ApplicationSettings.userSettings.notificationSettings.showWarning.value
-				enableError.state = ApplicationSettings.userSettings.notificationSettings.showError.value
-				enableSuccess.state = ApplicationSettings.userSettings.notificationSettings.showSuccess.value
-				autoDismiss.state = ApplicationSettings.userSettings.notificationSettings.autoDismiss.value
-				autoDismissTime.text = ApplicationSettings.userSettings.notificationSettings.autoDismissTime.value.toString()
+				enableInfo.state = ApplicationData.userSettings.notificationSettings.showInfo.value
+				enableWarning.state = ApplicationData.userSettings.notificationSettings.showWarning.value
+				enableError.state = ApplicationData.userSettings.notificationSettings.showError.value
+				enableSuccess.state = ApplicationData.userSettings.notificationSettings.showSuccess.value
+				autoDismiss.state = ApplicationData.userSettings.notificationSettings.autoDismiss.value
+				autoDismissTime.text = ApplicationData.userSettings.notificationSettings.autoDismissTime.value.toString()
 
 				enableInfo.stateProperty.addListener { _, oldValue, newValue ->
 					if (newValue == oldValue) return@addListener
-					ApplicationSettings.userSettings.notificationSettings.showInfo.value = newValue
+					ApplicationData.userSettings.notificationSettings.showInfo.value = newValue
 				}
 				enableWarning.stateProperty.addListener { _, oldValue, newValue ->
 					if (newValue == oldValue) return@addListener
-					ApplicationSettings.userSettings.notificationSettings.showWarning.value = newValue
+					ApplicationData.userSettings.notificationSettings.showWarning.value = newValue
 				}
 				enableError.stateProperty.addListener { _, oldValue, newValue ->
 					if (newValue == oldValue) return@addListener
-					ApplicationSettings.userSettings.notificationSettings.showError.value = newValue
+					ApplicationData.userSettings.notificationSettings.showError.value = newValue
 				}
 				enableSuccess.stateProperty.addListener { _, oldValue, newValue ->
 					if (newValue == oldValue) return@addListener
-					ApplicationSettings.userSettings.notificationSettings.showSuccess.value = newValue
+					ApplicationData.userSettings.notificationSettings.showSuccess.value = newValue
 				}
 				autoDismiss.stateProperty.addListener { _, oldValue, newValue ->
 					if (newValue == oldValue) return@addListener
-					ApplicationSettings.userSettings.notificationSettings.autoDismiss.value = newValue
+					ApplicationData.userSettings.notificationSettings.autoDismiss.value = newValue
 				}
 				autoDismissTime.textProperty().addListener { _, oldValue, newValue ->
 					if (newValue == oldValue) return@addListener
-					ApplicationSettings.userSettings.notificationSettings.autoDismissTime.value = autoDismissTime.value.toInt()
+					ApplicationData.userSettings.notificationSettings.autoDismissTime.value = autoDismissTime.value.toInt()
 				}
 
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.notificationSettings.showInfo.collectLatest { enableInfo.state = it }
+					ApplicationData.userSettings.notificationSettings.showInfo.collectLatest { enableInfo.state = it }
 				}
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.notificationSettings.showWarning.collectLatest { enableWarning.state = it }
+					ApplicationData.userSettings.notificationSettings.showWarning.collectLatest { enableWarning.state = it }
 				}
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.notificationSettings.showError.collectLatest { enableError.state = it }
+					ApplicationData.userSettings.notificationSettings.showError.collectLatest { enableError.state = it }
 				}
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.notificationSettings.showSuccess.collectLatest { enableSuccess.state = it }
+					ApplicationData.userSettings.notificationSettings.showSuccess.collectLatest { enableSuccess.state = it }
 				}
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.notificationSettings.autoDismiss.collectLatest { autoDismiss.state = it }
+					ApplicationData.userSettings.notificationSettings.autoDismiss.collectLatest { autoDismiss.state = it }
 				}
 				scope.launch(Dispatchers.JavaFx) {
-					ApplicationSettings.userSettings.notificationSettings.autoDismissTime.collectLatest { autoDismissTime.text = autoDismissTime.value.toString() }
+					ApplicationData.userSettings.notificationSettings.autoDismissTime.collectLatest { autoDismissTime.text = autoDismissTime.value.toString() }
 				}
 
 				testInfo.onAction = EventHandler {
