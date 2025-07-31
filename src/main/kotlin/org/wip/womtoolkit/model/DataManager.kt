@@ -24,7 +24,7 @@ object DataManager {
 		serializersModule = module
 //		ignoreUnknownKeys = true
 		prettyPrint = true
-		encodeDefaults = true
+		encodeDefaults = false // Could cause circular serialization loop
 		isLenient = true // Allows for lenient parsing of JSON
 	}
 

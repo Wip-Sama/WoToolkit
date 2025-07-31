@@ -1,27 +1,23 @@
-package org.wip.womtoolkit.model.services.modulesManagment
+package org.wip.womtoolkit.model.services.modulesManagment.moduleDTO
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.Serializable
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.utils.Version
-import org.wip.womtoolkit.utils.serializers.MutableStateFlowHashmapSerializer
-import org.wip.womtoolkit.utils.serializers.MutableStateFlowListStringSerializer
+import org.wip.womtoolkit.utils.serializers.MutableStateFlowListSerializer
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 
 @Serializable
-class Module() {
+class ModuleInfo() {
 	// Should contain all the information about a module and the functions to manage it (update/install/remove/validate)
 	@Serializable(with = MutableStateFlowSerializer::class) val name: MutableStateFlow<String> = MutableStateFlow( "")
-	@Serializable(with = MutableStateFlowSerializer::class) val version: MutableStateFlow<String> = MutableStateFlow( "")
 	@Serializable(with = MutableStateFlowSerializer::class) val description: MutableStateFlow<String> = MutableStateFlow( "")
+	@Serializable(with = MutableStateFlowSerializer::class) val version: MutableStateFlow<String> = MutableStateFlow( "")
 	@Serializable(with = MutableStateFlowSerializer::class) val toolkitVersion: MutableStateFlow<String> = MutableStateFlow( "")
-	// version follows this format "epoch.major.minor.patch"
-	// min - max
-	// min - (opt)
-	// (opt) - max
+	// this version follows this format "epoch.major.minor.patch"
 	@Serializable(with = MutableStateFlowSerializer::class) val source: MutableStateFlow<String> = MutableStateFlow( "")
-	@Serializable(with = MutableStateFlowListStringSerializer::class) val authors: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
-	@Serializable(with = MutableStateFlowHashmapSerializer::class) val supportedPlatforms: MutableStateFlow<HashMap<String, Platform>> = MutableStateFlow(hashMapOf())
+	@Serializable(with = MutableStateFlowListSerializer::class) val authors: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+	@Serializable(with = MutableStateFlowHashmapStringModulePlatformSerializer::class) val supportedPlatforms: MutableStateFlow<HashMap<String, ModulePlatform>> = MutableStateFlow(hashMapOf())
 
 	// get latest version (from source)
 	// get latest compatible version (from source) (optional)

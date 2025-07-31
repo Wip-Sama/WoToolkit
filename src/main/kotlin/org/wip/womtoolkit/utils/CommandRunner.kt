@@ -37,6 +37,12 @@ class CommandRunner {
 			return mutableListOf("cmd.exe", "/C")
 		}
 
+		fun runUsingPythonVenv(venvPath: String): MutableList<String> {
+			return mutableListOf(
+				"$venvPath/bin/python",
+				"-c"
+			)
+		}
 
 		fun customProcessBuilder(command: List<String>? = null): ProcessBuilder {
 			return ProcessBuilder(command ?: listOf())
