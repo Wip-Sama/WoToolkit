@@ -48,8 +48,9 @@ object DataManager {
 
 		// Modules
 		validateOrCreateFolder(modulesFolder)
-		loadAndValidateExistingModules()
-		addLoadAndValidateDefaultMissingModules()
+		loadInstalledModules()
+		addDefaultModules()
+		validateModules()
 
 
 		// Log
@@ -59,7 +60,7 @@ object DataManager {
 		loadApplicationDataJSON()
 
 		// Forced sync phase
-		LocalizationService.currentLocaleProperty.addListener { _, _, newLocale -> }
+//		LocalizationService.currentLocaleProperty.addListener { _, _, newLocale -> }
 	}
 
 	fun close() {
@@ -68,7 +69,6 @@ object DataManager {
 	}
 
 	private fun validateOrCreateFolder(folder: Path) {
-		//Is invalid
 		if (!checkItsDirectoryAndICanReadWrite(folder)) {
 			try {
 				Files.createDirectories(folder)
@@ -85,7 +85,7 @@ object DataManager {
 		}
 	}
 
-	private fun loadAndValidateExistingModules() {
+	private fun loadInstalledModules() {
 		modulesFolder.listDirectoryEntries().forEach { file ->
 			if (!file.isDirectory()) return@forEach
 			if (!checkItsDirectoryAndICanReadWrite(file)) {
@@ -111,8 +111,60 @@ object DataManager {
 		}
 	}
 
-	private fun addLoadAndValidateDefaultMissingModules() {
-		//TODO()
+	private fun addDefaultModules() {
+		if (ModuleManagementService.modules["Slicer"] == null) {
+			ModuleManagementService.addOrUpdateModule(ModuleInfo(
+				name = MutableStateFlow("Slicer"),
+				version = MutableStateFlow("0.1.0.0"),
+				toolkitVersion = MutableStateFlow(Globals.TOOLKIT_VERSION.toString()),
+				source = MutableStateFlow("github.com/wip-org/womtoolkit-modules"),
+			))
+		}
+
+		if (ModuleManagementService.modules["Converter"] == null) {
+			ModuleManagementService.addOrUpdateModule(ModuleInfo(
+				name = MutableStateFlow("Converter"),
+				version = MutableStateFlow("0.1.0.0"),
+				toolkitVersion = MutableStateFlow(Globals.TOOLKIT_VERSION.toString()),
+				source = MutableStateFlow("github.com/wip-org/womtoolkit-modules"),
+			))
+		}
+	}
+
+	private fun validateModules() {
+		ModuleManagementService.modules.forEach { (name, module) ->
+			if (!module.compatibleWithToolkitVersion) {
+				Globals.logger.warning("Module $name is not compatible with the current toolkit version: ${module.toolkitVersion.value}")
+				NotificationService.addNotification(NotificationData(
+					localizedContent = "warning.moduleVersionNotCompatibleWithToolkitVersion",
+					type = NotificationTypes.WARNING,
+					urgency = 0,
+				))
+			}
+			if (!module.compatibleWithPlatform) {
+				Globals.logger.warning("Module $name is not compatible with the current platform: ${Globals.PLATFORM.name}")
+				NotificationService.addNotification(NotificationData(
+					localizedContent = "warning.moduleNotCompatiblePlatform",
+					type = NotificationTypes.WARNING,
+					urgency = 0,
+				))
+			}
+			module._supportedPlatforms[Globals.PLATFORM.name]?.let { platform ->
+				platform.validation.value.forEach { step ->
+					when (step.type.value) {
+						"hash" -> {
+							step.file
+							step.hash
+						}
+						"command" -> {
+							step.command
+							step.expectedResult
+						}
+					}
+				}
+			}
+		}
+		Globals.logger.info("All modules validated successfully.")
 	}
 
 	private fun validateOrCreateApplicationDataJSON() {

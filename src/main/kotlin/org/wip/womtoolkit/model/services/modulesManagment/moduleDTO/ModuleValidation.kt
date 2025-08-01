@@ -8,7 +8,7 @@ import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 data class ModuleValidation (
 	@Serializable(with = MutableStateFlowSerializer::class) val type: MutableStateFlow<String> = MutableStateFlow(""),
 	@Serializable(with = MutableStateFlowSerializer::class) val file: MutableStateFlow<String> = MutableStateFlow(""),
-	@Serializable(with = MutableStateFlowSerializer::class) val command: MutableStateFlow<String> = MutableStateFlow(""),
 	@Serializable(with = MutableStateFlowSerializer::class) val hash: MutableStateFlow<String> = MutableStateFlow(""),
+	@Serializable(with = MutableStateFlowSerializer::class) val command: MutableStateFlow<String> = MutableStateFlow(""),
 	@Serializable(with = MutableStateFlowSerializer::class) val expectedResult: MutableStateFlow<ModuleExpectedResult>? = null,
 )

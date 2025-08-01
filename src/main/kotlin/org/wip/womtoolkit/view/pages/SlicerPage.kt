@@ -24,8 +24,11 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.wip.womtoolkit.model.ApplicationData
 import org.wip.womtoolkit.model.Globals
+import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.processing.slicer.Slicer
 import org.wip.womtoolkit.model.processing.slicer.SlicerSingleUseSettings
+import org.wip.womtoolkit.model.services.notification.NotificationData
+import org.wip.womtoolkit.model.services.notification.NotificationService
 import org.wip.womtoolkit.view.components.NumberTextField
 import org.wip.womtoolkit.view.components.SelectedFilesContainer
 import org.wip.womtoolkit.view.components.Switch
@@ -125,7 +128,10 @@ class SlicerPage : BorderPane() {
                 // For now we will assume only one folder path is provided
                 try {
                     Slicer.addElementFromFolder(inputFolder = folderPath.text, createSingleUseSettings())
-                    //TODO: the notification should tell the user that the path was not found or is not a directory instead of throwing an exception
+                    NotificationService.addNotification(NotificationData(
+                        localizedContent = "info.pathIsNotValid",
+                        type = NotificationTypes.INFO
+                    ))
                 } finally {
                     folderPath.text = ""
                 }
