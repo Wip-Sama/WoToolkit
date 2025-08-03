@@ -2,6 +2,7 @@ package org.wip.womtoolkit.model.services.modulesManagment
 
 import org.wip.womtoolkit.model.services.modulesManagment.moduleDTO.ModuleInfo
 
+//TODO( Should check for circular dependencies)
 object ModuleManagementService {
 	//Could be a MutableStateFlow
 	private val _modules = mutableMapOf<String, ModuleInfo>()

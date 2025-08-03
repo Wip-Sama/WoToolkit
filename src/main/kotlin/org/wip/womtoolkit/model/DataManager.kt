@@ -12,6 +12,7 @@ import org.wip.womtoolkit.model.services.modulesManagment.ModuleManagementServic
 import org.wip.womtoolkit.model.services.modulesManagment.moduleDTO.ModuleInfo
 import org.wip.womtoolkit.model.services.notification.NotificationData
 import org.wip.womtoolkit.model.services.notification.NotificationService
+import org.wip.womtoolkit.utils.FileUtiles
 import org.wip.womtoolkit.utils.serializers.ColorSerializer
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
 import java.nio.file.Paths
@@ -69,7 +70,7 @@ object DataManager {
 	}
 
 	private fun validateOrCreateFolder(folder: Path) {
-		if (!checkItsDirectoryAndICanReadWrite(folder)) {
+		if (!FileUtiles.checkItsDirectoryAndICanReadWrite(folder)) {
 			try {
 				Files.createDirectories(folder)
 			} catch (e: Exception) {
@@ -88,7 +89,7 @@ object DataManager {
 	private fun loadInstalledModules() {
 		modulesFolder.listDirectoryEntries().forEach { file ->
 			if (!file.isDirectory()) return@forEach
-			if (!checkItsDirectoryAndICanReadWrite(file)) {
+			if (!FileUtiles.checkItsDirectoryAndICanReadWrite(file)) {
 				Globals.logger.warning("Module folder is not valid or not readable/writable: $file")
 				return@forEach
 			}
@@ -149,26 +150,14 @@ object DataManager {
 					urgency = 0,
 				))
 			}
-			module._supportedPlatforms[Globals.PLATFORM.name]?.let { platform ->
-				platform.validation.value.forEach { step ->
-					when (step.type.value) {
-						"hash" -> {
-							step.file
-							step.hash
-						}
-						"command" -> {
-							step.command
-							step.expectedResult
-						}
-					}
-				}
-			}
+			module.validate()
+			//TODO something with the result of the validation
 		}
 		Globals.logger.info("All modules validated successfully.")
 	}
 
 	private fun validateOrCreateApplicationDataJSON() {
-		if (!checkItsFileAndICanReadWrite(applicationSettings)) {
+		if (!FileUtiles.checkItsFileAndICanReadWrite(applicationSettings)) {
 			try {
 				val out = customJsonSerializer.encodeToString(ApplicationData)
 				Files.createFile(applicationSettings).also {
@@ -181,32 +170,6 @@ object DataManager {
 				throw IllegalStateException("Failed to create application settings JSON: $applicationSettings", e)
 			}
 		}
-	}
-
-	private fun checkItsFileAndICanReadWrite(path: Path): Boolean {
-		if (!Files.exists(path)) {
-			return false
-		}
-		if (!Files.isRegularFile(path)) {
-			return false
-		}
-		if (!Files.isReadable(path) || !Files.isWritable(path)) {
-			return false
-		}
-		return true
-	}
-
-	private fun checkItsDirectoryAndICanReadWrite(path: Path): Boolean {
-		if (!Files.exists(path)) {
-			return false
-		}
-		if (!Files.isDirectory(path)) {
-			return false
-		}
-		if (!Files.isReadable(path) || !Files.isWritable(path)) {
-			return false
-		}
-		return true
 	}
 
 	private fun loadApplicationDataJSON() {

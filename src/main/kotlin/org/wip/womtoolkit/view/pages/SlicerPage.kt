@@ -97,6 +97,7 @@ class SlicerPage : BorderPane() {
         }
     }
 
+
     @FXML
     fun initialize() {
         initializeAdvancedMode()

@@ -1,6 +1,9 @@
 package org.wip.womtoolkit.model
 
+import org.wip.womtoolkit.model.enums.NotificationTypes
 import org.wip.womtoolkit.model.enums.Platforms
+import org.wip.womtoolkit.model.services.notification.NotificationData
+import org.wip.womtoolkit.model.services.notification.NotificationService
 import org.wip.womtoolkit.utils.Version
 import java.lang.management.ManagementFactory
 import java.util.logging.FileHandler
@@ -22,19 +25,28 @@ object Globals {
 
 	val TOOLKIT_VERSION: Version = Version(0, 0, 0, 1) // epoch.major.minor.patch
 
-	val PLATFORM = when (System.getProperty("os.name").lowercase()) {
-		"linux" -> Platforms.LINUX
-		"mac os x" -> Platforms.MACOS
-		"windows" -> Platforms.WINDOWS
-		else -> Platforms.UNKNOWN
-	}
-
 	val isDebug: Boolean by lazy {
 		ManagementFactory.getRuntimeMXBean()
 			.inputArguments.any { it.contains("-agentlib:jdwp") }
 	}
 
 	val logger: Logger = Logger.getLogger(javaClass.getName())
+
+	val PLATFORM = when (System.getProperty("os.name").lowercase()) {
+		"linux" -> Platforms.LINUX
+		"mac os x" -> Platforms.MACOS
+		"windows" -> Platforms.WINDOWS
+		"windows 11" -> Platforms.WINDOWS
+		else -> {
+			val osName = System.getProperty("os.name").lowercase()
+			logger.warning("Unsupported platform: $osName")
+			NotificationService.addNotification(NotificationData(
+				localizedContent = "warning.unsupportedPlatform",
+				type = NotificationTypes.WARNING,
+			))
+			Platforms.UNKNOWN
+		}
+	}
 
 	init {
 		logger.level = Level.ALL
