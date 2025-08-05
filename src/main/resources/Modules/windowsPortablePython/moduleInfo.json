@@ -32,7 +32,7 @@
           "command": "WPy64-31350\\python\\Scripts\\pip.exe --version",
           "expectedResult": {
             "type": "regex",
-            "regex": "^pip$"
+            "regex": "^pip.*$"
           }
         }
       ],

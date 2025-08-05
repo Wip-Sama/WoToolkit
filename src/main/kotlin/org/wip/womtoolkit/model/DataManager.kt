@@ -38,7 +38,7 @@ object DataManager {
 		prettyPrint = true
 		encodeDefaults = false // Could cause circular serialization loop
 		isLenient = true // Allows for lenient parsing of JSON
-//		ignoreUnknownKeys = true
+		ignoreUnknownKeys = true
 	}
 
 	fun init() {
