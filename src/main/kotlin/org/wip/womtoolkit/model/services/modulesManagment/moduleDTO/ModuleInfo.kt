@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.utils.Version
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
+import kotlin.properties.Delegates
 
 @Serializable
 data class ModuleInfo(
@@ -14,6 +15,7 @@ data class ModuleInfo(
 	@Serializable(with = MutableStateFlowSerializer::class) val version: MutableStateFlow<String> = MutableStateFlow( ""),
 	@Serializable(with = MutableStateFlowSerializer::class) val toolkitVersion: MutableStateFlow<String> = MutableStateFlow( ""),
 	// this version follows this format "epoch.major.minor.patch"
+	@Serializable(with = MutableStateFlowSerializer::class) val icon: MutableStateFlow<String> = MutableStateFlow( ""),
 	@Serializable(with = MutableStateFlowSerializer::class) val source: MutableStateFlow<String> = MutableStateFlow( ""),
 	@Serializable(with = MutableStateFlowSerializer::class) val authors: MutableStateFlow<List<String>> = MutableStateFlow(listOf()),
 	@Serializable(with = MutableStateFlowHashmapStringModulePlatformSerializer::class) val supportedPlatforms: MutableStateFlow<HashMap<String, ModulePlatform>> = MutableStateFlow(hashMapOf())
@@ -55,7 +57,15 @@ data class ModuleInfo(
 	var isValidated: Boolean = false
 		private set
 
-	var isValid: Boolean = false
+	var isValid: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
+		isValidated = true
+	}
+		private set
+
+	var isInstalled: Boolean = false
+		private set
+
+	var isUpdateAvailable: Boolean = false
 		private set
 
 	fun validate(): Boolean {
@@ -75,5 +85,18 @@ data class ModuleInfo(
 
 	fun install() {
 		supportedPlatforms.value[Globals.PLATFORM.name.lowercase()]?.installModule()
+		isInstalled = true
+	}
+
+	fun update() {
+		//TODO()
+	}
+
+	fun uninstall() {
+		//TODO()
+	}
+
+	fun searchForUpdates() {
+		isUpdateAvailable = !isUpdateAvailable
 	}
 }

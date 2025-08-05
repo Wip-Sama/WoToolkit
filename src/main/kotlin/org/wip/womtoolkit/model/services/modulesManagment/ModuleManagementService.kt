@@ -1,5 +1,6 @@
 package org.wip.womtoolkit.model.services.modulesManagment
 
+import kotlinx.coroutines.flow.MutableSharedFlow
 import org.wip.womtoolkit.model.services.modulesManagment.moduleDTO.ModuleInfo
 
 //TODO( Should check for circular dependencies)

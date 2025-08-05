@@ -37,13 +37,13 @@ class SettingElement() : AnchorPane() {
             "M8.29289 4.29289C7.90237 4.68342 7.90237 5.31658 8.29289 5.70711L14.5858 12L8.29289 18.2929C7.90237 18.6834 7.90237 19.3166 8.29289 19.7071C8.68342 20.0976 9.31658 20.0976 9.70711 19.7071L16.7071 12.7071C17.0976 12.3166 17.0976 11.6834 16.7071 11.2929L9.70711 4.29289C9.31658 3.90237 8.68342 3.90237 8.29289 4.29289Z"
     }
 
-    @FXML lateinit var title: Label
-    @FXML lateinit var description: Label
-    @FXML lateinit var expandedIndicator: SVGPath
-    @FXML lateinit var expandablePane: BorderPane
-    @FXML lateinit var imageContainer: BorderPane
-    @FXML lateinit var displayPane: BorderPane
-    @FXML lateinit var rightContainer: HBox
+    @FXML private lateinit var title: Label
+    @FXML private lateinit var description: Label
+    @FXML private lateinit var expandedIndicator: SVGPath
+    @FXML private lateinit var expandablePane: BorderPane
+    @FXML private lateinit var imageContainer: BorderPane
+    @FXML private lateinit var displayPane: BorderPane
+    @FXML private lateinit var rightContainer: HBox
 
     private val _contentProperty: SimpleStringProperty = SimpleStringProperty("")
     fun getContent(): String = _contentProperty.get()
@@ -91,14 +91,12 @@ class SettingElement() : AnchorPane() {
             }
         }
 
-
     var redirectable: Boolean = false
         set(value) {
             field = value
             displayPane.pseudoClassStateChanged(PseudoClass.getPseudoClass("expandable"), value)
             updateExpandedIndicator()
         }
-        get() = field
     var onRedirect: EventHandler<Event> = EventHandler {}
 
     val rectClip = Rectangle().apply {
