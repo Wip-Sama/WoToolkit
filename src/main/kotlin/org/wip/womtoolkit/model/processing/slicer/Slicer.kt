@@ -69,7 +69,7 @@ object Slicer {
 					val process = CommandRunner.customProcessBuilder().apply {
 							environment()["PATH"] = "$pythonDir;${System.getenv("PATH")}"
 							command(CommandRunner.runInPowershell().apply {
-								add("python -u $scriptPath $slicerSettings")
+								add("python -u $scriptPath '$slicerSettings'")
 							})
 						}
 						.start()
@@ -80,15 +80,19 @@ object Slicer {
 						}
 					}
 
+					var erroed = false
 					process.errorStream.bufferedReader().use { reader ->
 						reader.lines().forEach { line ->
 							Globals.logger.warning(line)
-							throw RuntimeException("Error while processing element, error: ${CommandRunner.cleanAnsiCodes(line)}")
+							erroed = true
 						}
 					}
 
 					//check exitcode
 					val exitCode = process.waitFor()
+					if (erroed) {
+						throw RuntimeException("Error while processing element")
+					}
 					if (exitCode != 0) {
 						Globals.logger.warning { "Slicer process exited with code $exitCode" }
 						throw RuntimeException("Slicer process exited with code $exitCode")

@@ -1,6 +1,8 @@
 package org.wip.womtoolkit.model.services.modulesManagment.moduleDTO
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.serialization.Serializable
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.utils.Version
@@ -54,24 +56,26 @@ data class ModuleInfo(
 			return Version.fromString(versions[1])
 		}
 
-	var isValidated: Boolean = false
-		private set
+	private val _isValidated: MutableStateFlow<Boolean> = MutableStateFlow(false)
+	val isValidated: StateFlow<Boolean>
+		get() = _isValidated.asStateFlow()
 
-	var isValid: Boolean by Delegates.observable(false) { _, oldValue, newValue ->
-		isValidated = true
-	}
-		private set
+	private val _isValid: MutableStateFlow<Boolean> = MutableStateFlow(false)
+	val isValid: StateFlow<Boolean>
+		get() = _isValid.asStateFlow()
 
-	var isInstalled: Boolean = false
-		private set
+	private val _isInstalled: MutableStateFlow<Boolean> = MutableStateFlow(false)
+	val isInstalled: StateFlow<Boolean>
+		get() = _isInstalled.asStateFlow()
 
-	var isUpdateAvailable: Boolean = false
-		private set
+	private val _isUpdateAvailable: MutableStateFlow<Boolean> = MutableStateFlow(false)
+	val isUpdateAvailable: StateFlow<Boolean>
+		get() = _isUpdateAvailable.asStateFlow()
 
 	fun validate(): Boolean {
-		isValidated = true
+		_isValidated.value = true
 		if (!compatibleWithPlatform) {
-			isValid = false
+			_isValid.value = false
 			return false
 		}
 		supportedPlatforms.value[Globals.PLATFORM.name.lowercase()]?.let { platform ->
@@ -79,13 +83,17 @@ data class ModuleInfo(
 			platform.validateInstallation()
 		}
 		Globals.logger.info("validated module ${name.value} successfully")
-		isValid = true
+		_isValid.value = true
 		return true
 	}
 
 	fun install() {
 		supportedPlatforms.value[Globals.PLATFORM.name.lowercase()]?.installModule()
-		isInstalled = true
+		_isInstalled.value = true
+	}
+
+	fun searchForUpdates() {
+		_isUpdateAvailable.value = !_isUpdateAvailable.value
 	}
 
 	fun update() {
@@ -94,9 +102,5 @@ data class ModuleInfo(
 
 	fun uninstall() {
 		//TODO()
-	}
-
-	fun searchForUpdates() {
-		isUpdateAvailable = !isUpdateAvailable
 	}
 }

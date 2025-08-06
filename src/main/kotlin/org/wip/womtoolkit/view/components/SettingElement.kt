@@ -3,8 +3,10 @@ package org.wip.womtoolkit.view.components
 import javafx.animation.KeyFrame
 import javafx.animation.KeyValue
 import javafx.animation.Timeline
+import javafx.beans.Observable
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleStringProperty
+import javafx.beans.value.ObservableValue
 import javafx.css.PseudoClass
 import javafx.event.Event
 import javafx.event.EventHandler
@@ -50,12 +52,22 @@ class SettingElement() : AnchorPane() {
     fun setContent(value: String) = _contentProperty.set(value)
 
     private val _titleLocalizationProperty = SimpleStringProperty("")
+    private var _titleArgs: Array<out ObservableValue<String?>?>? = null
     fun getTitleLocalization(): String = _titleLocalizationProperty.get()
     fun setTitleLocalization(value: String) = _titleLocalizationProperty.set(value)
+    fun setTitleLocalization(value: String, vararg args: ObservableValue<String?>?) {
+        _titleArgs = args
+        _titleLocalizationProperty.set(value)
+    }
 
     private val _descriptionLocalizationProperty = SimpleStringProperty("")
+    private var _descriptionArgs: Array<out ObservableValue<String?>?>? = null
     fun getDescriptionLocalization(): String = _descriptionLocalizationProperty.get()
     fun setDescriptionLocalization(value: String) = _descriptionLocalizationProperty.set(value)
+    fun setDescriptionLocalization(value: String, vararg args: ObservableValue<String?>?) {
+        _descriptionArgs = args
+        _descriptionLocalizationProperty.set(value)
+    }
 
     val expandedProperty = SimpleBooleanProperty(false)
     var expandableContent: Pane? = null
@@ -146,10 +158,10 @@ class SettingElement() : AnchorPane() {
 
         /* Initialize general */
         _titleLocalizationProperty.addListener {
-            title.textProperty().bind(Lsp.lsb(_titleLocalizationProperty.value))
+            title.textProperty().bind(Lsp.lsb(_titleLocalizationProperty.value, *(_titleArgs ?: arrayOf())))
         }
         _descriptionLocalizationProperty.addListener {
-            description.textProperty().bind(Lsp.lsb(_descriptionLocalizationProperty.value))
+            description.textProperty().bind(Lsp.lsb(_descriptionLocalizationProperty.value, *(_descriptionArgs ?: arrayOf())))
         }
         _contentProperty.addListener { _, _, newValue ->
             imageContainer.center = SVGPath().apply {

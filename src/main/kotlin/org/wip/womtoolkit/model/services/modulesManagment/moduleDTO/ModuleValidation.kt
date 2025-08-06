@@ -1,6 +1,7 @@
 package org.wip.womtoolkit.model.services.modulesManagment.moduleDTO
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 import org.wip.womtoolkit.model.Globals
 import org.wip.womtoolkit.utils.CommandRunner
@@ -16,14 +17,14 @@ data class ModuleValidation (
 	@Serializable(with = MutableStateFlowSerializer::class) val command: MutableStateFlow<String> = MutableStateFlow(""),
 	@Serializable(with = MutableStateFlowSerializer::class) val expectedResult: MutableStateFlow<ModuleExpectedResult>? = null,
 ) {
-	var isValidated: Boolean = false
-		private set
+	@Transient private val _isValidated: MutableStateFlow<Boolean> = MutableStateFlow(false)
+	@Transient var isValidated: StateFlow<Boolean> = _isValidated
 
-	var isValid: Boolean = false
-		private set
+	@Transient private val _isValid: MutableStateFlow<Boolean> = MutableStateFlow(false)
+	@Transient val isValid: StateFlow<Boolean> = _isValid
 
 	fun validate(): Boolean {
-		isValidated = true
+		_isValidated.value = true
 		when (type.value) {
 			"hash" -> {
 				val filePath = Path("${System.getProperty("user.dir")}/${file.value}")
@@ -31,7 +32,7 @@ data class ModuleValidation (
 					throw RuntimeException("File at $filePath does not exist or is not readable.")
 				}
 				// TODO: hash check
-				isValid = true
+				_isValid.value = true
 			}
 
 			"command" -> {
@@ -40,15 +41,14 @@ data class ModuleValidation (
 
 				if (output.second.isNotEmpty()) {
 					Globals.logger.warning("Command '${command.value}' failed with error: ${output.second}")
-					throw RuntimeException("Command '${command.value}' failed with error: ${output.second}")
+					return false
 				}
 
-				if (expectedResult?.value?.validateResult(output.first) == false) isValid = false
-				isValid = true
+				if (expectedResult?.value?.validateResult(output.first) == false) _isValid.value = false
+				_isValid.value = true
 			}
-			else -> isValid = false
-
+			else -> _isValid.value = false
 		}
-		return isValid
+		return _isValid.value
 	}
 }

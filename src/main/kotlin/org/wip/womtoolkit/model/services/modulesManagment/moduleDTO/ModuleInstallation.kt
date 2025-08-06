@@ -8,6 +8,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import org.wip.womtoolkit.model.Globals
+import org.wip.womtoolkit.model.services.activityMonitor.ActivityMonitorService
 import org.wip.womtoolkit.utils.CommandRunner
 import org.wip.womtoolkit.utils.FileUtiles
 import org.wip.womtoolkit.utils.serializers.MutableStateFlowSerializer
@@ -21,10 +22,14 @@ data class ModuleInstallation (
 ) {
 	fun execute(): Boolean {
 		val newCommand = CommandRunner.replaceDependenciesInCommand(command.value)
+//		ActivityMonitorService["ModuleManagement"].addActivity(
+//			"Executing command: $newCommand",
+//			Globals.logger
+//		)
 		val output = CommandRunner.runSimpleCommand(newCommand)
 
 		if (output.second.isNotEmpty()) {
-			Globals.logger.warning("Command '${command.value}' failed with error: ${output.second}")
+			Globals.logger.warning("Command '${newCommand}' failed with error: ${output.second}")
 			return false
 		}
 

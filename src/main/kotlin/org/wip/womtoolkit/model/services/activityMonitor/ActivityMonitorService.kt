@@ -54,6 +54,7 @@ object ActivityMonitorService {
 	        _containers[id] = container
 	    }
 	}
+
 	fun remove(id: String) {
 		with(lock) {
 			if (_containers.containsKey(id)) {

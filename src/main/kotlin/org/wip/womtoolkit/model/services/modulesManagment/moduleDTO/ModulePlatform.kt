@@ -29,20 +29,20 @@ data class ModulePlatform (
 	fun validateDependencies(): Boolean {
 		return dependencies.value.all { (name, version) ->
 			if (!ModuleManagementService.modules.containsKey(name)) {
-				Globals.logger.info("Module $name is missing dependency $name")
+				//TODO() some logging
 				false
 			}
 
-			val module = ModuleManagementService.modules[name]!!
+			val module = ModuleManagementService.modules[name] ?: return@all false
 
 			if ((module.minVersion?.let { it >= Version.fromString(version) } == true) ||
 				(module.maxVersion?.let { it <= Version.fromString(version) } == true)) {
-				Globals.logger.info("Module $name has incompatible dependency $name with version $version")
+				//TODO() some logging
 				false
 			}
 
 			if (!module.validate()) {
-				Globals.logger.info("Module $name has unvalidated dependency $name")
+				//TODO() some logging
 				false
 			}
 			true

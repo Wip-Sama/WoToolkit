@@ -24,6 +24,7 @@
 @import "components/custom/notification/notification-window.css";
 @import "components/custom/notification/notification-dispenser.css";
 @import "components/custom/circular-progress-bar.css";
+@import "components/custom/collapsable-activity-indicator.css";
 
 .label {
     -fx-text-fill: -womt-text;

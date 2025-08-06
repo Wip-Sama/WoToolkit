@@ -21,7 +21,7 @@
         <padding>
             <Insets left="55.0" right="8.0" />
         </padding>
-        <LocalizedLabel localizationKey="settingsPage.general.notification.enableInfo" />
+        <LocalizedLabel localizationKey="modulesPage.common.installOrUpdate" />
       <Button fx:id="installOrUpdate" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" />
     </GridPane>
     <Separator prefWidth="200.0" />
@@ -37,7 +37,7 @@
          <Insets left="55.0" right="8.0" />
       </padding>
       <children>
-         <LocalizedLabel localizationKey="settingsPage.general.notification.enableWarning" />
+         <LocalizedLabel localizationKey="modulesPage.common.revalidate" />
          <Button fx:id="revalidate" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" />
       </children>
    </GridPane>
@@ -54,7 +54,7 @@
          <Insets left="55.0" right="8.0" />
       </padding>
       <children>
-         <LocalizedLabel localizationKey="settingsPage.general.notification.enableError" />
+         <LocalizedLabel localizationKey="modulesPage.common.uninstall" />
          <Button fx:id="uninstall" mnemonicParsing="false" text="Button" GridPane.columnIndex="1" />
       </children>
    </GridPane>

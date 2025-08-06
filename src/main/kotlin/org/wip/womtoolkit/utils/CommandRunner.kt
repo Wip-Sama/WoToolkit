@@ -129,9 +129,9 @@ class CommandRunner {
 				val dependencyName = parts[0]
 				val dependencyInterfaceName = parts[1]
 
-				val dependencyModule = ModuleManagementService.modules[dependencyName]!!
-				val dependencyModulePlatform = dependencyModule.supportedPlatforms.value[Globals.PLATFORM.name.lowercase()]!!
-				val dependencyModuleInterface = dependencyModulePlatform.interfaces.value[dependencyInterfaceName]!!
+				val dependencyModule = ModuleManagementService.modules[dependencyName]?: return@forEach
+				val dependencyModulePlatform = dependencyModule.supportedPlatforms.value[Globals.PLATFORM.name.lowercase()]?: return@forEach
+				val dependencyModuleInterface = dependencyModulePlatform.interfaces.value[dependencyInterfaceName]?: return@forEach
 
 				newCommand = newCommand.replace(matchResult.value, dependencyModuleInterface.getInterface())
 			}
